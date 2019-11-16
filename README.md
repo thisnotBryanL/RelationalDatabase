@@ -18,6 +18,8 @@ The Department of Journalism, Public Relations and New Media would like to build
 
 - Figure out all the ways the user can input information
 
+- Make database web based
+
 - Design Schema
 
 - Configure Queries
