@@ -4,22 +4,22 @@ The Department of Journalism, Public Relations and New Media would like to build
 
 ## This Database will keep track of:
 
--Student Portfolio (and Personal information)
+- Student Portfolio (and Personal information)
 
--Internship Information
+- Internship Information
 
--Supervisor Information
+- Supervisor Information
 
--Evaluation information (reviews from both student and supervisor)
+- Evaluation information (reviews from both student and supervisor)
 
--Portfolio Review
+- Portfolio Review
 
 ## Current To-Do list:
 
--Figure out all the ways the user can input information
+- Figure out all the ways the user can input information
 
--Design Schema
+- Design Schema
 
--Configure Queries
+- Configure Queries
 
--Develop GUI
+- Develop GUI
