@@ -1,7 +1,7 @@
 import mysql.connector
 import tkinter as tk
 from User_Inputed_Data import *
-
+#
 class PageOne:
     def destoryWindow(self, mycursor, mydb):
         self.upperFrame.destroy()

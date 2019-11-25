@@ -2,7 +2,7 @@ import mysql.connector
 
 #global variable allows us to update page
 timeToUpdate = 0
-
+#
 def createTables(mycursor):
     mycursor.execute("CREATE TABLE IF NOT EXISTS StudentInfo(BaylorID CHAR (9),"
                      "lastName VARCHAR (30),"
