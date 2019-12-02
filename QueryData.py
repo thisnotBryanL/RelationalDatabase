@@ -8,8 +8,8 @@ def main():
     mydb = mysql.connector.connect(
         host = "localhost",
         user = "root",
-        password = "password123",
-        database = "GP"
+        password = "BUboxtop2020",
+        database = "testdb"
     )
     #initialize cursor of database
     mycursor = mydb.cursor()
