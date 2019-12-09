@@ -1,0 +1,47 @@
+<HTML>
+
+<body class="intro-header" style="background-size: cover;
+        background-image: url({{ url_for('static', filename='background5.png') }})">
+</body>
+
+<BODY>
+<form method="post" action="">
+    <center> <header><font size="48"> Student Information </font></header>
+        Student ID <input type="text" name="student_id" />
+        <br>
+        First Name <input type="text" name="first_name" />
+        <br>
+        Last Name <input type="text" name="last_name" />
+        <br>
+        Email <input type="email" name="email" />
+        <br>
+        Semester Entering Program <input type="radio" name="adv_pr_semester" id="Fall" value="Fall"> Fall </input>
+            <input type="radio" name="adv_pr_semester" id="Spring" value="Spring"> Spring </input>
+        <br>
+        Year <select name="year">
+                <script language="javascript" type="text/javascript">
+                for(var d=0;d<=19;d++)
+                {
+                    document.write("<option>"+(2000+d)+"</option>");
+                }
+                </script>
+            </select>
+        <br>
+        Class <input type="text" name="class" />
+        <br>
+        Major or Minor <input type="radio" name="major_minor" id="major" value="major"> major </input>
+                       <input type="radio" name="major_minor" id="minor" value="minor"> minor </input>
+        <br>
+        Grade <select name="grade">
+            <option value="A"> A </option>
+            <option value="B"> B </option>
+            <option value="C"> C </option>
+            <option value="D"> D </option>
+            <option value="F"> F </option>
+        </select>
+        <br><br>
+    <input type="submit" name="submit_button" value="next">
+    <input type="submit" name="submit_button" value="back"></center>
+</form>
+</BODY>
+</HTML>

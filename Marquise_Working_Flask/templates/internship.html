@@ -1,10 +1,83 @@
 <!DOCTYPE html>
 <html lang="en">
+
+<body class="intro-header" style="background-size: cover;
+        background-image: url({{ url_for('static', filename='background5.png') }})">
+</body>
+<body class="intro-header" style="background-size: cover;
+        background-image: url('background5.png')">
+</body>
+
 <head>
     <meta charset="UTF-8">
     <title>Internship Page!</title>
-    <h2>Welcome to the Journalism Internships!</h2>
+    <h2>Welcome to the Journalism Internships Page!</h2>
 </head>
-<body>
-</body>
+
+<BODY>
+<form method="post" action="">
+    <strong> Company </strong> <input type="text" name="company" />
+    <br>
+    <strong> Start Date </strong>
+    <br>
+    <select name="start_month">
+        <option value="JAN"> JAN </option>
+        <option value="FEB"> FEB </option>
+        <option value="MAR"> MAR </option>
+        <option value="APR"> APR </option>
+        <option value="MAY"> MAY </option>
+        <option value="JUN"> JUN </option>
+        <option value="JUL"> JUL </option>
+        <option value="AUG"> AUG </option>
+        <option value="SEP"> SEP </option>
+        <option value="OCT"> OCT </option>
+        <option value="NOV"> NOV </option>
+        <option value="DEC"> DEC </option>
+    </select>
+        <select name="start_year">
+                <script language="javascript" type="text/javascript">
+                for(var d=0;d<=19;d++)
+                {
+                    document.write("<option>"+(2000+d)+"</option>");
+                }
+                </script>
+        </select>
+
+    <select name="end_month">
+        <option value="JAN"> JAN </option>
+        <option value="FEB"> FEB </option>
+        <option value="MAR"> MAR </option>
+        <option value="APR"> APR </option>
+        <option value="MAY"> MAY </option>
+        <option value="JUN"> JUN </option>
+        <option value="JUL"> JUL </option>
+        <option value="AUG"> AUG </option>
+        <option value="SEP"> SEP </option>
+        <option value="OCT"> OCT </option>
+        <option value="NOV"> NOV </option>
+        <option value="DEC"> DEC </option>
+    </select>
+        <select name="end_year">
+                <script language="javascript" type="text/javascript">
+                for(var d=0;d<=19;d++)
+                {
+                    document.write("<option>"+(2000+d)+"</option>");
+                }
+                </script>
+        </select>
+    <br>
+    <strong> Address </strong> <input type="text" name="address" />
+    <br>
+    <strong> Phone Number </strong> <input type="tel" pattern="[0-9]{3}-[0-9]{3}-[0-9]{4}" required />
+    <br>
+    <strong> Total Hours </strong> <input type="number" name="tot_hours" />
+    <br>
+    <strong> Student ID </strong> <input type="text" name="student_id" />
+    <br>
+    <strong> Supervisor Name </strong> <input type="text" name="sup_name"/>
+    <input type="submit" name="submit_button" value="next"/>
+    <input type="submit" name="submit_button" value="back"/>
+
+</form>
+</BODY>
 </html>
