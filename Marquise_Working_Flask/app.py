@@ -1,6 +1,6 @@
 from flask import Flask, render_template, request, url_for, redirect
 import mysql.connector
-from User_Inputed_Data import *
+from TableSchema import *
 
 app = Flask(__name__)
 
@@ -8,8 +8,8 @@ app = Flask(__name__)
 mydb = mysql.connector.connect(
     host="localhost",
     user="root",
-    passwd="BUboxtop2020",
-    database="testdb"
+    passwd="password123",
+    database="GP"
 )
 
 myCursor = mydb.cursor()
