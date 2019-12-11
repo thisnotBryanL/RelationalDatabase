@@ -20,13 +20,14 @@
                 {{ wtf.form_field(form.Class) }}
             </div>
             <div style="width: 150%">
-                {{ form.major_minor }}
-
+                {{ form2.major_minor }}
+                {{ form2.ADV_PR_Semester }}
+                {{ form2.ADV_PR_Grade }}
+                {{ form2.ADV_PR_Year }}
             </div>
 
             <br><br><br>
-            {{ wtf.form_field(form.submit) }}
-            <!input class="btn btn-primary" value="submit" type="submit">
+            <input class="btn btn-primary" value="submit" type="submit">
         </dl>
     </form>
 </div>
