@@ -4,6 +4,7 @@ from flask_wtf import FlaskForm
 from wtforms import StringField, SelectField, SubmitField, Form
 from wtforms.validators import InputRequired, Email, Length, ValidationError, AnyOf, DataRequired
 from flask_bootstrap import Bootstrap
+from flask_table import Table, Col,LinkCol
 
 app = Flask(__name__)
 Bootstrap(app)
@@ -53,7 +54,6 @@ def studentInfo():
         email = userDetails['email']
         semester = userDetails['adv_pr_semester']
         yr = userDetails['year']
-        className = userDetails['class']
         major_minor = userDetails['major_minor']
         grade = userDetails['grade']
 
@@ -99,6 +99,33 @@ class StudentSearchForm(Form):
     search = StringField('')
 
 
+class Results(Table):
+    id = Col('Baylor ID ')
+    fname = Col('First Name ')
+    lname = Col('Last Name ')
+    email = Col('Email ')
+    semester = Col('Semester ' )
+    yr = Col('Year ')
+    major_minor = Col('Major ')
+    grade = Col('Grade ')
+    classN = Col('Class ')
+    edit = LinkCol('Reviews', 'edit', url_kwargs=dict(id='id'))
+
+class Item(object):
+    def __init__(self, id, fname, lname, email,semester,yr,major_minor,grade,classN):
+        self.id = id
+        self.fname = fname
+        self.lname = lname
+        self.email = email
+        self.semester = semester
+        self.yr = yr
+        self.major_minor = major_minor
+        self.grade = grade
+        self.classN = classN
+
+
+
+
 @app.route('/studentQuery', methods=['GET', "POST"])
 def studentQueryHomePage():
     search = StudentSearchForm(request.form)
@@ -114,6 +141,12 @@ def search_results(search):
 
     if search.data['search'] == 'Bryan':
         print("YAY")
+        results = ['000000000','Bryan','Lee','Bryan_Lee@baylor.edu','Fall','2019','PR','A','Blah']
+        items = [Item('000000000', 'Bryan', 'Lee', 'Bryan_Lee@baylor.edu', 'Fall', '2019', 'PR', 'A', 'Class'),
+                 Item('000000000', 'Bryan', 'Lee', 'Bryan_Lee@baylor.edu', 'Fall', '2019', 'PR', 'A', 'Class'),
+                 Item('000000000', 'Bryan', 'Lee', 'Bryan_Lee@baylor.edu', 'Fall', '2019', 'PR', 'A', 'Class')]
+        table = Results(items)
+
     #qry = db_session.query(Album)
     #results = qry.all()
 
@@ -122,7 +155,12 @@ def search_results(search):
         return redirect('/studentQuery')
     else:
         # display results
-        return render_template('results.html', results=results)
+        table.border = True
+        return render_template('results.html', table = table)
+
+@app.route('/item/<int:id>', methods=['GET', 'POST'])
+def edit(id):
+    print('')
 
 if __name__ == '__main__':
     app.run(debug=True)
