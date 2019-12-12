@@ -1,10 +1,10 @@
 <doctype html>
   <center>
 <head>
-    <title>Search by Name</title>
+    <title>Student Search</title>
 </head>
  
-<h2>Search by Name</h2>
+<h2>Student Search</h2>
 
 {% with messages = get_flashed_messages() %}
   {% if messages %}
@@ -21,10 +21,13 @@
 
   <dl>
 
-    {{ render_field(form.select) }}
+    {{form.select.label}}
+    {{ form.select}}
     <p>
-    {{ render_field(form.search) }}
+      {{form.search.label}}
+      {{ form.search}}
   </dl>
+
 
   <p><input type=submit value=Search>
 </form>

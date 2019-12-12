@@ -92,11 +92,13 @@ def experience():
     return render_template('experience.html')
 
 
-class StudentSearchForm(Form):
+class StudentSearchForm(FlaskForm):
     choices = [('Baylor ID', 'Baylor ID'),
                ('Name', 'Name')]
     select = SelectField('Search for Student by:', choices=choices)
-    search = StringField('')
+    search = StringField('Full Name or ID')
+
+
 
 
 class Results(Table):
@@ -104,7 +106,7 @@ class Results(Table):
     fname = Col('First Name ')
     lname = Col('Last Name ')
     email = Col('Email ')
-    semester = Col('Semester ' )
+    semester = Col('Semester' )
     yr = Col('Year ')
     major_minor = Col('Major ')
     grade = Col('Grade ')
@@ -128,7 +130,7 @@ class Item(object):
 
 @app.route('/studentQuery', methods=['GET', "POST"])
 def studentQueryHomePage():
-    search = StudentSearchForm(request.form)
+    search = StudentSearchForm()
     if request.method == 'POST':
         return search_results(search)
     return render_template('studentQueryHome.html', form=search)
@@ -139,9 +141,10 @@ def search_results(search):
     results = []
     search_string = search.data['search']
 
+
     if search.data['search'] == 'Bryan':
         print("YAY")
-        results = ['000000000','Bryan','Lee','Bryan_Lee@baylor.edu','Fall','2019','PR','A','Blah']
+        print(search.select.data)
         items = [Item('000000000', 'Bryan', 'Lee', 'Bryan_Lee@baylor.edu', 'Fall', '2019', 'PR', 'A', 'Class'),
                  Item('000000000', 'Bryan', 'Lee', 'Bryan_Lee@baylor.edu', 'Fall', '2019', 'PR', 'A', 'Class'),
                  Item('000000000', 'Bryan', 'Lee', 'Bryan_Lee@baylor.edu', 'Fall', '2019', 'PR', 'A', 'Class')]
@@ -150,7 +153,7 @@ def search_results(search):
     #qry = db_session.query(Album)
     #results = qry.all()
 
-    if not results:
+    if results.__sizeof__() == 0:
         flash('No results found!')
         return redirect('/studentQuery')
     else:
@@ -158,9 +161,12 @@ def search_results(search):
         table.border = True
         return render_template('results.html', table = table)
 
+
 @app.route('/item/<int:id>', methods=['GET', 'POST'])
 def edit(id):
     print('')
+
+
 
 if __name__ == '__main__':
     app.run(debug=True)
