@@ -3,6 +3,22 @@ from flask_wtf import FlaskForm
 from wtforms import StringField, SelectField, SubmitField
 from wtforms.validators import InputRequired, Email, Length, ValidationError, AnyOf, DataRequired
 from flask_bootstrap import Bootstrap
+from TableSchema import *
+import mysql.connector
+
+#connect to database
+mydb = mysql.connector.connect(
+    host = "localhost",
+    user = "root",
+    password = "password123",
+    database = "GP"
+)
+
+#initialize cursor of database
+mycursor = mydb.cursor()
+
+# Create Tables if they do not exist
+createTables(mycursor)
 
 app = Flask(__name__)
 Bootstrap(app)

@@ -1,6 +1,7 @@
 import mysql.connector
 
 def createTables(mycursor):
+    """"*************************************************************************************************"""
     mycursor.execute("CREATE TABLE IF NOT EXISTS StudentInfo(BaylorID CHAR (9),"
                      "lastName VARCHAR (30),"
                      "firstName VARCHAR (30),"
@@ -11,6 +12,12 @@ def createTables(mycursor):
                      "ADV_PR_grade CHAR(1),"
                      "ADV_PR_year CHAR(4),"
                      "PRIMARY KEY (BaylorID))")
+
+    mycursor.execute("CREATE TABLE IF NOT EXISTS Supervisor(company VARCHAR (50),"
+                     "supervisorName VARCHAR (50)," #seperate to first last
+                     "title VARCHAR (20),"
+                     "email VARCHAR (30),"
+                     "PRIMARY KEY (email))")
 
     mycursor.execute("CREATE TABLE IF NOT EXISTS Internship(supervisorEmail VARCHAR (30),"
                      "startMonth VARCHAR (15),"
@@ -25,64 +32,86 @@ def createTables(mycursor):
                      "PRIMARY KEY (BaylorID, supervisorEmail),"
                      #Supervisor has not yet been created so will have to alter Internship table after 
                      #to add supervisorEmail foreign constraint
+                     "FOREIGN KEY (supervisorEmail) REFERENCES Supervisor(email),"
                      "FOREIGN KEY (BaylorID) REFERENCES StudentInfo(BaylorID))")
+    """"*************************************************************************************************"""
 
-    mycursor.execute("CREATE TABLE IF NOT EXISTS Supervisor(company VARCHAR (50),"
-                     "supervisorName VARCHAR (50),"
-                     "title VARCHAR (20),"
-                     "email VARCHAR (30),"
-                     "studentID CHAR (9),"
-                     "FOREIGN KEY (studentID) REFERENCES StudentInfo (BaylorID),"
-                     "PRIMARY KEY (email))")
-
-    mycursor.execute("CREATE TABLE IF NOT EXISTS SupervisorQuestions(label VARCHAR (50),"
+    mycursor.execute("CREATE TABLE IF NOT EXISTS SupervisorInternReviewQ(label VARCHAR (50),"
                      "question VARCHAR (255),"
-                     "comments VARCHAR (255),"
+                     "reviewType VARCHAR (30),"
                      "startYear CHAR (4),"
-                     "isOrdered BIT," #if question has order associated with it, answers have values
-                     "PRIMARY KEY (label, startYear, isOrdered))")
+                     "PRIMARY KEY (label, startYear, reviewType))")
 
-    mycursor.execute("CREATE TABLE IF NOT EXISTS studentQuestions(label VARCHAR (50),"
+    mycursor.execute("CREATE TABLE IF NOT EXISTS SupervisorInternAnswerChoices(label VARCHAR (50),"
+                     "startYear CHAR (4),"
+                     "reviewType VARCHAR (30),"
+                     "answerChoiceLabel VARCHAR (255),"
+                     "value INT DEFAULT NULL," #answerchoices can have a value associated with them
+                     "FOREIGN KEY (label, startYear, reviewType) REFERENCES SupervisorInternReviewQ(label, startYear, reviewType),"
+                     "PRIMARY KEY (label, startYear, reviewType, answerChoiceLabel))")
+
+    mycursor.execute("CREATE TABLE IF NOT EXISTS SupervisorInternResponse(label VARCHAR (50),"
+                     "startYear CHAR (4),"
+                     "reviewType VARCHAR (30),"
+                     "supervisorEmail VARCHAR (30),"
+                     "baylorID CHAR (9),"
+                     "answer VARCHAR (255),"
+                     "comment VARCHAR (255),"
+                     "FOREIGN KEY (supervisorEmail) REFERENCES Supervisor(email),"
+                     "FOREIGN KEY (BaylorID) REFERENCES StudentInfo(BaylorID),"
+                     "FOREIGN KEY (label, startYear, reviewType) REFERENCES SupervisorInternReviewQ(label, startYear, reviewType),"
+                     "PRIMARY KEY (label, startYear, reviewType, supervisorEmail))")
+    """"*************************************************************************************************"""
+
+    mycursor.execute("CREATE TABLE IF NOT EXISTS StudentReviewQ(label VARCHAR (50),"
                      "question VARCHAR (255),"
-                     "comments VARCHAR (255),"
                      "startYear CHAR (4),"
-                     "isOrdered BIT," #if question has order associated with it, answers have values
-                     "PRIMARY KEY (label, startYear, isOrdered))")
+                     "PRIMARY KEY (label, startYear))")
 
+    mycursor.execute("CREATE TABLE IF NOT EXISTS StudentAnswerChoices(label VARCHAR (50),"
+                     "startYear CHAR (4),"
+                     "answerChoiceLabel VARCHAR (255),"
+                     "value INT DEFAULT NULL," #answerchoices can have a value associated with them
+                     "FOREIGN KEY (label, startYear) REFERENCES StudentReviewQ(label, startYear),"
+                     "PRIMARY KEY (label, startYear, answerChoiceLabel))")
 
-    mycursor.execute("CREATE TABLE IF NOT EXISTS QualtricsReview(baylorID CHAR (9),"
-                     "reviewTime VARCHAR(20)," #either midterm or endterm
+    mycursor.execute("CREATE TABLE IF NOT EXISTS StudentResponse(label VARCHAR (50),"
+                     "startYear CHAR (4),"
+                     "supervisorEmail VARCHAR (30),"
+                     "baylorID CHAR (9),"
                      "answer VARCHAR (255),"
-                     "label VARCHAR (255)," #each answer is associated with a question (label, year)
-                     "syear CHAR (4),"
                      "comment VARCHAR (255),"
-                     "isOrdered BIT,"
-                     "PRIMARY KEY (baylorID, reviewTime, label, syear)," #can identify answer with these 4 attributes
-                     "FOREIGN KEY (baylorID) REFERENCES StudentInfo(BaylorID),"
-                     "FOREIGN KEY (label, syear, isOrdered) REFERENCES SupervisorQuestions(label, startYear, isOrdered))")
+                     "FOREIGN KEY (supervisorEmail) REFERENCES Supervisor(email),"
+                     "FOREIGN KEY (BaylorID) REFERENCES StudentInfo(BaylorID),"
+                     "FOREIGN KEY (label, startYear) REFERENCES StudentReviewQ(label, startYear),"
+                     "PRIMARY KEY (label, startYear, supervisorEmail))")
+    """"*************************************************************************************************"""
+    mycursor.execute("CREATE TABLE IF NOT EXISTS PortfolioReviewQ(label VARCHAR (50),"
+                     "question VARCHAR (255),"
+                     "startYear CHAR (4),"
+                     "PRIMARY KEY (label, startYear))")
 
-    mycursor.execute("CREATE TABLE IF NOT EXISTS midTermSiteReview(baylorID CHAR (9),"
+    #will need to ask user for number of answer choices
+    mycursor.execute("CREATE TABLE IF NOT EXISTS PortfolioAnswerChoices(label VARCHAR (50),"
+                     "startYear CHAR (4),"
+                     "answerChoiceLabel VARCHAR (255),"
+                     "value INT DEFAULT NULL," #answerchoices can have a value associated with them
+                     "FOREIGN KEY (label, startYear) REFERENCES PortfolioReviewQ(label, startYear),"
+                     "PRIMARY KEY (label, startYear, answerChoiceLabel))")
+
+    mycursor.execute("CREATE TABLE IF NOT EXISTS PortfolioResponses(label VARCHAR (50),"
+                     "startYear CHAR (4),"
+                     "baylorID CHAR (9),"
                      "answer VARCHAR (255),"
-                     "label VARCHAR (255)," #each answer is associated with a question (label, year)
-                     "syear CHAR (4),"
                      "comment VARCHAR (255),"
-                     "isOrdered BIT,"
-                     "PRIMARY KEY (baylorID, label, syear)," #can identify answer with these 3 attributes
-                     "FOREIGN KEY (baylorID) REFERENCES StudentInfo(BaylorID),"
-                     "FOREIGN KEY (label, syear) REFERENCES SupervisorQuestions(label, startYear))")
-
-    mycursor.execute("CREATE TABLE IF NOT EXISTS StudentReview(baylorID CHAR (9),"
-                     "answer VARCHAR (255),"
-                     "label VARCHAR (255)," #each answer is associated with a question (label, year)
-                     "syear CHAR (4),"
-                     "comment VARCHAR (255),"
-                     "isOrdered BIT,"
-                     "PRIMARY KEY (baylorID, label, syear)," #can identify answer with these 3 attributes
-                     "FOREIGN KEY (baylorID) REFERENCES StudentInfo(BaylorID),"
-                     "FOREIGN KEY (label, syear) REFERENCES StudentQuestions(label, startYear))")
+                     "dateOfReview DATE,"
+                     "reviewerName VARCHAR (50),"
+                     "FOREIGN KEY (BaylorID) REFERENCES StudentInfo(BaylorID),"
+                     "FOREIGN KEY (label, startYear) REFERENCES PortfolioReviewQ(label, startYear),"
+                     "PRIMARY KEY (label, startYear, ReviewerName, baylorID))")
+    """"*************************************************************************************************"""
 
 
-    mycursor.execute("ALTER TABLE Internship ADD FOREIGN KEY (supervisorEmail) REFERENCES Supervisor(email)")
 
 
 #get the basic student info
