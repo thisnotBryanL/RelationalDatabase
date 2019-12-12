@@ -110,11 +110,9 @@ def createTables(mycursor):
                      "FOREIGN KEY (label, startYear) REFERENCES PortfolioReviewQ(label, startYear),"
                      "PRIMARY KEY (label, startYear, ReviewerName, baylorID))")
     """"*************************************************************************************************"""
+#QUERY ANALYSIS
 
-
-
-
-#get the basic student info
+#BASIC INFO
 #if they enter id
 basicInfoBaylorID = """SELECT BaylorID, lastName, firstName, emailAddress, ADV_PR_semester, class, major_minor, ADV_PR_grade, ADV_PR_year
 FROM StudentInfo
@@ -123,34 +121,92 @@ WHERE BaylorID = %s"""
 basicInfoName = """SELECT BaylorID, lastName, firstName, emailAddress, ADV_PR_semester, class, major_minor, ADV_PR_grade, ADV_PR_year
 FROM StudentInfo
 WHERE firstName = %s AND lastName = %s"""
+"----------------------------------------------------------------------------------------------------------------------------------------------------------------"
+#REVIEW FOR SPECIFIC TYPE
+#IF REVIEW != PORTFOLIO
+#id and no year
+displayQReviewIDNoYear = """SELECT question, answer, comment 
+FROM SupervisorInternResponse, SupervisorInternReviewQ 
+WHERE baylorID = %s AND ReviewType = %s AND SupervisorInternResponse.startYear = SupervisorInternReviewQ.startYear AND SupervisorInternResponse.label = SupervisorInternReviewQ.label"""
+#name and no year
+displayQReviewnameNoYear = """SELECT question, answer, comment 
+FROM SupervisorInternResponse, StudentInfo, SupervisorInternReviewQ 
+WHERE firstName = %s AND lastName = %s AND ReviewType = %s 
+AND SupervisorInternResponse.baylorID = StudentInfo.BaylorID 
+AND SupervisorInternResponse.startYear = SupervisorInternReviewQ.startYear 
+AND SupervisorInternResponse.label = SupervisorInternReviewQ.label"""
 
-#ask user for which type of review they would like
-#if review type is Qualtrics
-#ask user if it is midterm or endterm
-#ask if they want to enter the year as well, if no:
-displayQReviewIDNoYear = "SELECT answer, comment FROM QualtricsReview WHERE reviewTime = %s AND BaylorID = %s"
-displayQReviewnameNoYear = """SELECT answer, comment 
-FROM QualtricsReview, StudentInfo 
-WHERE reviewTime = %s AND firstName = %s AND lastName = %s AND QualtricsReview.baylorID = StudentInfo.baylorID"""
-#if yes:
-displayQReviewIDYear = "SELECT answer, comment FROM QualtricsReview WHERE reviewTime = %s AND BaylorID = %s AND syear = %s"
-displayQReviewnameYear = """SELECT answer, comment 
-FROM QualtricsReview, StudentInfo 
-WHERE reviewTime = %s AND firstName = %s AND lastName = %s AND QualtricsReview.baylorID = StudentInfo.baylorID AND year = %s"""
+"----------------------------------------------------------------------------------------------------------------------------------------------------------------"
+#id and year
+displayQReviewIDYear = """SELECT question, answer, comment 
+FROM SupervisorInternResponse, SupervisorInternReviewQ 
+WHERE baylorID = %s AND ReviewType = %s AND startYear = %s 
+AND SupervisorInternResponse.startYear = SupervisorInternReviewQ.startYear 
+AND SupervisorInternResponse.label = SupervisorInternReviewQ.label"""
 
-#if review type is midTermSiteReview
-#ask if they want to enter the year as well, if no:
-displayMReviewIDNoYear = "SELECT answer, comment FROM midTermSiteReview WHERE BaylorID = %s"
-displayMReviewnameNoYear = """SELECT answer, comment 
-FROM midTermSiteReview, StudentInfo 
-WHERE firstName = %s AND lastName = %s AND midTermSiteReview.baylorID = StudentInfo.baylorID"""
-#if yes:
-displayMReviewIDYear = "SELECT answer, comment FROM midTermSiteReview WHERE BaylorID = %s AND syear = %s"
-displayMReviewnameYear = """SELECT answer, comment 
-FROM midTermSiteReview, StudentInfo 
-WHERE reviewTime = %s AND firstName = %s AND lastName = %s AND midTermSiteReview.baylorID = StudentInfo.baylorID AND year = %s"""
-#
+#name and year
+displayQReviewnameYear = """SELECT question, answer, comment 
+FROM SupervisorInternResponse, SupervisorInternReviewQ, StudentInfo
+WHERE firstName = %s AND lastName = %s AND ReviewType = %s AND startYear = %s 
+AND StudentInfo.BaylorID = SupervisorInternResponse.baylor ID
+AND SupervisorInternResponse.label = SupervisorInternReviewQ.label 
+AND SupervisorInternResponse.startYear = SupervisorInternReviewQ.startYear"""
+"----------------------------------------------------------------------------------------------------------------------------------------------------------------"
+#IF REVIEW == PORTFOLIO
+#id and no year
+displayQReviewIDNoYear = """SELECT question, answer, comment 
+FROM PortfolioReviewQ, PortfolioResponses 
+WHERE baylorID = %s 
+AND PortfolioReviewQ.startYear = PortfolioResponses.startYear 
+AND PortfolioReviewQ.label = PortfolioResponses.label"""
+#name and no year
+displayQReviewnameNoYear = """SELECT question, answer, comment 
+FROM PortfolioReviewQ, StudentInfo, PortfolioResponses 
+WHERE firstName = %s AND lastName = %s 
+AND PortfolioResponses.baylorID = StudentInfo.BaylorID 
+AND PortfolioResponses.startYear = PortfolioReviewQ.startYear 
+AND PortfolioResponses.label = PortfolioReviewQ.label"""
+"----------------------------------------------------------------------------------------------------------------------------------------------------------------"
+#id and year
+displayQReviewIDYear = """SELECT question, answer, comment 
+FROM PortfolioResponses, PortfolioReviewQ 
+WHERE baylorID = %s AND startYear = %s 
+AND PortfolioResponses.startYear = PortfolioReviewQ.startYear 
+AND PortfolioResponses.label = PortfolioReviewQ.label"""
 
+#name and year
+displayQReviewnameYear = """SELECT question, answer, comment 
+FROM PortfolioResponses, PortfolioReviewQ, StudentInfo
+WHERE firstName = %s AND lastName = %s AND startYear = %s 
+AND StudentInfo.BaylorID = SupervisorInternResponse.baylor ID
+AND PortfolioResponses.startYear = PortfolioReviewQ.startYear 
+AND PortfolioResponses.label = PortfolioReviewQ.label"""
+
+"----------------------------------------------------------------------------------------------------------------------------------------------------------------"
+#Reviews for specific year
+
+#id
+displayQReviewIDYear = """SELECT PortfolioReviewQ.question, PortfolioResponses.answer, PortfolioResponses.comment,
+SupervisorInternReviewQ.question, SupervisorInternResponse.answer, SupervisorInternResponse.comment
+FROM PortfolioResponses, PortfolioReviewQ, SupervisorInternResponse, SupervisorInternReviewQ  
+WHERE baylorID = %s AND PortfolioResponses.startYear = %s AND SupervisorInternResponse.startYear = %s
+AND PortfolioResponses.startYear = PortfolioReviewQ.startYear 
+AND PortfolioResponses.label = PortfolioReviewQ.label 
+AND SupervisorInternResponse.label = SupervisorInternReviewQ.label
+AND SupervisorInternResponse.startYear = SupervisorInternReviewQ.startYear """
+
+#name
+displayQReviewIDYear = """SELECT PortfolioReviewQ.question, PortfolioResponses.answer, PortfolioResponses.comment,
+SupervisorInternReviewQ.question, SupervisorInternResponse.answer, SupervisorInternResponse.comment
+FROM PortfolioResponses, PortfolioReviewQ, SupervisorInternResponse, SupervisorInternReviewQ, StudentInfo 
+WHERE firstName = %s AND lastName = %s AND PortfolioResponses.startYear = %s AND SupervisorInternResponse.startYear = %s
+AND StudentInfo.BaylorID = PortfolioResponses.baylorID
+AND PortfolioResponses.startYear = PortfolioReviewQ.startYear 
+AND PortfolioResponses.label = PortfolioReviewQ.label 
+AND SupervisorInternResponse.label = SupervisorInternReviewQ.label
+AND SupervisorInternResponse.startYear = SupervisorInternReviewQ.startYear """
+
+""""*************************************************************************************************"""
 
 def insertIntoStudentInfo(idEntry, lastnameEntry, firstnameEntry, emailEntry, semesterEntry, classyr, major_minor, grade, year, mycursor, mydb, middleFrame, topFrame):
     try:
