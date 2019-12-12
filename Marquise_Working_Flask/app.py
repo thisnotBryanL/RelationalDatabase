@@ -140,25 +140,29 @@ def studentQueryHomePage():
 def search_results(search):
     results = []
     search_string = search.data['search']
+    if search.select.data == "Baylor ID":
+        print("BUID")
+        #Query the BU ID
+    else:
+        print("BUNAME")
+        #Query the Name
 
-
-    if search.data['search'] == 'Bryan':
-        print("YAY")
-        print(search.select.data)
+    if search.data['search'] == 'Bryan Lee':
         items = [Item('000000000', 'Bryan', 'Lee', 'Bryan_Lee@baylor.edu', 'Fall', '2019', 'PR', 'A', 'Class'),
                  Item('000000000', 'Bryan', 'Lee', 'Bryan_Lee@baylor.edu', 'Fall', '2019', 'PR', 'A', 'Class'),
-                 Item('000000000', 'Bryan', 'Lee', 'Bryan_Lee@baylor.edu', 'Fall', '2019', 'PR', 'A', 'Class')]
+                 Item('111111111', 'Bryan', 'Lee', 'Bryan_Lee@baylor.edu', 'Fall', '2019', 'PR', 'A', 'Class')]
         table = Results(items)
-
+        table.border = True
+        return render_template('results.html', table=table)
     #qry = db_session.query(Album)
     #results = qry.all()
 
-    if results.__sizeof__() == 0:
+    if len(results) == 0:
         flash('No results found!')
         return redirect('/studentQuery')
     else:
         # display results
-        table.border = True
+        #table.border = True
         return render_template('results.html', table = table)
 
 
