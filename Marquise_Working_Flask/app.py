@@ -1,5 +1,5 @@
 from flask import Flask, render_template, request, url_for, redirect, flash
-from TableSchema import *
+#from TableSchema import *
 from flask_wtf import FlaskForm
 from wtforms import StringField, SelectField, SubmitField, Form
 from wtforms.validators import InputRequired, Email, Length, ValidationError, AnyOf, DataRequired
@@ -9,17 +9,19 @@ app = Flask(__name__)
 Bootstrap(app)
 app.config['SECRET_KEY'] = 'DontTellAnyone'
 
+'''
 # Configure db
 mydb = mysql.connector.connect(
     host="localhost",
     user="root",
-    passwd="password123",
+    passwd="hoangdieu72",
     database="GP"
 )
 
 myCursor = mydb.cursor()
 
 createTables(myCursor)
+'''
 
 @app.route('/', methods=['GET', "POST"])
 def index():
@@ -58,11 +60,13 @@ def studentInfo():
         # Use Micah's function from User_Inputed_Data if possible. May need modification
         # insertIntoStudentInfo(s_id, lname, fName, email, semester, yr, major_minor, )
 
+        '''
         myCursor.execute("INSERT INTO studentInfo(baylorID, lastName, firstName, emailAddress, ADV_PR_semester,"
                          "class, major_minor, ADV_PR_grade, ADV_PR_Year) VALUES(%s, %s, %s, %s, %s, %s, %s, %s, %s)"
                          , (s_id, lname, fName, email, semester, className, major_minor, grade, yr))
         mydb.commit()
         myCursor.close()
+        '''
 
         if request.form['submit_button'] == 'next':
             return redirect(url_for('intern'))
