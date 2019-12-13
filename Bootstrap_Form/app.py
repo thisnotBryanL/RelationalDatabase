@@ -77,6 +77,7 @@ class InternshipInfoForm(FlaskForm):
     phone = StringField('Phone Number', validators=[InputRequired(), Length(10)])
     tot_hours = IntegerField('Total Hours', validators=[InputRequired()])
     buID = StringField('Student ID', validators=[InputRequired(), Length(9)])
+    # add validators
 
 class Results(Table):
     id = Col('Baylor ID ')
