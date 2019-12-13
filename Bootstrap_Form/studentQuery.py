@@ -1,9 +1,9 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, SelectField
+from wtforms import StringField, SelectField, IntegerField
 from flask_table import Table, Col,LinkCol
 from flask import Flask, render_template, request, url_for, redirect, flash
+from wtforms.validators import InputRequired, NumberRange, Length
 from flask_bootstrap import Bootstrap
-
 
 app = Flask(__name__)
 Bootstrap(app)
@@ -17,9 +17,6 @@ class StudentSearchForm(FlaskForm):
     firstName = StringField('First name')
     lastName = StringField('Last name')
 
-
-
-
 class Results(Table):
     id = Col('Baylor ID ')
     fname = Col('First Name ')
@@ -30,7 +27,23 @@ class Results(Table):
     major_minor = Col('Major ')
     grade = Col('Grade ')
     classYear = Col('Class')
-    edit = LinkCol('Reviews', 'edit', url_kwargs=dict(id='id'))
+    supervisorReviewLink = LinkCol('Supervisor Reviews', 'supervisorReviewLink', url_kwargs=dict(id='id'))
+    portfolioReviewLink = LinkCol('Portfolio Reviews', 'portfolioReviewLink', url_kwargs=dict(id='id'))
+    studentReviewLink = LinkCol('Student Reviews', 'studentReviewLink', url_kwargs=dict(id='id'))
+
+
+class SuperVisorReviewsTable(Table):
+    question = Col('Questions')
+    answer = Col('Answers')
+    comment = Col('Comments')
+
+
+class SuperVisorReviewItem(object):
+    def __init__(self,question,answer,comment):
+        self.question = question
+        self.answer = answer
+        self.comment = comment
+
 
 class Item(object):
     def __init__(self, id, fname, lname, email,semester,yr,major_minor,grade,classYear):
@@ -43,6 +56,9 @@ class Item(object):
         self.major_minor = major_minor
         self.grade = grade
         self.classYear = classYear
+
+class YearSearchForm(FlaskForm):
+    year = StringField('Enter Year:')
 
 @app.route('/studentQuery', methods=['GET', "POST"])
 def studentQueryHomePage():
@@ -84,10 +100,55 @@ def search_results(search):
         #table.border = True
         return render_template('results.html', table = table)
 
+@app.route('/studentQuery/results/reviews/year', methods=['GET','POST'])
+def SearchYearHomePage():
+    yearSearch = YearSearchForm()
+    if request.method == 'POST' and yearSearch.validate_on_submit():
+        return SearchYear(yearSearch)
+    return render_template('yearForm.html', form=yearSearch)
+
+def SearchYear(search):
+    yearEntered = search.data['year']
+
+
+
 
 @app.route('/item/<int:id>', methods=['GET', 'POST'])
-def edit(id):
-    #Query the Reviews for the specific student using their BUID
+def supervisorReviewLink(id):
+    # Ask for YEAR of review
+    yearSearch = YearSearchForm()
+    print('here')
+    if request.method == 'POST':
+        yearNum = yearSearch.data['year']
+
+        if len(yearNum) == 4 and yearNum.isdigit():
+            print(yearNum)
+            # Query the Supervisor Reviews for the specific student using their BUID and Year
+            # and add it to results
+
+            results = [SuperVisorReviewItem('QUESTION 1', 'ANSWER1',
+                                            'This is a commnt that is supposed to be kind of l'
+                                            'ong to see how this would fit in to the table '
+                                            'lol hahahahahahha hehehehehe hohohohohohohho')]  # THE query information
+
+            superVisorTable = SuperVisorReviewsTable(results)
+            superVisorTable.border = True
+
+            if len(results) > 0:
+                return render_template('results.html', table=superVisorTable)
+            else:
+                flash('No results found!')
+                return redirect(url_for('studentQueryHomePage'))
+        else:
+            flash('Please enter a 4 digit year!')
+    return render_template('yearForm.html' ,form=yearSearch)
+
+@app.route('/item1/<int:id>', methods=['GET', 'POST'])
+def portfolioReviewLink(id):
+    #Ask for YEAR of review
+
+    #Query for the Portfolio Reviews for the specific student using their BUID
+
 
     results = [] #THE query information
 
@@ -97,11 +158,25 @@ def edit(id):
         flash('No results found!')
         return redirect('/studenQuery')
 
+@app.route('/item2/<int:id>', methods=['GET', 'POST'])
+def studentReviewLink(id):
+    # Ask for YEAR of review
 
+    #Query for the Student Reviews for the specific student using their BUID
+
+    results = [] #THE query information
+
+    if len(results) == 0:
+        return redirect(url_for('studentQueryHomePage'))
+    else:
+        flash('No results found!')
+        return redirect('/studenQuery')
+
+'''
 
 @app.route('studentQuery/results/reviews', methods=['GET','POST'])
 def reviewsResultsPage():
-    return 'This will be the review results page'
+'''
 
 if __name__ == '__main__':
     app.run(debug=True)
