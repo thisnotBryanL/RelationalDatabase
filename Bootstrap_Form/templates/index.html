@@ -1,0 +1,20 @@
+{% extends "bootstrap/base.html" %}
+{% import "bootstrap/wtf.html" as wtf%}
+
+{% block title %}
+    Student Form
+{% endblock %}
+
+{%  block content %}
+    <h1><center> Baylor Journalism Student Internship Homepage </center></h1>
+<div class="container">
+    <form method = "POST" action="/">
+        <input class="btn btn-primary btn-lg btn-block" value="Look Up Student Information" type="submit"
+               id="student" name="option">
+        <input class="btn btn-primary btn-lg btn-block" value="Enter Student Information" type="submit"
+               id="info" name="option">
+        <input class="btn btn-primary btn-lg btn-block" value="Enter Internship Information" type="submit"
+               id="internship" name="option">
+    </form>
+</div>
+{% endblock %}

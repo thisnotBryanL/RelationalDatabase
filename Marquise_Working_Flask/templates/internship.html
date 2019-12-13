@@ -16,7 +16,7 @@
 
 <BODY>
 <form method="post" action="">
-    <strong> Company </strong> <input type="text" name="company" />
+    <strong> Company </strong> <input type="text" name="company" required/>
     <br>
     <strong> Start Date </strong>
     <br>
@@ -66,13 +66,13 @@
                 </script>
         </select>
     <br>
-    <strong> Address </strong> <input type="text" name="address" />
+    <strong> Address </strong> <input type="text" name="address" required/>
     <br>
-    <strong> Phone Number </strong> <input type="tel" pattern="[0-9]{3}-[0-9]{3}-[0-9]{4}" required />
+    <strong> Phone Number </strong> <input type="tel" pattern="[0-9]{3}[0-9]{3}[0-9]{4}" required />
     <br>
-    <strong> Total Hours </strong> <input type="number" name="tot_hours" />
+    <strong> Total Hours </strong> <input type="number" name="tot_hours" required/>
     <br>
-    <strong> Student ID </strong> <input type="text" name="student_id" />
+    <strong> Student ID </strong> <input type="text" name="student_id" required/>
     <br>
     <strong> Supervisor Name </strong> <input type="text" name="sup_name"/>
     <input type="submit" name="submit_button" value="next"/>

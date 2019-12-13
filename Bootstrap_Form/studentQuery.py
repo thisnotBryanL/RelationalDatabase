@@ -4,6 +4,7 @@ from flask_table import Table, Col,LinkCol
 from flask import Flask, render_template, request, url_for, redirect, flash
 from flask_bootstrap import Bootstrap
 
+
 app = Flask(__name__)
 Bootstrap(app)
 app.config['SECRET_KEY'] = 'DontTellAnyone'
@@ -42,7 +43,6 @@ class Item(object):
         self.major_minor = major_minor
         self.grade = grade
         self.classYear = classYear
-
 
 @app.route('/studentQuery', methods=['GET', "POST"])
 def studentQueryHomePage():
@@ -101,6 +101,7 @@ def edit(id):
 
 @app.route('studentQuery/results/reviews', methods=['GET','POST'])
 def reviewsResultsPage():
+    return 'This will be the review results page'
 
 if __name__ == '__main__':
     app.run(debug=True)
