@@ -60,19 +60,7 @@ class SupervisorInfoForm(FlaskForm):
     title = StringField('Title', validators=[InputRequired()])
     email = StringField('Email', validators=[InputRequired(), Email(message='Invalid email address')])
 
-
 class Results(Table):
-    id = Col('Baylor ID ')
-    fname = Col('First Name ')
-    lname = Col('Last Name ')
-    email = Col('Email ')
-    semester = Col('Semester' )
-    yr = Col('Year ')
-    major_minor = Col('Major ')
-    grade = Col('Grade ')
-    classYear = Col('Class')
-
-class ResultsSup(Table):
     id = Col('Baylor ID ')
     fname = Col('First Name ')
     lname = Col('Last Name ')
@@ -233,10 +221,10 @@ def search_results(search):
         table.border = True
         return render_template('results.html', table=table)
 
-    elif search.data['firstname'] == firstNameSearch and search.data['lastname'] == lastNameSearch:
+    elif search.data['firstName'] == firstNameSearch and search.data['lastName'] == lastNameSearch:
         items = []
         for row in queryResults:
-            instance = Item('', '', '', '', '', '', '', '', '',)
+            instance = Item('', '', '', '', '', '', '', '', '')
             instance.setValues(row)
             items.append(instance)
         table = Results(items)
@@ -257,6 +245,7 @@ def supervisorReviewLink(id):
             print(yearNum)
             # Query the Supervisor Reviews for the specific student using their BUID and Year
             # and add it to results
+
 
             results = [SuperVisorReviewItem('QUESTION 1', 'ANSWER1',
                                             'This is a commnt that is supposed to be kind of l'
