@@ -25,7 +25,7 @@ def createTables(mycursor):
                      "endMonth VARCHAR (15),"
                      "endYear CHAR (4),"
                      "address VARCHAR(80),"
-                     "phoneNumber CHAR(11),"
+                     "phoneNumber CHAR(10),"
                      "totalHours INT,"
                      "BaylorID CHAR(9),"
                      #"supervisorName VARCHAR(50)," #supervisorName and company replaced with SupervisorEmail
