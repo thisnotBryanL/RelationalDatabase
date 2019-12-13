@@ -2,32 +2,25 @@
 {% import "bootstrap/wtf.html" as wtf%}
 
 {% block title %}
-    Student Form
+    Supervisor Form
 {% endblock %}
 
 {%  block content %}
-    <h1> Student Information </h1>
+    <h1> Supervisor Information </h1>
 <div class="container">
     <form method = "POST">
         <dl>
             {{ form.hidden_tag() }}
             <div style="width: 40%">
                 {{ form.csrf_token }}
-                {{ wtf.form_field(form.student_id) }}
+                {{ wtf.form_field(form.company) }}
                 {{ wtf.form_field(form.first_name) }}
                 {{ wtf.form_field(form.last_name) }}
+                {{ wtf.form_field(form.title) }}
                 {{ wtf.form_field(form.email) }}
-                {{ wtf.form_field(form.Class) }}
+                <br><br><br>
+                <input class="btn btn-primary" value="submit" type="submit">
             </div>
-            <div style="width: 150%">
-                {{ form2.major_minor }}
-                {{ form2.ADV_PR_Semester }}
-                {{ form2.ADV_PR_Grade }}
-                {{ form2.ADV_PR_Year }}
-            </div>
-
-            <br><br><br>
-            <input class="btn btn-primary" value="submit" type="submit">
         </dl>
     </form>
 </div>

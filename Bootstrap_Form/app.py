@@ -55,6 +55,16 @@ class StudentSearchForm(FlaskForm):
     firstName = StringField('First name')
     lastName = StringField('Last name')
 
+class SupervisorInfoForm(FlaskForm):
+    company = StringField('Company', validators=[InputRequired()])
+    first_name = StringField('First Name', validators=[InputRequired()])
+    last_name = StringField('Last Name', validators=[InputRequired()])
+    title = StringField('Title', validators=[InputRequired()])
+    email = StringField('Email', validators=[InputRequired(), Email(message='Invalid email address')])
+
+
+
+
 class Results(Table):
     id = Col('Baylor ID ')
     fname = Col('First Name ')
@@ -85,10 +95,14 @@ def index():
     if request.method == 'POST':
         if request.form['option'] == 'Look Up Student Information':
             return redirect(url_for('studentQueryHomePage'))
-        if request.form['option'] == 'Enter Student Information':
+        elif request.form['option'] == 'Enter Student Information':
             return redirect(url_for('studentInfo'))
+        elif request.form['option'] == 'Enter Supervisor Information':
+            return redirect(url_for('supervisorInfo'))
     return render_template('index.html')
 
+
+######################## INFORMATION INPUT FORMS ########################
 @app.route('/input_student_info', methods=['GET', 'POST'])
 def studentInfo():
     form = StudentInfoForm()
@@ -98,7 +112,12 @@ def studentInfo():
         return 'Redirect'
     return render_template('submit.html', form=form, form2=form2)
 
-
+@app.route('/input_supervisor_info', methods=['GET', 'POST'])
+def supervisorInfo():
+    form = SupervisorInfoForm()
+    if form.validate_on_submit():
+        return 'Successfully submitted supervisor information!'
+    return render_template('supervisor.html', form=form)
 
 
 ######################## SUDENT QUERY DATA ########################
@@ -154,7 +173,7 @@ def edit(id):
         return redirect(url_for('studentQueryHomePage'))
     else:
         flash('No results found!')
-        return redirect('/studenQuery')
+        return redirect('/studentQuery')
 
 
 
