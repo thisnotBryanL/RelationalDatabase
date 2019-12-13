@@ -2,30 +2,25 @@
 {% import "bootstrap/wtf.html" as wtf%}
 
 {% block title %}
-    Internship Form
+    Intern Review Form
 {% endblock %}
 
 {%  block content %}
-    <h1> Internship Information </h1>
+    <h1> Supervisor Intern Review Questions </h1>
 <div class="container">
     <form method = "POST">
         <dl>
             {{ form.hidden_tag() }}
             <div style="width: 40%">
                 {{ form.csrf_token }}
-                {{ wtf.form_field(form.email) }}
-                {{ wtf.form_field(form2.startMonth) }}
+                {{ wtf.form_field(form.label) }}
+                {{ wtf.form_field(form.question) }}
+                {{ wtf.form_field(form.review_type) }}
                 {{ wtf.form_field(form2.startYear) }}
-                {{ wtf.form_field(form2.endMonth) }}
-                {{ wtf.form_field(form2.endYear) }}
-                {{ wtf.form_field(form.address) }}
-                {{ wtf.form_field(form.phone) }}
-                {{ wtf.form_field(form.tot_hours) }}
-                {{ wtf.form_field(form.buID) }}
 
                 <br><br><br>
                 <input class="btn btn-primary" value="submit" type="submit"/>
-                <input class="btn btn-primary" value="home" type="submit"
+                <!input class="btn btn-primary" value="home" type="submit"
                     id="home" name="option"/>
             </div>
         </dl>

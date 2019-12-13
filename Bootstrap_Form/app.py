@@ -1,8 +1,8 @@
 from flask import Flask, render_template, request, redirect, url_for, flash
 from flask_wtf import FlaskForm
 from flask_table import Table, Col,LinkCol
-from wtforms import StringField, SelectField, SubmitField
-from wtforms.validators import InputRequired, Email, Length, DataRequired
+from wtforms import StringField, SelectField, IntegerField
+from wtforms.validators import InputRequired, Email, Length, DataRequired, NumberRange
 from flask_bootstrap import Bootstrap
 from TableSchema import *
 import mysql.connector
@@ -12,8 +12,8 @@ import mysql.connector
 mydb = mysql.connector.connect(
     host = "localhost",
     user = "root",
-    password = "password123",
-    database = "GP"
+    password = "BUboxtop2020",
+    database = "testdb"
 )
 
 #initialize cursor of database
@@ -30,6 +30,12 @@ Bootstrap(app)
 app.config['SECRET_KEY'] = 'DontTellAnyone'
 
 # Create Classes for forms and web pages
+year_list = [(0, '---')]
+for i in range(20):
+    year_list.append((i + 1, 2000 + i))
+
+month_list = [(0,'---'), (1, 'JAN'), (2,'FEB'), (3,'MAR'), (4,'APR'), (5,'MAY'), (6,'JUN'),
+            (7,'JUL'), (8, 'AUG'), (9, 'SEP'), (10, 'OCT'), (11, 'NOV'), (12, 'DEC')]
 
 class StudentInfoForm(FlaskForm):
     student_id = StringField('student ID', validators=[InputRequired(), Length(9)])
@@ -40,9 +46,7 @@ class StudentInfoForm(FlaskForm):
 
 class StudentInfoForm2(FlaskForm):
     grade_list = [(0, '---'), (1, 'A'), (2, 'B'), (3, 'C'), (4, 'D'), (5, 'F')]
-    year_list = [(0, '---')]
-    for i in range(20):
-        year_list.append((i + 1, 2000 + i))
+
     major_minor = SelectField('Major/Minor', [DataRequired()], choices=[(0, "---"), (1, 'major'), (2, 'minor')])
     ADV_PR_Semester = SelectField('ADV PR Semester', choices=[(0, '---'), (1, 'Fall'), (2, 'Spring')])
     ADV_PR_Year = SelectField('Year', choices=year_list)
@@ -62,6 +66,30 @@ class SupervisorInfoForm(FlaskForm):
     last_name = StringField('Last Name', validators=[InputRequired()])
     title = StringField('Title', validators=[InputRequired()])
     email = StringField('Email', validators=[InputRequired(), Email(message='Invalid email address')])
+
+class InternshipInfoForm(FlaskForm):
+    email = StringField('Email', validators=[InputRequired(), Email(message='Invalid email address')])
+    address = StringField('Address', validators=[InputRequired()])
+    phone = StringField('Phone Number', validators=[InputRequired()])
+    tot_hours = IntegerField('Total Hours', validators=[InputRequired()])
+    buID = StringField('Student ID', validators=[InputRequired(), Length(9)])
+
+class InternshipInfoForm2(FlaskForm):
+    startMonth = SelectField('Start Month', choices=month_list)
+    startYear = SelectField('Start Year', choices=year_list)
+    endMonth = SelectField('Start Month', choices=month_list)
+    endYear = SelectField('Start Year', choices=year_list)
+
+class SupervisorInternReviewQForm(FlaskForm):
+    label = StringField('Label', validators=[InputRequired()])
+    question = StringField('Question', validators=[InputRequired()])
+    review_type = StringField('Review Type', validators=[InputRequired()])
+
+class SupervisorInternReviewQForm2(FlaskForm):
+    startYear = SelectField('Start Year', choices=year_list)
+
+
+
 
 class Results(Table):
     id = Col('Baylor ID ')
@@ -167,6 +195,10 @@ def index():
             return redirect(url_for('studentInfo'))
         elif request.form['option'] == 'Enter Supervisor Information':
             return redirect(url_for('supervisorInfo'))
+        elif request.form['option'] == 'Enter Internship Information':
+            return redirect(url_for('internshipInfo'))
+        elif request.form['option'] == 'Supervisor\'s Intern Review Quesitons':
+            return redirect(url_for('SupInternReviewInfo'))
     return render_template('index.html')
 
 
@@ -177,16 +209,43 @@ def studentInfo():
     form2 = StudentInfoForm2()
     if (form.validate_on_submit() and form2.major_minor.data != '0' and form2.ADV_PR_Semester.data != '0' and
         form2.ADV_PR_Grade.data != '0' and form2.ADV_PR_Year.data != '0'):
-        return 'Redirect'
+        if request.form['option'] == 'home':
+            return redirect(url_for('index'))
+        else:
+            return 'Redirect'
     return render_template('submit.html', form=form, form2=form2)
 
 @app.route('/input_supervisor_info', methods=['GET', 'POST'])
 def supervisorInfo():
     form = SupervisorInfoForm()
     if form.validate_on_submit():
-        return 'Successfully submitted supervisor information!'
+        if request.form['option'] == 'home':
+            return redirect(url_for('index'))
+        else:
+            return 'Successfully submitted supervisor information!'
     return render_template('supervisor.html', form=form)
 
+@app.route('/input_internship_info', methods=['GET', 'POST'])
+def internshipInfo():
+    form = InternshipInfoForm()
+    form2 = InternshipInfoForm2()
+    if form.validate_on_submit():
+        if request.form['option'] == 'home':
+            return redirect(url_for('index'))
+        else:
+            return 'Successfully submitted internship information!'
+    return render_template('internship.html', form=form, form2=form2)
+
+@app.route('/input_SupervisorInternReviewQ_info', methods=['GET', 'POST'])
+def SupInternReviewInfo():
+    form = SupervisorInternReviewQForm()
+    form2 = SupervisorInternReviewQForm2()
+    if form.validate_on_submit():
+#        if request.form['option'] == 'home':
+#            return redirect(url_for('index'))
+#        else:
+            return 'Successfully submitted Review information!'
+    return render_template('SupervisorInternReviewQ.html', form=form, form2=form2)
 
 ######################## SUDENT QUERY DATA ########################
 
