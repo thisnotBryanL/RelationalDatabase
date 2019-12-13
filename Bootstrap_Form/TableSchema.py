@@ -120,17 +120,24 @@ def basicInfo(mycursor, mydb, choice, executeList):
         basicInfoBaylorID = """SELECT BaylorID, lastName, firstName, emailAddress, ADV_PR_semester, class, major_minor, ADV_PR_grade, ADV_PR_year
         FROM StudentInfo
         WHERE BaylorID = %s"""
+
+        mycursor.execute(basicInfoBaylorID, (baylorID))
+        mydb.commit()
     else:
         #if they enter name
         basicInfoName = """SELECT BaylorID, lastName, firstName, emailAddress, ADV_PR_semester, class, major_minor, ADV_PR_grade, ADV_PR_year
         FROM StudentInfo
         WHERE firstName = %s AND lastName = %s"""
+
+        mycursor.execute(basicInfoName, (firstName, lastName))
+        mydb.commit()
+
 "----------------------------------------------------------------------------------------------------------------------------------------------------------------"
 #REVIEW FOR SPECIFIC TYPE
 #IF REVIEW != PORTFOLIO
 """
 this is how we will call the function in main
-if choice != "portfolio":
+if reviewType != "portfolio" and reviewType != "reviewByStudent":
     reviewType(mycursor, mydb, choice, executeList)"""
 #choice can be id, name, idyear, nameyear
 def reviewType(mycursor, mydb, choice, executeList):
@@ -139,20 +146,12 @@ def reviewType(mycursor, mydb, choice, executeList):
         displayQReviewIDNoYear = """SELECT question, answer, comment 
         FROM SupervisorInternResponse, SupervisorInternReviewQ 
         WHERE baylorID = %s AND ReviewType = %s AND SupervisorInternResponse.startYear = SupervisorInternReviewQ.startYear AND SupervisorInternResponse.label = SupervisorInternReviewQ.label"""
-        #name and no year
-        displayQReviewnameNoYear = """SELECT question, answer, comment 
-        FROM SupervisorInternResponse, StudentInfo, SupervisorInternReviewQ 
-        WHERE firstName = %s AND lastName = %s AND ReviewType = %s 
-        AND SupervisorInternResponse.baylorID = StudentInfo.BaylorID 
-        AND SupervisorInternResponse.startYear = SupervisorInternReviewQ.startYear 
-        AND SupervisorInternResponse.label = SupervisorInternReviewQ.label"""
+
+        mycursor.execute(displayQReviewIDNoYear, (baylorid, reviewtype))
+        mydb.commit()
 
     # name and no year
     if choice == "name":
-        displayQReviewIDNoYear = """SELECT question, answer, comment 
-        FROM SupervisorInternResponse, SupervisorInternReviewQ 
-        WHERE firstName = %s AND lastName = %s AND ReviewType = %s AND SupervisorInternResponse.startYear = SupervisorInternReviewQ.startYear AND SupervisorInternResponse.label = SupervisorInternReviewQ.label"""
-        #name and no year
         displayQReviewnameNoYear = """SELECT question, answer, comment 
         FROM SupervisorInternResponse, StudentInfo, SupervisorInternReviewQ 
         AND StudentInfo.BaylorID = SupervisorInternResponse.baylor ID
@@ -160,7 +159,10 @@ def reviewType(mycursor, mydb, choice, executeList):
         AND SupervisorInternResponse.baylorID = StudentInfo.BaylorID 
         AND SupervisorInternResponse.startYear = SupervisorInternReviewQ.startYear 
         AND SupervisorInternResponse.label = SupervisorInternReviewQ.label"""
-     "----------------------------------------------------------------------------------------------------------------------------------------------------------------"
+
+        mycursor.execute(displayQReviewnameNoYear, (first, last, reviewtype))
+        mydb.commit()
+    "----------------------------------------------------------------------------------------------------------------------------------------------------------------"
     #id and year
     if choice == "idyear":
         displayQReviewIDYear = """SELECT question, answer, comment 
@@ -168,6 +170,9 @@ def reviewType(mycursor, mydb, choice, executeList):
         WHERE baylorID = %s AND ReviewType = %s AND startYear = %s 
         AND SupervisorInternResponse.startYear = SupervisorInternReviewQ.startYear 
         AND SupervisorInternResponse.label = SupervisorInternReviewQ.label"""
+
+        mycursor.execute(displayQReviewIDYear, (baylorid , reviewtype, startyear))
+        mydb.commit()
 
     #name and year
     if choice == "nameyear":
@@ -177,62 +182,309 @@ def reviewType(mycursor, mydb, choice, executeList):
         AND StudentInfo.BaylorID = SupervisorInternResponse.baylor ID
         AND SupervisorInternResponse.label = SupervisorInternReviewQ.label 
         AND SupervisorInternResponse.startYear = SupervisorInternReviewQ.startYear"""
-    "----------------------------------------------------------------------------------------------------------------------------------------------------------------"
-#IF REVIEW == PORTFOLIO
-#id and no year
-displayQReviewIDNoYear = """SELECT question, answer, comment 
-FROM PortfolioReviewQ, PortfolioResponses 
-WHERE baylorID = %s 
-AND PortfolioReviewQ.startYear = PortfolioResponses.startYear 
-AND PortfolioReviewQ.label = PortfolioResponses.label"""
-#name and no year
-displayQReviewnameNoYear = """SELECT question, answer, comment 
-FROM PortfolioReviewQ, StudentInfo, PortfolioResponses 
-WHERE firstName = %s AND lastName = %s 
-AND PortfolioResponses.baylorID = StudentInfo.BaylorID 
-AND PortfolioResponses.startYear = PortfolioReviewQ.startYear 
-AND PortfolioResponses.label = PortfolioReviewQ.label"""
+
+    mycursor.execute(displayQReviewnameYear, (first, last, reviewtype, startyear))
+    mydb.commit()
 "----------------------------------------------------------------------------------------------------------------------------------------------------------------"
-#id and year
-displayQReviewIDYear = """SELECT question, answer, comment 
-FROM PortfolioResponses, PortfolioReviewQ 
-WHERE baylorID = %s AND startYear = %s 
-AND PortfolioResponses.startYear = PortfolioReviewQ.startYear 
-AND PortfolioResponses.label = PortfolioReviewQ.label"""
+# IF REVIEW == PORTFOLIO
+"""
+this is how we will call the function in main
+elif reviewType == "portfolio":
+    portfolioReview(mycursor, mydb, choice, executeList)"""
+#choice can be id, name, idyear, nameyear
+def portfolioReview(mycursor, mydb, choice, executeList):
+    #id and no year
+    if choice == "id":
+        displayQReviewIDNoYear = """SELECT question, answer, comment, reviewerName 
+        FROM PortfolioReviewQ, PortfolioResponses 
+        WHERE baylorID = %s 
+        AND PortfolioReviewQ.startYear = PortfolioResponses.startYear 
+        AND PortfolioReviewQ.label = PortfolioResponses.label"""
 
-#name and year
-displayQReviewnameYear = """SELECT question, answer, comment 
-FROM PortfolioResponses, PortfolioReviewQ, StudentInfo
-WHERE firstName = %s AND lastName = %s AND startYear = %s 
-AND StudentInfo.BaylorID = SupervisorInternResponse.baylor ID
-AND PortfolioResponses.startYear = PortfolioReviewQ.startYear 
-AND PortfolioResponses.label = PortfolioReviewQ.label"""
+        mycursor.execute(displayQReviewIDNoYear, (baylorid))
+        mydb.commit()
 
+    #name and no year
+    if choice == "name":
+        displayQReviewnameNoYear = """SELECT question, answer, comment, reviewerName 
+        FROM PortfolioReviewQ, StudentInfo, PortfolioResponses 
+        WHERE firstName = %s AND lastName = %s 
+        AND PortfolioResponses.baylorID = StudentInfo.BaylorID 
+        AND PortfolioResponses.startYear = PortfolioReviewQ.startYear 
+        AND PortfolioResponses.label = PortfolioReviewQ.label"""
+
+        mycursor.execute(displayQReviewnameNoYear, (firstname , lastname))
+        mydb.commit()
+
+    # id and year
+    if choice == "idyear":
+        displayQReviewIDNoYear = """SELECT question, answer, comment, reviewerName 
+        FROM PortfolioReviewQ, PortfolioResponses 
+        WHERE baylorID = %s and startYear = %s
+        AND PortfolioReviewQ.startYear = PortfolioResponses.startYear 
+        AND PortfolioReviewQ.label = PortfolioResponses.label"""
+
+        mycursor.execute(displayQReviewIDNoYear, (baylorid , startyear))
+        mydb.commit()
+
+    # name and year
+    if choice == "nameyear":
+        displayQReviewnameNoYear = """SELECT question, answer, comment, reviewerName 
+        FROM PortfolioReviewQ, StudentInfo, PortfolioResponses 
+        WHERE firstName = %s AND lastName = %s AND startYear = %s
+        AND PortfolioResponses.baylorID = StudentInfo.BaylorID 
+        AND PortfolioResponses.startYear = PortfolioReviewQ.startYear 
+        AND PortfolioResponses.label = PortfolioReviewQ.label"""
+
+        mycursor.execute(displayQReviewnameNoYear, (firstname , lastname, startyear))
+        mydb.commit()
+"----------------------------------------------------------------------------------------------------------------------------------------------------------------"
+#IF REVIEW == reviewByStudent
+"""
+this is how we will call the function in main
+elif reviewType == "reviewByStudent":
+    reviewByStudent(mycursor, mydb, choice, executeList)"""
+# choice can be id, name, idyear, nameyear
+def reviewByStudent(mycursor, mydb, choice, executeList):
+    # id and no year
+    if choice == "id":
+        displayQReviewIDNoYear = """SELECT question, answer, comment 
+        FROM StudentReviewQ, StudentResponse
+        WHERE baylorID = %s 
+        AND StudentReviewQ.startYear = StudentResponse.startYear 
+        AND StudentReviewQ.label = StudentResponse.label"""
+
+        mycursor.execute(displayQReviewnameNoYear, (firstname , lastname, startyear))
+        mydb.commit()
+
+    # name and no year
+    if choice == "name":
+        displayQReviewnameNoYear = """SELECT question, answer, comment 
+        FROM StudentReviewQ, StudentResponse, StudentInfo 
+        WHERE firstName = %s AND lastName = %s 
+        AND StudentResponse.baylorID = StudentInfo.BaylorID 
+        AND StudentResponse.startYear = StudentReviewQ.startYear 
+        AND StudentResponse.label = StudentReviewQ.label"""
+
+        mycursor.execute(displayQReviewnameNoYear, (firstname , lastname, startyear))
+        mydb.commit()
+
+    # id and year
+    if choice == "idyear":
+        displayQReviewIDNoYear = """SELECT question, answer, comment 
+        FROM StudentReviewQ, StudentResponse
+        WHERE baylorID = %s and startYear = %s
+        AND StudentReviewQ.startYear = StudentResponse.startYear 
+        AND StudentReviewQ.label = StudentResponse.label"""
+
+        mycursor.execute(displayQReviewnameNoYear, (firstname , lastname, startyear))
+        mydb.commit()
+
+    # name and year
+    if choice == "nameyear":
+        displayQReviewnameNoYear = """SELECT question, answer, comment 
+        FROM StudentReviewQ, StudentInfo, StudentResponse 
+        WHERE firstName = %s AND lastName = %s AND startYear = %s
+        AND StudentResponse.baylorID = StudentInfo.BaylorID 
+        AND StudentResponse.startYear = StudentReviewQ.startYear 
+        AND StudentResponse.label = StudentReviewQ.label"""
+
+        mycursor.execute(displayQReviewnameNoYear, (firstname , lastname, startyear))
+        mydb.commit()
 "----------------------------------------------------------------------------------------------------------------------------------------------------------------"
 #Reviews for specific year
+"""
+this is how we will call the function in main
+#choice can equal "name" or "id"
+displayReviewForStudent(mycursor, mydb, choice, executeList)"""
+def displayReviewForStudent(mycursor, mydb, choice, executeList):
+    if choice == "id":
+        #id
+        displayQReviewIDYear = """SELECT PortfolioReviewQ.question, PortfolioResponses.answer, PortfolioResponses.comment, reviewerName
+        SupervisorInternReviewQ.question, SupervisorInternResponse.answer, SupervisorInternResponse.comment, 
+        StudentReviewQ.question, StudentResponse.answer, StudentResponse.comment,
+        FROM PortfolioResponses, PortfolioReviewQ, SupervisorInternResponse, SupervisorInternReviewQ, StudentReviewQ, StudentResponse  
+        WHERE PortfolioResponses.startYear = %s AND SupervisorInternResponse.startYear = %s AND StudentResponse.startYear = %s
+        AND PortfolioResponse.baylorID = %s AND SupervisorInternResponse.baylorID = %s AND StudentResponse.baylorID = %s
+        AND PortfolioResponses.startYear = PortfolioReviewQ.startYear 
+        AND PortfolioResponses.label = PortfolioReviewQ.label 
+        AND SupervisorInternResponse.label = SupervisorInternReviewQ.label
+        AND SupervisorInternResponse.startYear = SupervisorInternReviewQ.startYear 
+        AND StudentResponse.startYear = StudentReviewQ.startYear 
+        AND StudentResponse.label = StudentReviewQ.label"""
 
-#id
-displayQReviewIDYear = """SELECT PortfolioReviewQ.question, PortfolioResponses.answer, PortfolioResponses.comment,
-SupervisorInternReviewQ.question, SupervisorInternResponse.answer, SupervisorInternResponse.comment
-FROM PortfolioResponses, PortfolioReviewQ, SupervisorInternResponse, SupervisorInternReviewQ  
-WHERE baylorID = %s AND PortfolioResponses.startYear = %s AND SupervisorInternResponse.startYear = %s
-AND PortfolioResponses.startYear = PortfolioReviewQ.startYear 
-AND PortfolioResponses.label = PortfolioReviewQ.label 
-AND SupervisorInternResponse.label = SupervisorInternReviewQ.label
-AND SupervisorInternResponse.startYear = SupervisorInternReviewQ.startYear """
+        mycursor.execute(displayQReviewIDYear, (startyear, startyear, startyear, baylorid, baylorid, baylorid))
+        mydb.commit()
+    if choice == "name":
+        #name
+        displayQReviewnameYear = """SELECT PortfolioReviewQ.question, PortfolioResponses.answer, PortfolioResponses.comment,
+        SupervisorInternReviewQ.question, SupervisorInternResponse.answer, SupervisorInternResponse.comment,
+        StudentReviewQ.question, StudentResponse.answer, StudentResponse.comment, reviewerName
+        FROM PortfolioResponses, PortfolioReviewQ, SupervisorInternResponse, SupervisorInternReviewQ, StudentInfo, StudentReviewQ, StudentResponse 
+        WHERE firstName = %s AND lastName = %s 
+        AND PortfolioResponses.startYear = %s AND SupervisorInternResponse.startYear = %s AND StudentResponse.startYear = %s
+        AND StudentInfo.BaylorID = PortfolioResponses.baylorID
+        AND PortfolioResponse.baylorID = SupervisorInternResponse.baylorID = %s AND StudentResponse.baylorID = SupervisorInternResponse.baylorID
+        AND PortfolioResponses.startYear = PortfolioReviewQ.startYear 
+        AND PortfolioResponses.label = PortfolioReviewQ.label 
+        AND SupervisorInternResponse.label = SupervisorInternReviewQ.label
+        AND SupervisorInternResponse.startYear = SupervisorInternReviewQ.startYear
+        AND StudentResponse.startYear = StudentReviewQ.startYear 
+        AND StudentResponse.label = StudentReviewQ.label
+         """
 
-#name
-displayQReviewIDYear = """SELECT PortfolioReviewQ.question, PortfolioResponses.answer, PortfolioResponses.comment,
-SupervisorInternReviewQ.question, SupervisorInternResponse.answer, SupervisorInternResponse.comment
-FROM PortfolioResponses, PortfolioReviewQ, SupervisorInternResponse, SupervisorInternReviewQ, StudentInfo 
-WHERE firstName = %s AND lastName = %s AND PortfolioResponses.startYear = %s AND SupervisorInternResponse.startYear = %s
-AND StudentInfo.BaylorID = PortfolioResponses.baylorID
-AND PortfolioResponses.startYear = PortfolioReviewQ.startYear 
-AND PortfolioResponses.label = PortfolioReviewQ.label 
-AND SupervisorInternResponse.label = SupervisorInternReviewQ.label
-AND SupervisorInternResponse.startYear = SupervisorInternReviewQ.startYear """
+    mycursor.execute(displayQReviewIDYear, (firstname, lastname, startyear, startyear, startyear))
+    mydb.commit()
 
 """"**************************************************************************************************************************************************************************************************"""
+#ask for certain type of reviews
+"""if reviewType = "Portfolio":
+    displayPortfolioReviews(mycursor, mydb, choice, executeList)"""
+def displayPortfolioReviews(mycursor, mydb, choice, executeList):
+    displayAllPortfolio = """SELECT firstName, lastName, StudentInfo.BaylorID, 
+    PortfolioReviewQ.question, PortfolioResponses.answer, PortfolioResponses.comment,
+    PortfolioReviewQ.startYear, reviewerName
+    FROM StudentInfo, PortfolioReviewQ, PortfolioResponses
+    WHERE StudentInfo.BaylorID = PortfolioResponses.baylorID
+    AND PortfolioReviewQ.startYear = PortfolioResponses.startYear 
+    AND PortfolioReviewQ.label = PortfolioResponses.label"""
+
+    mycursor.execute(displayAllPortfolio)
+    mydb.commit()
+"----------------------------------------------------------------------------------------------------------------------------------------------------------------"
+"""if reviewType = "Student":
+    displayStudentReviews(mycursor, mydb, choice, executeList)"""
+def displayStudentReviews(mycursor, mydb, choice, executeList):
+    displayAllStudent = """SELECT firstName, lastName, StudentInfo.BaylorID, 
+    StudentReviewQ.question, StudentResponse.answer, StudentResponse.comment,
+    StudentResponse.startYear
+    FROM StudentInfo, PortfolioReviewQ, PortfolioResponse
+    WHERE StudentInfo.BaylorID = StudentResponse.baylorID
+    AND StudentReviewQ.startYear = StudentResponse.startYear 
+    AND StudentReviewQ.label = StudentResponse.label"""
+
+    mycursor.execute(displayAllStudent)
+    mydb.commit()
+"----------------------------------------------------------------------------------------------------------------------------------------------------------------"
+"""elif reviewType != "Student" AND reviewType != "Portfolio":
+    displayReviews(mycursor, mydb, choice, executeList)"""
+def displayReviews(mycursor, mydb, choice, executeList):
+    displayReviews = """SELECT firstName, lastName, StudentInfo.BaylorID, 
+    SupervisorInternReviewQ.question, SupervisorInternResponse.answer, SupervisorInternResponse.comment, 
+    SupervisorInternResponse.startYear 
+    FROM StudentInfo, SupervisorInternReviewQ, SupervisorInternResponse 
+    WHERE reviewType = %s 
+    AND StudentInfo.BaylorID = SupervisorInternResponse.baylorID 
+    AND SupervisorInternReviewQ.startYear = SupervisorInternResponse.startYear 
+    AND SupervisorInternReviewQ.label = StudentResponse.label"""
+
+    mycursor.execute(displayReviews, (reviewType))
+    mydb.commit()
+""""**************************************************************************************************************************************************************************************************"""
+#certain question label for certain review type of certain year range
+"""if reviewType != "Student" AND reviewType != "Portfolio":
+    displayForSpecificLabelSup(mycursor, mydb, executeList)"""
+def displayForSpecificLabelSup(mycursor, mydb, executeList):
+    #by year
+    displayReviewsY = """SELECT SupervisorInternResponse.label, SupervisorInternResponse.answer
+    COUNT(*) as number__of_times_answer_was_chosen
+    FROM SupervisorInternReviewQ, SupervisorInternResponse, SupervisorInternAnswerChoices,
+    WHERE SupervisorInternAnswerChoices.ReviewType = %s AND SupervisorInternAnswerChoices.label = %s 
+    AND SupervisorInternAnswerChoices.startYear BETWEEN %s AND %s
+    AND SupervisorInternReviewQ.startYear = SupervisorInternResponse.startYear 
+    AND SupervisorInternReviewQ.label = StudentResponse.label
+    AND SupervisorInternAnswerChoices.label = SupervisorInternReviewQ.label 
+    AND SupervisorInternAnswerChoices.startYear = SupervisorInternReviewQ.label
+    GROUP BY SupervisorInternAnswerChoices.startYear, SupervisorInternResponse.answer"""
+
+    mycursor.execute(displayReviewsY, (reviewType, questionlabel, startyear, endyear))
+    mydb.commit()
+
+    #aggregate
+    displayReviewsA = """SELECT SupervisorInternResponse.label, SupervisorInternResponse.answer
+    COUNT(*) as number__of_times_answer_was_chosen
+    FROM SupervisorInternReviewQ, SupervisorInternResponse, SupervisorInternAnswerChoices,
+    WHERE SupervisorInternAnswerChoices.ReviewType = %s AND SupervisorInternAnswerChoices.label = %s 
+    AND SupervisorInternAnswerChoices.startYear BETWEEN %s and %s
+    AND SupervisorInternReviewQ.startYear = SupervisorInternResponse.startYear 
+    AND SupervisorInternReviewQ.label = StudentResponse.label
+    AND SupervisorInternAnswerChoices.label = SupervisorInternReviewQ.label 
+    AND SupervisorInternAnswerChoices.startYear = SupervisorInternReviewQ.label
+    GROUP BY SupervisorInternResponse.answer"""
+
+    mycursor.execute(displayReviewsA, (reviewType, questionlabel, startyear, endyear))
+    mydb.commit()
+
+    #number__of_times_answer_was_chosen > 1, display it for both queries
+"----------------------------------------------------------------------------------------------------------------------------------------------------------------"
+"""elif reviewType == "Student":
+    #questionLabel, startYear, endYear
+    displayForSpecificLabelStudent(mycursor, mydb, executeList)"""
+def displayForSpecificLabelStudent(mycursor, mydb, executeList):
+    #by year
+    displayReviewsY = """SELECT StudentResponse.label, StudentResponse.answer
+    COUNT(*) as number__of_times_answer_was_chosen
+    FROM StudentReviewQ, StudentResponse, StudentAnswerChoices,
+    WHERE StudentAnswerChoices.label = %s AND StudentAnswerChoices.startYear BETWEEN %s and %s
+    AND StudentAnswerChoices.startYear = StudentResponse.startYear 
+    AND StudentReviewQ.label = StudentResponse.label
+    AND StudentAnswerChoices.label = StudentResponse.label 
+    AND StudentAnswerChoices.startYear = StudentReviewQ.label
+    GROUP BY StudentAnswerChoices.startYear, StudentResponse.answer"""
+
+    mycursor.execute(displayReviewsY, (questionlabel, startyear, endyear))
+    mydb.commit()
+
+    #aggregate
+    displayReviewsA = """SELECT StudentResponse.label, StudentResponse.answer
+    COUNT(*) as number__of_times_answer_was_chosen
+    FROM StudentReviewQ, StudentResponse, StudentAnswerChoices,
+    WHERE StudentAnswerChoices.label = %s AND StudentAnswerChoices.startYear BETWEEN %s and %s
+    AND StudentAnswerChoices.startYear = StudentResponse.startYear 
+    AND StudentReviewQ.label = StudentResponse.label
+    AND StudentAnswerChoices.label = StudentResponse.label 
+    AND StudentAnswerChoices.startYear = StudentReviewQ.label
+    GROUP BY  StudentResponse.answer"""
+
+    mycursor.execute(displayReviewsA, (questionlabel, startyear, endyear))
+    mydb.commit()
+
+    #number__of_times_answer_was_chosen > 1, display it for both queries
+#ask for certain review label of
+
+"----------------------------------------------------------------------------------------------------------------------------------------------------------------"
+"""elif reviewType != "Portfolio":
+    #questionLabel, startYear, endYear
+    displayForSpecificLabelPortfolio(mycursor, mydb, executeList)"""
+def displayForSpecificLabelPortfolio(mycursor, mydb, executeList):
+    #by year
+    displayReviewsY = """SELECT PortfolioResponses.label, PortfolioResponses.answer
+    COUNT(*) as number__of_times_answer_was_chosen
+    FROM PortfolioReviewQ, PortfolioResponses, PortfolioAnswerChoices,
+    WHERE PortfolioAnswerChoices.label = %s AND PortfolioAnswerChoices.startYear BETWEEN %s and %s
+    AND PortfolioAnswerChoices.startYear = PortfolioResponses.startYear 
+    AND PortfolioReviewQ.label = PortfolioResponses.label
+    AND PortfolioAnswerChoices.label = PortfolioResponses.label 
+    AND PortfolioAnswerChoices.startYear = PortfolioReviewQ.label
+    GROUP BY PortfolioAnswerChoices.startYear, PortfolioResponses.answer"""
+
+    mycursor.execute(displayReviewsY, (questionlabel, startyear, endyear))
+    mydb.commit()
+
+    #aggregate
+    displayReviewsA = """SELECT PortfolioResponses.label, PortfolioResponses.answer
+    COUNT(*) as number__of_times_answer_was_chosen
+    FROM PortfolioReviewQ, PortfolioResponses, PortfolioAnswerChoices,
+    WHERE PortfolioAnswerChoices.label = %s AND PortfolioAnswerChoices.startYear BETWEEN %s and %s
+    AND PortfolioAnswerChoices.startYear = PortfolioResponses.startYear 
+    AND PortfolioReviewQ.label = PortfolioResponses.label
+    AND PortfolioAnswerChoices.label = PortfolioResponses.label 
+    AND PortfolioAnswerChoices.startYear = PortfolioReviewQ.label
+    GROUP BY  PortfolioResponses.answer"""
+
+    mycursor.execute(displayReviewsA, (questionlabel, startyear, endyear))
+    mydb.commit()
+
 
 def insertIntoStudentInfo(idEntry, lastnameEntry, firstnameEntry, emailEntry, semesterEntry, classyr, major_minor, grade, year, mycursor, mydb, middleFrame, topFrame):
     try:
