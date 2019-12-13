@@ -139,23 +139,23 @@ def basicInfo(mycursor, mydb, choice, executeList):
 
 
 "----------------------------------------------------------------------------------------------------------------------------------------------------------------"
-# #REVIEW FOR SPECIFIC TYPE
-# #IF REVIEW != PORTFOLIO
-# """
-# this is how we will call the function in main
-# if reviewType != "portfolio" and reviewType != "reviewByStudent":
-#     reviewType(mycursor, mydb, choice, executeList)"""
-# #choice can be id, name, idyear, nameyear
-# def reviewType(mycursor, mydb, choice, executeList):
+#REVIEW FOR SPECIFIC TYPE
+#IF REVIEW != PORTFOLIO
+"""
+this is how we will call the function in main
+if reviewType != "portfolio" and reviewType != "reviewByStudent":
+    reviewType(mycursor, mydb, choice, executeList)"""
+#choice can be id, name, idyear, nameyear
+def reviewType(mycursor, mydb, choice, executeList):
 #     # id and no year
 #     if choice == "id":
 #         displayQReviewIDNoYear = """SELECT question, answer, comment
 #         FROM SupervisorInternResponse, SupervisorInternReviewQ
 #         WHERE baylorID = %s AND ReviewType = %s AND SupervisorInternResponse.startYear = SupervisorInternReviewQ.startYear AND SupervisorInternResponse.label = SupervisorInternReviewQ.label"""
 #
-#         mycursor.execute(displayQReviewIDNoYear, (baylorid, reviewtype))
-#         mydb.commit()
-#         reviewresults = mycursor.fetchall()
+# #         mycursor.execute(displayQReviewIDNoYear, (baylorid, reviewtype))
+# #         mydb.commit()
+# #         reviewresults = mycursor.fetchall()
 #
 #
 #     # name and no year
@@ -234,17 +234,17 @@ def basicInfo(mycursor, mydb, choice, executeList):
 #         reviewresults = mycursor.fetchall()
 #
 #
-#     # id and year
-#     if choice == "idyear":
-#         displayQReviewIDNoYear = """SELECT question, answer, comment, reviewerName
-#         FROM PortfolioReviewQ, PortfolioResponses
-#         WHERE baylorID = %s and startYear = %s
-#         AND PortfolioReviewQ.startYear = PortfolioResponses.startYear
-#         AND PortfolioReviewQ.label = PortfolioResponses.label"""
-#
-#         mycursor.execute(displayQReviewIDNoYear, (baylorid , startyear))
-#         mydb.commit()
-#         reviewresults = mycursor.fetchall()
+    # id and year
+    if choice == "idyear":
+        displayQReviewIDNoYear = """SELECT question, answer, comment, reviewerName
+        FROM PortfolioReviewQ, PortfolioResponses
+        WHERE baylorID = %s and PortfolioResponses.startYear = %s
+        AND PortfolioReviewQ.startYear = PortfolioResponses.startYear
+        AND PortfolioReviewQ.label = PortfolioResponses.label"""
+
+        mycursor.execute(displayQReviewIDNoYear, executeList)
+        reviewresults = mycursor.fetchall()
+        return reviewresults
 #
 #
 #     # name and year
