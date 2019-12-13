@@ -12,7 +12,10 @@ class StudentSearchForm(FlaskForm):
     choices = [('Baylor ID', 'Baylor ID'),
                ('Name', 'Name')]
     select = SelectField('Search for Student by:', choices=choices)
-    search = StringField('Full Name or ID')
+    search = StringField('ID')
+    firstName = StringField('First name')
+    lastName = StringField('Last name')
+
 
 
 
@@ -52,13 +55,16 @@ def studentQueryHomePage():
 @app.route('/studentQuery/results')
 def search_results(search):
     results = []
-    search_string = search.data['search']
+
     if search.select.data == "Baylor ID":
         print("BUID")
         #Query the BU ID
+        search_string = search.data['search']
+
     else:
         print("BUNAME")
-        #Query the Name
+        firstNameSearch = search.data['firstName']
+        lastNameSearch = search.data['lastName']
 
     if search.data['search'] == 'Bryan Lee':
         items = [Item('000000000', 'Bryan', 'Lee', 'Bryan_Lee@baylor.edu', 'Fall', '2019', 'PR', 'A', 'SR'),
@@ -81,7 +87,20 @@ def search_results(search):
 
 @app.route('/item/<int:id>', methods=['GET', 'POST'])
 def edit(id):
-    print('')
+    #Query the Reviews for the specific student using their BUID
+
+    results = [] #THE query information
+
+    if len(results) == 0:
+        return redirect(url_for('studentQueryHomePage'))
+    else:
+        flash('No results found!')
+        return redirect('/studenQuery')
+
+
+
+@app.route('studentQuery/results/reviews', methods=['GET','POST'])
+def reviewsResultsPage():
 
 if __name__ == '__main__':
     app.run(debug=True)
