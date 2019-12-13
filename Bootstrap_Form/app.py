@@ -13,8 +13,8 @@ import mysql.connector
 mydb = mysql.connector.connect(
     host = "localhost",
     user = "root",
-    password = "hoangdieu72",
-    database = "GP"
+    password = "BUboxtop2020",
+    database = "testdb"
 )
 
 #initialize cursor of database
@@ -30,18 +30,19 @@ app.config['SECRET_KEY'] = 'DontTellAnyone'
 
 # Create Classes for forms and web pages
 
+year_list = [(0, '---')]
+for i in range(20):
+    year_list.append((i + 1, 2000 + i))
+
 class StudentInfoForm(FlaskForm):
-    student_id = StringField('student ID', validators=[InputRequired(), Length(9)])
+    student_id = StringField('Student ID', validators=[InputRequired(), Length(9)])
     first_name = StringField('First Name', validators=[InputRequired()])
     last_name = StringField('Last Name', validators=[InputRequired()])
-    email = StringField('email', validators=[InputRequired(), Email(message='Invalid email address')])
+    email = StringField('Email', validators=[InputRequired(), Email(message='Invalid email address')])
     Class = StringField('Class', validators=[InputRequired()])
 
 class StudentInfoForm2(FlaskForm):
     grade_list = [(0, '---'), (1, 'A'), (2, 'B'), (3, 'C'), (4, 'D'), (5, 'F')]
-    year_list = [(0, '---')]
-    for i in range(20):
-        year_list.append((i + 1, 2000 + i))
     major_minor = SelectField('Major/Minor', [DataRequired()], choices=[(0, "---"), (1, 'major'), (2, 'minor')])
     ADV_PR_Semester = SelectField('ADV PR Semester', choices=[(0, '---'), (1, 'Fall'), (2, 'Spring')])
     ADV_PR_Year = SelectField('Year', choices=year_list)
@@ -62,7 +63,16 @@ class SupervisorInfoForm(FlaskForm):
     title = StringField('Title', validators=[InputRequired()])
     email = StringField('Email', validators=[InputRequired(), Email(message='Invalid email address')])
 
+class InternshipInfoForm(FlaskForm):
+    month_list = [(0,'---'), (1,'JAN'), (2,'FEB'), (3,'MAR'), (4,'APR'), (5,'MAY'),
+                  (6,'JUN'), (7,'JUL'), (8,'AUG'), (9,'SEP'), (10,'OCT'),
+                  (11, 'NOV'), (12, 'DEC')]
 
+    email = StringField('Email', validators=[InputRequired(), Email(message='Invalid email address')])
+    startMonth = SelectField('Start Month', choices=month_list)
+    startYear = SelectField('Start Year', choices=year_list)
+    endMonth = SelectField('End Month', choices=month_list)
+    endYear = SelectField('End Year', choices=year_list)
 
 
 class Results(Table):
@@ -85,17 +95,6 @@ class SuperVisorReviewsTable(Table):
     answer = Col('Answers')
     comment = Col('Comments')
 
-class PortfolioReviewTable(Table):
-    question = Col('Questions')
-    answer = Col('Answers')
-    comment = Col('Comments')
-    reviewerName = Col('Reviewer Name')
-
-class StudentReviewTable(Table):
-    question = Col('Questions')
-    answer = Col('Answers')
-    comment = Col('Comments')
-
 
 class SuperVisorReviewItem(object):
     def __init__(self,question,answer,comment):
@@ -103,19 +102,6 @@ class SuperVisorReviewItem(object):
         self.answer = answer
         self.comment = comment
 
-class StudentReviewItem(object):
-    def __init__(self,question,answer,comment):
-        self.question = question
-        self.answer = answer
-        self.comment = comment
-
-
-class PortfolioReviewItem(object):
-    def __init__(self,question,answer,comment,reviewerName):
-        self.question = question
-        self.answer = answer
-        self.comment = comment
-        self.reviewerName = reviewerName
 
 class Item(object):
     def __init__(self, id, fname, lname, email,semester,yr,major_minor,grade,classYear):
@@ -142,6 +128,8 @@ def index():
             return redirect(url_for('studentInfo'))
         elif request.form['option'] == 'Enter Supervisor Information':
             return redirect(url_for('supervisorInfo'))
+        elif request.form['option'] == 'Enter Internship Information':
+            return redirect(url_for('internshipInfo'))
     return render_template('index.html')
 
 
@@ -161,6 +149,13 @@ def supervisorInfo():
     if form.validate_on_submit():
         return 'Successfully submitted supervisor information!'
     return render_template('supervisor.html', form=form)
+
+@app.route('/input_internship_info', methods=['GET', 'POST'])
+def internshipInfo():
+    form = InternshipInfoForm()
+    if form.validate_on_submit():
+        return 'Successfully submitted internship information!'
+    return render_template('internship.html', form=form)
 
 
 ######################## SUDENT QUERY DATA ########################
@@ -218,7 +213,7 @@ def SearchYear(search):
 
 
 
-@app.route('/item/<int:id>', methods=['GET', 'POST'])
+@app.route('/studentQuery/results/supervisorreviews', methods=['GET', 'POST'])
 def supervisorReviewLink(id):
     # Ask for YEAR of review
     yearSearch = YearSearchForm()
@@ -240,6 +235,7 @@ def supervisorReviewLink(id):
             superVisorTable.border = True
 
             if len(results) > 0:
+
                 return render_template('results.html', table=superVisorTable)
             else:
                 flash('No results found!')
@@ -250,63 +246,32 @@ def supervisorReviewLink(id):
 
 @app.route('/item1/<int:id>', methods=['GET', 'POST'])
 def portfolioReviewLink(id):
-    # Ask for YEAR of review
-    yearSearch = YearSearchForm()
-    print('here')
-    if request.method == 'POST':
-        yearNum = yearSearch.data['year']
+    #Ask for YEAR of review
 
-        if len(yearNum) == 4 and yearNum.isdigit():
-            print(yearNum)
-            # Query the Portfolio Reviews for the specific student using their BUID and Year
-            # and add it to results
+    #Query for the Portfolio Reviews for the specific student using their BUID
 
-            results = [PortfolioReviewItem('QUESTION 1', 'ANSWER1',
-                                            'This is a commnt that is supposed to be kind of l'
-                                            'ong to see how this would fit in to the table '
-                                            'lol hahahahahahha hehehehehe hohohohohohohho')]  # THE query information
 
-            portfolioReviewTable = PortfolioReviewTable(results)
-            portfolioReviewTable.border = True
+    results = [] #THE query information
 
-            if len(results) > 0:
-                return render_template('results.html', table=portfolioReviewTable)
-            else:
-                flash('No results found!')
-                return redirect(url_for('studentQueryHomePage'))
-        else:
-            flash('Please enter a 4 digit year!')
-    return render_template('yearForm.html' ,form=yearSearch)
+    if len(results) == 0:
+        return redirect(url_for('studentQueryHomePage'))
+    else:
+        flash('No results found!')
+        return redirect('/studenQuery')
 
 @app.route('/item2/<int:id>', methods=['GET', 'POST'])
 def studentReviewLink(id):
     # Ask for YEAR of review
-    yearSearch = YearSearchForm()
-    print('here')
-    if request.method == 'POST':
-        yearNum = yearSearch.data['year']
 
-        if len(yearNum) == 4 and yearNum.isdigit():
-            print(yearNum)
-            # Query the Supervisor Reviews for the specific student using their BUID and Year
-            # and add it to results
+    #Query for the Student Reviews for the specific student using their BUID
 
-            results = [StudentReviewItem('QUESTION 1', 'ANSWER1',
-                                            'This is a commnt that is supposed to be kind of l'
-                                            'ong to see how this would fit in to the table '
-                                            'lol hahahahahahha hehehehehe hohohohohohohho')]  # THE query information
+    results = [] #THE query information
 
-            studentReviewTable = StudentReviewTable(results)
-            studentReviewTable.border = True
-
-            if len(results) > 0:
-                return render_template('results.html', table=studentReviewTable)
-            else:
-                flash('No results found!')
-                return redirect(url_for('studentQueryHomePage'))
-        else:
-            flash('Please enter a 4 digit year!')
-    return render_template('yearForm.html' ,form=yearSearch)
+    if len(results) == 0:
+        return redirect(url_for('studentQueryHomePage'))
+    else:
+        flash('No results found!')
+        return redirect('/studenQuery')
 
 
 if __name__ == '__main__':

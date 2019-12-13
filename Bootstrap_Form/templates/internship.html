@@ -1,0 +1,27 @@
+{% extends "bootstrap/base.html" %}
+{% import "bootstrap/wtf.html" as wtf%}
+
+{% block title %}
+    Supervisor Form
+{% endblock %}
+
+{%  block content %}
+    <h1> Supervisor Information </h1>
+<div class="container">
+    <form method = "POST">
+        <dl>
+            {{ form.hidden_tag() }}
+            <div style="width: 40%">
+                {{ form.csrf_token }}
+                {{ wtf.form_field(form.email) }}
+                {{ wtf.form_field(form.startMonth) }}
+                {{ wtf.form_field(form.startYear) }}
+                {{ wtf.form_field(form.endMonth) }}
+                {{ wtf.form_field(form.endYear) }}
+                <br><br><br>
+                <input class="btn btn-primary" value="submit" type="submit">
+            </div>
+        </dl>
+    </form>
+</div>
+{% endblock %}
