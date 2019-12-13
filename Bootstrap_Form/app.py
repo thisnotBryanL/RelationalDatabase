@@ -1,7 +1,7 @@
 from flask import Flask, render_template, request, redirect, url_for, flash
 from flask_wtf import FlaskForm
 from flask_table import Table, Col,LinkCol
-from wtforms import StringField, SelectField, SubmitField
+from wtforms import StringField, SelectField, IntegerField
 from wtforms.validators import InputRequired, Email, Length, DataRequired
 from flask_bootstrap import Bootstrap
 
@@ -13,8 +13,8 @@ import mysql.connector
 mydb = mysql.connector.connect(
     host = "localhost",
     user = "root",
-    password = "hoangdieu72",
-    database = "GP"
+    password = "BUboxtop2020",
+    database = "testdb"
 )
 
 #initialize cursor of database
@@ -73,7 +73,10 @@ class InternshipInfoForm(FlaskForm):
     startYear = SelectField('Start Year', choices=year_list)
     endMonth = SelectField('End Month', choices=month_list)
     endYear = SelectField('End Year', choices=year_list)
-
+    address = StringField('Address', validators=[InputRequired()])
+    phone = StringField('Phone Number', validators=[InputRequired(), Length(10)])
+    tot_hours = IntegerField('Total Hours', validators=[InputRequired()])
+    buID = StringField('Student ID', validators=[InputRequired(), Length(9)])
 
 class Results(Table):
     id = Col('Baylor ID ')
