@@ -36,7 +36,6 @@ class StudentInfoForm(FlaskForm):
     last_name = StringField('Last Name', validators=[InputRequired()])
     email = StringField('email', validators=[InputRequired(), Email(message='Invalid email address')])
     Class = StringField('Class', validators=[InputRequired()])
-    submit = SubmitField('Submit')
 
 class StudentInfoForm2(FlaskForm):
     grade_list = [(0, '---'), (1, 'A'), (2, 'B'), (3, 'C'), (4, 'D'), (5, 'F')]
@@ -86,7 +85,7 @@ def index():
     if request.method == 'POST':
         if request.form['option'] == 'Look Up Student Information':
             return redirect(url_for('studentQueryHomePage'))
-        elif request.form['option'] == 'Enter Student Information':
+        if request.form['option'] == 'Enter Student Information':
             return redirect(url_for('studentInfo'))
     return render_template('index.html')
 
