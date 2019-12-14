@@ -173,17 +173,18 @@ def reviewType(mycursor, mydb, choice, executeList):
 #         reviewresults = mycursor.fetchall()
 
 #     "----------------------------------------------------------------------------------------------------------------------------------------------------------------"
-#     #id and year
-#     if choice == "idyear":
-#         displayQReviewIDYear = """SELECT question, answer, comment
-#         FROM SupervisorInternResponse, SupervisorInternReviewQ
-#         WHERE baylorID = %s AND ReviewType = %s AND startYear = %s
-#         AND SupervisorInternResponse.startYear = SupervisorInternReviewQ.startYear
-#         AND SupervisorInternResponse.label = SupervisorInternReviewQ.label"""
-#
-#         mycursor.execute(displayQReviewIDYear, (baylorid , reviewtype, startyear))
-#         mydb.commit()
-#         reviewresults = mycursor.fetchall()
+     #id and year
+        if choice == "SUPidyear":
+             displayQReviewIDYear = """SELECT question, answer, comment
+             FROM SupervisorInternResponse, SupervisorInternReviewQ
+             WHERE baylorID = %s AND SupervisorInternReviewQ.startYear = %s
+             AND SupervisorInternResponse.startYear = SupervisorInternReviewQ.startYear
+             AND SupervisorInternResponse.label = SupervisorInternReviewQ.label"""
+
+             print(displayQReviewIDYear)
+             mycursor.execute(displayQReviewIDYear,(executeList))
+             reviewresults = mycursor.fetchall()
+             return reviewresults
 #
 #
 #     #name and year
@@ -234,17 +235,18 @@ def reviewType(mycursor, mydb, choice, executeList):
 #         reviewresults = mycursor.fetchall()
 #
 #
-    # id and year
-    if choice == "idyear":
-        displayQReviewIDNoYear = """SELECT question, answer, comment, reviewerName
-        FROM PortfolioReviewQ, PortfolioResponses
-        WHERE baylorID = %s and PortfolioResponses.startYear = %s
-        AND PortfolioReviewQ.startYear = PortfolioResponses.startYear
-        AND PortfolioReviewQ.label = PortfolioResponses.label"""
+        # id and year
+        if choice == "idyear":
+            displayQReviewIDNoYear = """SELECT question, answer, comment, reviewerName
+            FROM PortfolioReviewQ, PortfolioResponses
+            WHERE baylorID = %s and PortfolioResponses.startYear = %s
+            AND PortfolioReviewQ.startYear = PortfolioResponses.startYear
+            AND PortfolioReviewQ.label = PortfolioResponses.label"""
 
-        mycursor.execute(displayQReviewIDNoYear, executeList)
-        reviewresults = mycursor.fetchall()
-        return reviewresults
+
+            mycursor.execute(displayQReviewIDNoYear, executeList)
+            reviewresults = mycursor.fetchall()
+            return reviewresults
 #
 #
 #     # name and year

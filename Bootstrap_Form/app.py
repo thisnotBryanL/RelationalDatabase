@@ -4,6 +4,8 @@ from flask_table import Table, Col,LinkCol
 from wtforms import StringField, SelectField, IntegerField
 from wtforms.validators import InputRequired, Email, Length, DataRequired, NumberRange
 from flask_bootstrap import Bootstrap
+
+from Bootstrap_Form.TableSchema import reviewType, reviewByStudent, basicInfo
 from TableSchema import *
 import mysql.connector
 
@@ -12,7 +14,7 @@ import mysql.connector
 mydb = mysql.connector.connect(
     host = "localhost",
     user = "root",
-    password = "password123",
+    password = "hoangdieu72",
     database = "GP"
 )
 
@@ -21,6 +23,7 @@ mycursor = mydb.cursor()
 
 # Create Tables if they do not exist
 createTables(mycursor)
+print('done')
 
 studentInfoList = []
 
@@ -298,7 +301,6 @@ def search_results(search):
         search_string = search.data['search']
         results.append(search_string)
         stringf = search_string
-        studentInfoList.append(stringf)
 
     else:
         print("BUNAME")
@@ -308,8 +310,7 @@ def search_results(search):
         results.append(firstNameSearch)
         results.append(lastNameSearch)
         stringf = firstNameSearch + " " + lastNameSearch
-        studentInfoList.append(firstNameSearch)
-        studentInfoList.append(lastNameSearch)
+
 
 
 
@@ -355,24 +356,34 @@ def supervisorReviewLink(id):
             print(yearNum)
             # Query the Supervisor Reviews for the specific student using their BUID and Year
             # and add it to results
+            studentInfoList.append(str(id))
             studentInfoList.append(str(yearNum))
-            studentReviewLink = studentInfoList
-            print ("student review", studentInfoList)
+            SuperVisorList = studentInfoList
 
-            #reviewType(mycursor, mydb, "idyear", executeList)
-            results = [SuperVisorReviewItem('QUESTION 1', 'ANSWER1',
-                                            'This is a commnt that is supposed to be kind of l'
-                                            'ong to see how this would fit in to the table '
-                                            'lol hahahahahahha hehehehehe hohohohohohohho')]  # THE query information
 
-            superVisorTable = SuperVisorReviewsTable(results)
-            superVisorTable.border = True
+            print(studentInfoList)
+            print(SuperVisorList)
+
+            results = reviewType(mycursor, mydb, "SUPidyear", SuperVisorList)
+
+            # Clears the list after use, or else append will keep appending
+            # if back button is pushed
+            studentInfoList.clear()
+            SuperVisorList.clear()
 
             if len(results) > 0:
+                items = []
+                for row in results:
+                    instance = SuperVisorReviewItem('', '', '')
+                    instance.setValues(row)
+                    items.append(instance)
+
+                superVisorTable = SuperVisorReviewsTable(items)
+                superVisorTable.border = True
                 return render_template('results.html', table=superVisorTable)
             else:
                 flash('No results found!')
-                return redirect(url_for('studentQueryHomePage'))
+                return redirect(f'/item/{id}')
         else:
             flash('Please enter a 4 digit year!')
     return render_template('yearForm.html' ,form=yearSearch)
@@ -389,12 +400,20 @@ def portfolioReviewLink(id):
             print(yearNum)
             # Query the Portfolio Reviews for the specific student using their BUID and Year
             # and add it to results
+            studentInfoList.append(str(id))
             studentInfoList.append(str(yearNum))
             PortfolioList = studentInfoList
             print ("list:", PortfolioList)
-            results = reviewType(mycursor, mydb, "idyear", PortfolioList)
-            print (results)
 
+            try:
+                results = reviewType(mycursor, mydb, "idyear", PortfolioList)
+            except Exception as e:
+                print(e)
+
+
+            #Clears the list after use, or else append will keep appending
+            # if back button is pushed
+            studentInfoList.clear()
             # results = [PortfolioReviewItem('QUESTION 1', 'ANSWER1',
             #                                 'This is a commnt that is supposed to be kind of l'
             #                                 'ong to see how this would fit in to the table '
@@ -406,7 +425,7 @@ def portfolioReviewLink(id):
             if len(results) > 0:
                 items = []
                 for row in results:
-                    instance = PortfolioReviewItem('', '', '', ' ')
+                    instance = PortfolioReviewItem('', '', '', '')
                     instance.setValues(row)
                     items.append(instance)
 
@@ -415,7 +434,7 @@ def portfolioReviewLink(id):
                 return render_template('results.html', table=portfolioReviewTable)
             else:
                 flash('No results found!')
-                return redirect(url_for('studentQueryHomePage'))
+                return redirect(f'/item1/{id}')
         else:
             flash('Please enter a 4 digit year!')
     return render_template('yearForm.html' ,form=yearSearch)
@@ -432,6 +451,7 @@ def studentReviewLink(id):
             print(yearNum)
             # Query the Supervisor Reviews for the specific student using their BUID and Year
             # and add it to results
+            studentInfoList.append(str(id))
             studentInfoList.append(str(yearNum))
             studentRList = studentInfoList
             results = reviewByStudent(mycursor, mydb, "idyear", studentRList)
@@ -440,6 +460,10 @@ def studentReviewLink(id):
             #                                 'This is a commnt that is supposed to be kind of l'
             #                                 'ong to see how this would fit in to the table '
             #                                 'lol hahahahahahha hehehehehe hohohohohohohho')]  # THE query information
+
+            # Clears the list after use, or else append will keep appending
+            # if back button is pushed
+            studentInfoList.clear()
 
             if len(results) > 0:
                 items = []
@@ -452,7 +476,7 @@ def studentReviewLink(id):
                 return render_template('results.html', table=studentReviewTable)
             else:
                 flash('No results found!')
-                return redirect(url_for('studentQueryHomePage'))
+                return redirect(f'/item2/{id}')
         else:
             flash('Please enter a 4 digit year!')
     return render_template('yearForm.html' ,form=yearSearch)
