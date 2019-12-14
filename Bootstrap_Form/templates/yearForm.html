@@ -8,8 +8,22 @@
   {% endif %}
 {% endwith %}
 {% from "_formhelpers.html" import render_field %}
-<form method=post >
-    {{ render_field(form.year) }}
-  <p><input type=submit value=Sumbmit>
 
-</form>
+<body>
+  <div>
+    Project:
+    <a href="{{ url_for('index') }}">Home,</a>
+    <a href="{{ url_for('studentQueryHomePage') }}">Search for students,</a>
+    <a href="{{ url_for('studentInfo') }}">Add Students,</a>
+    <a href="{{ url_for('supervisorInfo') }}">Add Supervisors,</a>
+    <a href="{{ url_for('internshipInfo') }}">Add Internship Information,</a>
+    <a href="{{ url_for('SupInternReviewInfo') }}">Add Review Questions</a>
+  </div>
+  <hr>
+
+  <form method=post >
+      {{ render_field(form.year) }}
+    <p><input type=submit value=Sumbmit>
+
+  </form>
+</body>
