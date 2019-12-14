@@ -40,26 +40,17 @@ for i in range(20):
 month_list = [(0,'---'), (1, 'JAN'), (2,'FEB'), (3,'MAR'), (4,'APR'), (5,'MAY'), (6,'JUN'),
             (7,'JUL'), (8, 'AUG'), (9, 'SEP'), (10, 'OCT'), (11, 'NOV'), (12, 'DEC')]
 
-class createInsertIntoStudentList():
-    def __init__ (self, student_id, first_name, last_name, email, Class ):
-        self.executeList = [" "] * 5
-        self.executeList[0] = student_id
-        self.executeList[2] = first_name
-        self.executeList[1] = last_name
-        self.executeList[3] = email
-        self.executeList[4] = Class
+executeList = [ ]
+def executeInsert(sqlStatement, executeList, mycursor, mydb):
+    try:
+        mycursor.execute(sqlStatement, executeList)
+        mydb.commit()
+    except mysql.connector.Error as error:
+        print ("duplicate entry")
+    del executeList[:]
 
-    def getExecuteList(self):
-        return self.executeList
 
-        # sql = "INSERT INTO StudentInfo (`BaylorID`, `lastName`, `firstName`, `emailAddress`, `class`)" \
-        #       "VALUES (%s, %s, %s, %s, %s)"
-        # mycursor.execute(sql, self.executeList)
-        # mycursor.execute("insert into PortfolioResponses values('photo', '2018', '123456789', 'saw the skyline', 'how observational', '2019-05-01', 'Julius Caesar')")
-        #
-        # mydb.commit
 
-StudentInfoFormExecuteList = [ ]
 class StudentInfoForm(FlaskForm):
     student_id = StringField('student ID', validators=[InputRequired(), Length(9)])
     first_name = StringField('First Name', validators=[InputRequired()])
@@ -67,12 +58,8 @@ class StudentInfoForm(FlaskForm):
     email = StringField('email', validators=[InputRequired(), Email(message='Invalid email address')])
     Class = StringField('Class', validators=[InputRequired()])
 
-    instance = createInsertIntoStudentList (student_id, first_name, last_name, email, Class)
-    StudentInfoFormExecuteList = instance.getExecuteList()
-    # sql = "INSERT INTO StudentInfo (`BaylorID`, `lastName`, `firstName`, `emailAddress`, `class`)" \
-    #       "VALUES (%s, %s, %s, %s, %s)"
-    # mycursor.execute(sql, StudentInfoFormExecuteList)
-    mydb.commit()
+
+
 
 
 class StudentInfoForm2(FlaskForm):
@@ -118,8 +105,6 @@ class SupervisorInternReviewQForm(FlaskForm):
 
 class SupervisorInternReviewQForm2(FlaskForm):
     startYear = SelectField('Start Year', choices=year_list)
-
-
 
 
 class Results(Table):
@@ -234,19 +219,68 @@ def index():
 
 
 ######################## INFORMATION INPUT FORMS ########################
+
 @app.route('/input_student_info', methods=['GET', 'POST'])
 def studentInfo():
     form = StudentInfoForm()
-    print ("The execute list is", StudentInfoFormExecuteList)
-
     form2 = StudentInfoForm2()
     if (form.validate_on_submit() and form2.major_minor.data != '0' and form2.ADV_PR_Semester.data != '0' and
         form2.ADV_PR_Grade.data != '0' and form2.ADV_PR_Year.data != '0'):
-        if request.form['option'] == 'home':
-            print ("The execute list is", StudentInfoFormExecuteList)
-            return redirect(url_for('index'))
+       #insert data into datab|ase
+        majororminor = " "
+        if form2.data['major_minor'] == '1':
+           majororminor = "major"
         else:
-            return 'Redirect'
+            majororminor = "minor"
+
+        semester = " "
+        if form2.data['ADV_PR_Semester'] == '1':
+           semester = "Fall"
+        else:
+           semester = "Spring"
+
+        grade = " "
+        if form2.data['ADV_PR_Grade'] == '1':
+           grade = "A"
+        elif form2.data['ADV_PR_Grade'] == '2':
+           grade = "B"
+        elif form2.data['ADV_PR_Grade'] == '3':
+           grade = "C"
+        elif form2.data['ADV_PR_Grade'] == '4':
+           grade = "D"
+        elif form2.data['ADV_PR_Grade'] == '5':
+           grade = "F"
+
+        year = " "
+        year = int(form2.data['ADV_PR_Year']) - 1
+        yr = "20" + str(year)
+
+        executeList.append(form.data['student_id'])
+        executeList.append(form.data['last_name'])
+        executeList.append(form.data['first_name'])
+        executeList.append(form.data['email'])
+        executeList.append(semester)
+        executeList.append(form.data['Class'])
+        executeList.append(majororminor)
+        executeList.append(grade)
+        executeList.append(yr)
+
+
+        print ("the executeList is", executeList)
+        sql = "INSERT INTO StudentInfo (`BaylorID`, `lastName`, `firstName`, `emailAddress`, `ADV_PR_semester`, `class`, `major_minor`, `ADV_PR_grade`, `ADV_PR_year`)" \
+              "VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)"
+        executeInsert(sql, executeList, mycursor,mydb)
+       #END INSERT DATA
+        # if request.form['option'] == 'home':
+        #     return redirect(url_for('index'))
+        # else:
+        #     return 'Redirect'
+    # if trueorfalse == False:
+    #     error1 = "Student with ID #" + executeList[0] + " has already been inserted'\n'" \
+    #                                                     "If you would like to update their information, please go to the update page"
+    #
+    #     return render_template('submit.html', form=form, form2=form2, error=error)
+    # else:
     return render_template('submit.html', form=form, form2=form2)
 
 @app.route('/input_supervisor_info', methods=['GET', 'POST'])
@@ -317,8 +351,6 @@ def search_results(search):
         stringf = firstNameSearch + " " + lastNameSearch
         studentInfoList.append(firstNameSearch)
         studentInfoList.append(lastNameSearch)
-
-
 
     queryResults = []
     queryResults = basicInfo(mycursor, mydb, choice, results)
