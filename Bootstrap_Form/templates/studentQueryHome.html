@@ -1,129 +1,40 @@
-<!DOCTYPE html>
-<head xmlns:onClick="http://www.w3.org/1999/xhtml">
-	<title id ="title">Student Search</title>
-</head>
+{% extends "base.html" %}
+{% import "bootstrap/wtf.html" as wtf%}
+<link rel= "stylesheet" type= "text/css" href= "static/css/bootstrap.css">
 
+
+
+{% block title %}
+    Student Search
+{% endblock %}
+
+{%  block content %}
 <style>
-.bryan {
-	background: green;
-	display: block;
-	margin: 0 auto;
-	text-align: center;
-	max-width: 600px;
-	border-radius: 5px;
-
-}
-
-.flashes {
-	color: #fff;
-}
-
-h2.bryan-header {
-	font-size: 50px;
-	margin: 0 auto;
-	padding: 0px;
-    color: yellow;
-}
-
-#title{
-  font-size: large;
-}
-
-.SubmitBtn{
-  width: 100px;
+    .MyClass {
+    margin: 0 auto;
+    align-items: center;
+    justify-content: space-around;
+    display: flex;
+    float: none;
 }
 </style>
-
-<body>
-  <div>
-    Project:
-    <a href="{{ url_for('index') }}">Home,</a>
-    <a href="{{ url_for('studentQueryHomePage') }}">Search for students,</a>
-    <a href="{{ url_for('studentInfo') }}">Add Students,</a>
-    <a href="{{ url_for('supervisorInfo') }}">Add Supervisors,</a>
-    <a href="{{ url_for('internshipInfo') }}">Add Internship Information,</a>
-    <a href="{{ url_for('SupInternReviewInfo') }}">Add Review Questions</a>
-  </div>
-  <hr>
-	<div class="bryan">
-		<h2 class="bryan-header">Student Search</h2>
-		<ul class="flashes">
-			{% with messages = get_flashed_messages() %}
-            {% if messages %}
-              {% for message in messages %}
-                <li>{{ message }}</li>
-              {% endfor %}
-              </ul>
-              {% endif %}
-        {% endwith %}
-		</ul>
-		{% from "_formhelpers.html" import render_field %}
-		<form method="post">
-
-				{{form.select.label}} {{ form.select}}<br><br>
-				{{form.search.label}} {{ form.search}}<br>
-
-                <h3>OR</h3>
-
+    <h1> Student Search </h1>
+<div class="MyClass">
+    <form method = "POST">
+        <dl>
+            {{ form.hidden_tag() }}
+            <div style="width: 40%">
+                {{ form.csrf_token }}
+                {{form.select.label}} {{ form.select}}<br><br>
+				{{form.search.label}} {{ form.search}}<br><br>
+                <h4>OR</h4><br>
                 {{form.firstName.label}} {{form.firstName}}<br><br>
                 {{form.lastName.label}} {{form.lastName}}<br>
 
-
-			<p><input class ="SubmitBtn" type="submit" value="Search"></p>
-		</form>
-	</div><!---END DIV CLASS BRYAN--->
-
-<!--- BEGIN SCRIPTS GO IN-BETWEEN HERE --->
-<script>
-function add() {
-
-//Create an input type dynamically.
-var element = document.createElement("input");
-
-//Create Labels
-var label = document.createElement("Label");
-label.innerHTML = "New Label";
-
-//Assign different attributes to the element.
-element.setAttribute("type", "text");
-element.setAttribute("value", "");
-element.setAttribute("name", "Test Name");
-element.setAttribute("style", "width:200px");
-
-label.setAttribute("style", "font-weight:normal");
-
-// 'foobar' is the div id, where new fields are to be added
-var foo = document.getElementById("fooBar");
-
-//Append the element in page (in span).
-foo.appendChild(label);
-foo.appendChild(element);
-}
-
-</script>
-<!--- END SCRIPTS GO IN-BETWEEN HERE --->
-
-</body>
-</html>
-
-<!--- EXAMPLE OF CLASSES ---
-	<div class="bryan">
-
-		<div class="josh">
-
-			<p class="headline"></p>
-
-		</div>
-
-	</div>
-
-	<div class="bryan">
-
-		<div class="josh">
-
-			<p class="headline"></p>
-
-		</div>
-
-	</div>
---- EXAMPLE OF CLASSES --->
+                <br><br><br>
+                <input class ="SubmitBtn" type="submit" value="Search"/>
+            </div>
+        </dl>
+    </form>
+</div>
+{% endblock %}
