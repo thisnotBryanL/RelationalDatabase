@@ -11,15 +11,25 @@
 {%  block content %}
 <style>
     .MyClass {
-    margin: 0 auto;
-    align-items: center;
-    justify-content: space-around;
-    display: flex;
-    float: none;
-}
+        margin: 0 auto;
+        align-items: center;
+        justify-content: space-around;
+        display: flex;
+        float: none;
+    }
+
+    #title{
+        margin: 0 auto;
+        align-items: center;
+        justify-content: space-around;
+        display: flex;
+        float: none;
+    }
 </style>
-    <h1> Student Search </h1>
+<h1 id="title"> Student Search </h1>
+<hr>
 <div class="MyClass">
+
     <form method = "POST">
         <dl>
             {{ form.hidden_tag() }}
