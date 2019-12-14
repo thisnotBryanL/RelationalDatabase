@@ -1,11 +1,9 @@
 {% extends "base.html" %}
 {% import "bootstrap/wtf.html" as wtf%}
-<link rel= "stylesheet" type= "text/css" href= "static/css/bootstrap.css">
-
 
 
 {% block title %}
-    Student Search
+    Review Search
 {% endblock %}
 
 {%  block content %}
@@ -17,7 +15,7 @@
         display: flex;
         float: none;
     }
-        .ErrorClass{
+    .ErrorClass{
         margin:  auto;
         justify-content: space-around;
         display: block;
@@ -31,8 +29,12 @@
         justify-content: space-around;
         display: flex;
     }
+
 </style>
-<h1 id="title"> Student Search </h1>
+<h1 id="title"> Review Search </h1>
+<hr>
+<p id ="title">You can search all reviews by just selecting a review type to search or search by specific student
+by also entering in their BU ID</p>
 <hr>
 <div class="ErrorClass">
                     {% with messages = get_flashed_messages() %}
@@ -45,18 +47,13 @@
                  {% endwith %}
 </div>
 <div class="MyClass">
-
-
-    <form method = "POST" action="{{url_for('studentQueryHomePage')}}">
+    <form method = "POST" action="{{url_for('reviewQueryHomePage')}}">
         <dl>
             {{ form.hidden_tag() }}
             <div style="width: 150%">
                 {{ form.csrf_token }}
                 {{ wtf.form_field(form.select) }}
-                {{ wtf.form_field(form.search) }}
-                <br><h3><p>OR</p></h3><br>
-                {{ wtf.form_field(form.firstName) }}
-                {{ wtf.form_field(form.lastName) }}
+                {{ wtf.form_field(form.searchID) }}
                 <br><br><br>
                 <input class="btn btn-primary" value="submit" type="submit"/>
             </div>
