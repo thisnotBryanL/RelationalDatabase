@@ -5,9 +5,8 @@ from wtforms import StringField, SelectField, IntegerField
 from wtforms.validators import InputRequired, Email, Length, DataRequired, NumberRange
 from flask_bootstrap import Bootstrap
 from flask_bootstrap import Bootstrap
-from TableSchema import *
+from Bootstrap_Form.TableSchema import reviewType, reviewByStudent, basicInfo
 import mysql.connector
-#
 
 
 #connect to database
