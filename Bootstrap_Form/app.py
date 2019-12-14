@@ -9,6 +9,7 @@ from TableSchema import *
 import mysql.connector
 
 
+
 #connect to database
 mydb = mysql.connector.connect(
     host = "localhost",
