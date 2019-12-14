@@ -12,8 +12,8 @@ import mysql.connector
 mydb = mysql.connector.connect(
     host = "localhost",
     user = "root",
-    password = "BUboxtop2020",
-    database = "testdb"
+    password = "password123",
+    database = "GP"
 )
 
 #initialize cursor of database
@@ -37,12 +37,36 @@ for i in range(20):
 month_list = [(0,'---'), (1, 'JAN'), (2,'FEB'), (3,'MAR'), (4,'APR'), (5,'MAY'), (6,'JUN'),
             (7,'JUL'), (8, 'AUG'), (9, 'SEP'), (10, 'OCT'), (11, 'NOV'), (12, 'DEC')]
 
+class createInsertIntoStudentList():
+    def __init__ (self, student_id, first_name, last_name, email, Class ):
+        self.executeList = [" "] * 5
+        self.executeList[0] = student_id
+        self.executeList[2] = first_name
+        self.executeList[1] = last_name
+        self.executeList[3] = email
+        self.executeList[4] = Class
+
+    def getExecuteList(self):
+        return self.executeList
+
+        # sql = "INSERT INTO StudentInfo (`BaylorID`, `lastName`, `firstName`, `emailAddress`, `class`)" \
+        #       "VALUES (%s, %s, %s, %s, %s)"
+        # mycursor.execute(sql, self.executeList)
+        # mycursor.execute("insert into PortfolioResponses values('photo', '2018', '123456789', 'saw the skyline', 'how observational', '2019-05-01', 'Julius Caesar')")
+        #
+        # mydb.commit
+
+StudentInfoFormExecuteList = [ ]
 class StudentInfoForm(FlaskForm):
     student_id = StringField('student ID', validators=[InputRequired(), Length(9)])
     first_name = StringField('First Name', validators=[InputRequired()])
     last_name = StringField('Last Name', validators=[InputRequired()])
     email = StringField('email', validators=[InputRequired(), Email(message='Invalid email address')])
     Class = StringField('Class', validators=[InputRequired()])
+
+    instance = createInsertIntoStudentList (student_id, first_name, last_name, email, Class)
+    StudentInfoFormExecuteList = instance.getExecuteList()
+
 
 class StudentInfoForm2(FlaskForm):
     grade_list = [(0, '---'), (1, 'A'), (2, 'B'), (3, 'C'), (4, 'D'), (5, 'F')]
@@ -206,10 +230,13 @@ def index():
 @app.route('/input_student_info', methods=['GET', 'POST'])
 def studentInfo():
     form = StudentInfoForm()
+    print ("The execute list is", StudentInfoFormExecuteList)
+
     form2 = StudentInfoForm2()
     if (form.validate_on_submit() and form2.major_minor.data != '0' and form2.ADV_PR_Semester.data != '0' and
         form2.ADV_PR_Grade.data != '0' and form2.ADV_PR_Year.data != '0'):
         if request.form['option'] == 'home':
+            print ("The execute list is", StudentInfoFormExecuteList)
             return redirect(url_for('index'))
         else:
             return 'Redirect'
@@ -316,9 +343,6 @@ def search_results(search):
         return render_template('results.html', table=table)
 
 
-
-
-
 @app.route('/item/<int:id>', methods=['GET', 'POST'])
 def supervisorReviewLink(id):
     # Ask for YEAR of review
@@ -408,16 +432,23 @@ def studentReviewLink(id):
             print(yearNum)
             # Query the Supervisor Reviews for the specific student using their BUID and Year
             # and add it to results
+            studentInfoList.append(str(yearNum))
+            studentRList = studentInfoList
+            results = reviewByStudent(mycursor, mydb, "idyear", studentRList)
 
-            results = [StudentReviewItem('QUESTION 1', 'ANSWER1',
-                                            'This is a commnt that is supposed to be kind of l'
-                                            'ong to see how this would fit in to the table '
-                                            'lol hahahahahahha hehehehehe hohohohohohohho')]  # THE query information
-
-            studentReviewTable = StudentReviewTable(results)
-            studentReviewTable.border = True
+            # results = [StudentReviewItem('QUESTION 1', 'ANSWER1',
+            #                                 'This is a commnt that is supposed to be kind of l'
+            #                                 'ong to see how this would fit in to the table '
+            #                                 'lol hahahahahahha hehehehehe hohohohohohohho')]  # THE query information
 
             if len(results) > 0:
+                items = []
+                for row in results:
+                    instance = StudentReviewItem('', '', ' ')
+                    instance.setValues(row)
+                    items.append(instance)
+                    studentReviewTable = StudentReviewTable(items)
+                    studentReviewTable.border = True
                 return render_template('results.html', table=studentReviewTable)
             else:
                 flash('No results found!')

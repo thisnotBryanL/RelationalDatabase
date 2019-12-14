@@ -267,18 +267,18 @@ def reviewType(mycursor, mydb, choice, executeList):
 # elif reviewType == "reviewByStudent":
 #     reviewByStudent(mycursor, mydb, choice, executeList)"""
 # # choice can be id, name, idyear, nameyear
-# def reviewByStudent(mycursor, mydb, choice, executeList):
-#     # id and no year
-#     if choice == "id":
-#         displayQReviewIDNoYear = """SELECT question, answer, comment
-#         FROM StudentReviewQ, StudentResponse
-#         WHERE baylorID = %s
-#         AND StudentReviewQ.startYear = StudentResponse.startYear
-#         AND StudentReviewQ.label = StudentResponse.label"""
-#
-#         mycursor.execute(displayQReviewnameNoYear, (firstname , lastname, startyear))
-#         mydb.commit()
-#         reviewresults = mycursor.fetchall()
+def reviewByStudent(mycursor, mydb, choice, executeList):
+    # # id and no year
+    # if choice == "id":
+    #     displayQReviewIDNoYear = """SELECT question, answer, comment
+    #     FROM StudentReviewQ, StudentResponse
+    #     WHERE baylorID = %s
+    #     AND StudentReviewQ.startYear = StudentResponse.startYear
+    #     AND StudentReviewQ.label = StudentResponse.label"""
+    #
+    #     mycursor.execute(displayQReviewnameNoYear, (firstname , lastname, startyear))
+    #     reviewresults = mycursor.fetchall()
+    #     return reviewresults
 #
 #
 #     # name and no year
@@ -295,17 +295,17 @@ def reviewType(mycursor, mydb, choice, executeList):
 #         reviewresults = mycursor.fetchall()
 #
 #
-#     # id and year
-#     if choice == "idyear":
-#         displayQReviewIDNoYear = """SELECT question, answer, comment
-#         FROM StudentReviewQ, StudentResponse
-#         WHERE baylorID = %s and startYear = %s
-#         AND StudentReviewQ.startYear = StudentResponse.startYear
-#         AND StudentReviewQ.label = StudentResponse.label"""
-#
-#         mycursor.execute(displayQReviewnameNoYear, (firstname , lastname, startyear))
-#         mydb.commit()
-#         reviewresults = mycursor.fetchall()
+    # id and year
+    if choice == "idyear":
+        displayQReviewIDNoYear = """SELECT question, answer, comment
+        FROM StudentReviewQ, StudentResponse
+        WHERE baylorID = %s and StudentResponse.startYear = %s
+        AND StudentReviewQ.startYear = StudentResponse.startYear
+        AND StudentReviewQ.label = StudentResponse.label"""
+
+        mycursor.execute(displayQReviewIDNoYear, executeList)
+        reviewresults = mycursor.fetchall()
+        return reviewresults
 #
 #
 #     # name and year
