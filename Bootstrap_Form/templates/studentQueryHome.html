@@ -11,7 +11,7 @@
 {%  block content %}
 <style>
     .MyClass {
-        margin: 0 auto;
+        margin:  auto;
         align-items: center;
         justify-content: space-around;
         display: flex;
@@ -23,28 +23,41 @@
         align-items: center;
         justify-content: space-around;
         display: flex;
-        float: none;
     }
 </style>
 <h1 id="title"> Student Search </h1>
 <hr>
 <div class="MyClass">
 
-    <form method = "POST">
+
+    <form method = "POST" action="{{url_for('studentQueryHomePage')}}">
         <dl>
             {{ form.hidden_tag() }}
-            <div style="width: 40%">
+            <div style="width: 150%">
+                {% with messages = get_flashed_messages() %}
+                {% if messages %}
+                    {% for message in messages %}
+                        <li style="color:red;">{{ message }}</li>
+                        </div>
+                    {% endfor %}
+                    {% endif %}
+                 {% endwith %}
                 {{ form.csrf_token }}
-                {{form.select.label}} {{ form.select}}<br><br>
-				{{form.search.label}} {{ form.search}}<br><br>
-                <h4>OR</h4><br>
-                {{form.firstName.label}} {{form.firstName}}<br><br>
-                {{form.lastName.label}} {{form.lastName}}<br>
-
+                {{ wtf.form_field(form.select) }}
+                {{ wtf.form_field(form.search) }}
+                {% for errors in form.errors %}
+                <ul>
+                    <li style="color:red;">{{ error }}</li>
+                {% endfor %}
+                </ul>
+                <br><h3><p>OR</p></h3><br>
+                {{ wtf.form_field(form.firstName) }}
+                {{ wtf.form_field(form.lastName) }}
                 <br><br><br>
-                <input class ="SubmitBtn" type="submit" value="Search"/>
+                <input class="btn btn-primary" value="submit" type="submit"/>
             </div>
         </dl>
+
     </form>
 </div>
 {% endblock %}

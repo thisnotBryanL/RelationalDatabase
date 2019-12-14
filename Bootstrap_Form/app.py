@@ -288,7 +288,16 @@ def studentQueryHomePage():
     del studentInfoList [:]
     search = StudentSearchForm()
     if request.method == 'POST':
-        return search_results(search)
+        if(search.select.data == "Baylor ID"):
+            if len(search.search.data) == 9 and search.search.data.isdigit():
+                return search_results(search)
+            else:
+                flash('ID must be 9 digits')
+        elif (search.select.data == "Name"):
+            if len(search.firstName.data) > 0 and len(search.lastName.data) > 0:
+                return search_results(search)
+            else:
+                flash('Please enter both first and last name')
     return render_template('studentQueryHome.html', form=search)
 
 
