@@ -14,7 +14,7 @@ import mysql.connector
 mydb = mysql.connector.connect(
     host = "localhost",
     user = "root",
-    password = "password123",
+    password = "hoangdieu72",
     database = "GP"
 )
 
@@ -77,6 +77,17 @@ class StudentSearchForm(FlaskForm):
     search = StringField('ID')
     firstName = StringField('First name')
     lastName = StringField('Last name')
+
+
+class ReviewSearchForm(FlaskForm):
+    choices = [('Review1', 'Review1'),
+               ('Review2', 'Review2'),
+               ('Review3', 'Review3'),
+               ('Review4', 'Review4')]
+
+    select = SelectField('Search by:', choices=choices)
+    searchID = StringField('ID')
+
 
 class SupervisorInfoForm(FlaskForm):
     company = StringField('Company', validators=[InputRequired()])
@@ -322,7 +333,16 @@ def studentQueryHomePage():
     del studentInfoList [:]
     search = StudentSearchForm()
     if request.method == 'POST':
-        return search_results(search)
+        if(search.select.data == "Baylor ID"):
+            if len(search.search.data) == 9 and search.search.data.isdigit():
+                return search_results(search)
+            else:
+                flash('ID must be 9 digits')
+        elif (search.select.data == "Name"):
+            if len(search.firstName.data) > 0 and len(search.lastName.data) > 0:
+                return search_results(search)
+            else:
+                flash('Please enter both first and last name')
     return render_template('studentQueryHome.html', form=search)
 
 
@@ -444,16 +464,6 @@ def portfolioReviewLink(id):
 
             results = reviewType(mycursor, mydb, "idyear", PortfolioList)
 
-
-            # results = [PortfolioReviewItem('QUESTION 1', 'ANSWER1',
-            #                                 'This is a commnt that is supposed to be kind of l'
-            #                                 'ong to see how this would fit in to the table '
-            #                                 'lol hahahahahahha hehehehehe hohohohohohohho')]  # THE query information
-
-            # portfolioReviewTable = PortfolioReviewTable(results)
-            # portfolioReviewTable.border = True
-
-
             if len(results) > 0:
                 items = []
                 for row in results:
@@ -487,12 +497,6 @@ def studentReviewLink(id):
             studentRList = studentInfoList
             results = reviewByStudent(mycursor, mydb, "idyear", studentRList)
 
-            # results = [StudentReviewItem('QUESTION 1', 'ANSWER1',
-            #                                 'This is a commnt that is supposed to be kind of l'
-            #                                 'ong to see how this would fit in to the table '
-            #                                 'lol hahahahahahha hehehehehe hohohohohohohho')]  # THE query information
-
-
             if len(results) > 0:
                 items = []
                 for row in results:
@@ -508,6 +512,72 @@ def studentReviewLink(id):
         else:
             flash('Please enter a 4 digit year!')
     return render_template('yearForm.html' ,form=yearSearch)
+
+
+@app.route('/reviewQuery', methods=['GET', "POST"])
+def reviewQueryHomePage():
+    search = ReviewSearchForm()
+    if request.method == 'POST':
+        if (len(search.searchID.data) > 0):
+            if len(search.searchID.data) == 9 and search.search.data.isdigit():
+                return search_resultsForReview(search)
+            else:
+                flash('ID must be 9 digits')
+        return search_resultsForReview(search)
+    return render_template('reviewQueryHome.html', form=search)
+
+@app.route('/reviewQuery/results')
+def search_resultsForReview(search):
+    results = []
+    choice = " "
+    stringf = " "
+
+    if search.select.data == "Review1":
+        print("REVIEW 1")
+        choice = "idTrue"
+        #Query the Review
+        '''
+        search_string = search.data['search']
+        results.append(search_string)
+        stringf = search_string
+        studentInfoList.append(stringf)
+        '''
+
+        #elif statements for the other review types
+
+        #elif statement if BU ID was included
+
+
+    queryResults = []
+    print(len(queryResults))
+
+    if len(queryResults) == 0:
+        flash('No results found!')
+
+
+    ''''
+    elif search.data['search'] == stringf:
+        items = []
+        for row in queryResults:
+            instance = Item('', '', '', '', '', '', '', '', '')
+            instance.setValues(row)
+            items.append(instance)
+        table = Results(items)
+        table.border = True
+        return render_template('results.html', table=table)
+
+    elif search.data['firstName'] == firstNameSearch and search.data['lastName'] == lastNameSearch:
+        items = []
+        for row in queryResults:
+            instance = Item('', '', '', '', '', '', '', '', '')
+            instance.setValues(row)
+            items.append(instance)
+        table = Results(items)
+        table.border = True
+        return render_template('results.html', table=table)
+        '''
+    return redirect('/reviewQuery')
+
 
 
 if __name__ == '__main__':

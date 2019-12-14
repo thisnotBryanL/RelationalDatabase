@@ -9,7 +9,7 @@
                 <span class="icon-bar"></span>
                 <span class="icon-bar"></span>
             </button>
-            <a class="navbar-brand" href="{{ url_for('index') }}">BRYAN RULES AKA HOME PAGE</a>
+            <a class="navbar-brand" href="{{ url_for('index') }}">Home</a>
         </div>
         <div class="navbar-collapse collapse">
             <ul class="nav navbar-nav">
@@ -19,6 +19,7 @@
                     </a>
                     <ul class="dropdown-menu">
                         <li><a href="{{ url_for('studentQueryHomePage') }}">Search Students</a></li>
+                        <li><a href="{{ url_for('reviewQueryHomePage') }}">Search Reviews</a></li>
                         <li><a href="{{ url_for('supervisorInfo') }}">Search Supervisors</a></li>
                         <li><a href="{{ url_for('internshipInfo') }}">Search Internship Information</a></li>
                         <li><a href="{{ url_for('SupInternReviewInfo') }}">Search Internship Information</a></li>
@@ -36,7 +37,7 @@
                     </ul>
             </ul>
             <ul class="nav navbar-nav navbar-right">
-                <li><a href="{{ url_for('SupInternReviewInfo') }}">Empty Link for now</a></li>
+                <li><a href="{{ url_for('SupInternReviewInfo') }}">Import Qualtrics</a></li>
 
             </ul>
         </div>

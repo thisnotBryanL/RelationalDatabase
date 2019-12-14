@@ -52,7 +52,7 @@ class StudentSearchForm(FlaskForm):
     choices = [('Baylor ID', 'Baylor ID'),
                ('Name', 'Name')]
     select = SelectField('Search for Student by:', choices=choices)
-    search = StringField('ID')
+    search = StringField('ID',  validators=[InputRequired(), Length(min=9,max=9)])
     firstName = StringField('First name')
     lastName = StringField('Last name')
 
@@ -187,7 +187,8 @@ def internshipInfo():
 @app.route('/studentQuery', methods=['GET', "POST"])
 def studentQueryHomePage():
     search = StudentSearchForm()
-    if request.method == 'POST':
+    if search.validate_on_submit():
+        print('Got through')
         return search_results(search)
     return render_template('studentQueryHome.html', form=search)
 
@@ -196,12 +197,12 @@ def studentQueryHomePage():
 def search_results(search):
     results = []
 
-    if search.select.data == "Baylor ID":
-        print("BUID")
+    if search.select.data == "Baylor ID" :
+        print("TEST")
         #Query the BU ID
         search_string = search.data['search']
 
-    else:
+    elif search.select.data == "Name":
         print("BUNAME")
         firstNameSearch = search.data['firstName']
         lastNameSearch = search.data['lastName']

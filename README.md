@@ -16,12 +16,11 @@ The Department of Journalism, Public Relations and New Media would like to build
 
 ## Current To-Do list:
 
-- Figure out all the ways the user can input information
+- Connect all datbase queries
 
-- Make database web based
+- Make GUI windows for inserting answers with questions
 
-- Design Schema
+- Implement all search GUI windows/tables
 
-- Configure Queries
+- CSV parser for Qualtrics
 
-- Develop GUI
