@@ -6,6 +6,7 @@ from wtforms.validators import InputRequired, Email, Length, DataRequired, Numbe
 from flask_bootstrap import Bootstrap
 from flask_bootstrap import Bootstrap
 from Bootstrap_Form.TableSchema import reviewType, reviewByStudent, basicInfo
+from TableSchema import *
 import mysql.connector
 
 
