@@ -4,7 +4,7 @@ from flask_table import Table, Col,LinkCol
 from wtforms import StringField, SelectField, IntegerField
 from wtforms.validators import InputRequired, Email, Length, DataRequired, NumberRange
 from flask_bootstrap import Bootstrap
-
+from flask_bootstrap import Bootstrap
 from Bootstrap_Form.TableSchema import reviewType, reviewByStudent, basicInfo
 from TableSchema import *
 import mysql.connector
@@ -14,7 +14,7 @@ import mysql.connector
 mydb = mysql.connector.connect(
     host = "localhost",
     user = "root",
-    password = "hoangdieu72",
+    password = "password123",
     database = "GP"
 )
 
@@ -69,6 +69,10 @@ class StudentInfoForm(FlaskForm):
 
     instance = createInsertIntoStudentList (student_id, first_name, last_name, email, Class)
     StudentInfoFormExecuteList = instance.getExecuteList()
+    # sql = "INSERT INTO StudentInfo (`BaylorID`, `lastName`, `firstName`, `emailAddress`, `class`)" \
+    #       "VALUES (%s, %s, %s, %s, %s)"
+    # mycursor.execute(sql, StudentInfoFormExecuteList)
+    mydb.commit()
 
 
 class StudentInfoForm2(FlaskForm):
@@ -301,6 +305,7 @@ def search_results(search):
         search_string = search.data['search']
         results.append(search_string)
         stringf = search_string
+        studentInfoList.append(stringf)
 
     else:
         print("BUNAME")
@@ -310,7 +315,8 @@ def search_results(search):
         results.append(firstNameSearch)
         results.append(lastNameSearch)
         stringf = firstNameSearch + " " + lastNameSearch
-
+        studentInfoList.append(firstNameSearch)
+        studentInfoList.append(lastNameSearch)
 
 
 
@@ -400,20 +406,13 @@ def portfolioReviewLink(id):
             print(yearNum)
             # Query the Portfolio Reviews for the specific student using their BUID and Year
             # and add it to results
-            studentInfoList.append(str(id))
             studentInfoList.append(str(yearNum))
             PortfolioList = studentInfoList
             print ("list:", PortfolioList)
 
-            try:
-                results = reviewType(mycursor, mydb, "idyear", PortfolioList)
-            except Exception as e:
-                print(e)
+            results = reviewType(mycursor, mydb, "idyear", PortfolioList)
 
 
-            #Clears the list after use, or else append will keep appending
-            # if back button is pushed
-            studentInfoList.clear()
             # results = [PortfolioReviewItem('QUESTION 1', 'ANSWER1',
             #                                 'This is a commnt that is supposed to be kind of l'
             #                                 'ong to see how this would fit in to the table '
@@ -421,6 +420,7 @@ def portfolioReviewLink(id):
 
             # portfolioReviewTable = PortfolioReviewTable(results)
             # portfolioReviewTable.border = True
+
 
             if len(results) > 0:
                 items = []
@@ -451,7 +451,6 @@ def studentReviewLink(id):
             print(yearNum)
             # Query the Supervisor Reviews for the specific student using their BUID and Year
             # and add it to results
-            studentInfoList.append(str(id))
             studentInfoList.append(str(yearNum))
             studentRList = studentInfoList
             results = reviewByStudent(mycursor, mydb, "idyear", studentRList)
@@ -461,9 +460,6 @@ def studentReviewLink(id):
             #                                 'ong to see how this would fit in to the table '
             #                                 'lol hahahahahahha hehehehehe hohohohohohohho')]  # THE query information
 
-            # Clears the list after use, or else append will keep appending
-            # if back button is pushed
-            studentInfoList.clear()
 
             if len(results) > 0:
                 items = []
