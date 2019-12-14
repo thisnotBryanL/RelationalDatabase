@@ -14,7 +14,7 @@ import mysql.connector
 mydb = mysql.connector.connect(
     host = "localhost",
     user = "root",
-    password = "hoangdieu72",
+    password = "password123",
     database = "GP"
 )
 
@@ -42,11 +42,13 @@ month_list = [(0,'---'), (1, 'JAN'), (2,'FEB'), (3,'MAR'), (4,'APR'), (5,'MAY'),
 
 executeList = [ ]
 def executeInsert(sqlStatement, executeList, mycursor, mydb):
+    print ("The execute list is", executeList)
     try:
         mycursor.execute(sqlStatement, executeList)
         mydb.commit()
     except mysql.connector.Error as error:
         print ("duplicate entry")
+    mydb.commit()
     del executeList[:]
 
 
@@ -57,9 +59,6 @@ class StudentInfoForm(FlaskForm):
     last_name = StringField('Last Name', validators=[InputRequired()])
     email = StringField('email', validators=[InputRequired(), Email(message='Invalid email address')])
     Class = StringField('Class', validators=[InputRequired()])
-
-
-
 
 
 class StudentInfoForm2(FlaskForm):
@@ -97,8 +96,8 @@ class SupervisorInfoForm(FlaskForm):
     email = StringField('Email', validators=[InputRequired(), Email(message='Invalid email address')])
 
 class InternshipInfoForm(FlaskForm):
-    email = StringField('Email', validators=[InputRequired(), Email(message='Invalid email address')])
-    address = StringField('Address', validators=[InputRequired()])
+    email = StringField('Supervisor Email', validators=[InputRequired(), Email(message='Invalid email address')])
+    address = StringField('Company Address', validators=[InputRequired()])
     phone = StringField('Phone Number', validators=[InputRequired()])
     tot_hours = IntegerField('Total Hours', validators=[InputRequired()])
     buID = StringField('Student ID', validators=[InputRequired(), Length(9)])
@@ -106,8 +105,8 @@ class InternshipInfoForm(FlaskForm):
 class InternshipInfoForm2(FlaskForm):
     startMonth = SelectField('Start Month', choices=month_list)
     startYear = SelectField('Start Year', choices=year_list)
-    endMonth = SelectField('Start Month', choices=month_list)
-    endYear = SelectField('Start Year', choices=year_list)
+    endMonth = SelectField('End Month', choices=month_list)
+    endYear = SelectField('End Year', choices=year_list)
 
 class SupervisorInternReviewQForm(FlaskForm):
     label = StringField('Label', validators=[InputRequired()])
@@ -237,7 +236,7 @@ def studentInfo():
     form2 = StudentInfoForm2()
     if (form.validate_on_submit() and form2.major_minor.data != '0' and form2.ADV_PR_Semester.data != '0' and
         form2.ADV_PR_Grade.data != '0' and form2.ADV_PR_Year.data != '0'):
-       #insert data into datab|ase
+       #insert data into database
         majororminor = " "
         if form2.data['major_minor'] == '1':
            majororminor = "major"
@@ -298,10 +297,17 @@ def studentInfo():
 def supervisorInfo():
     form = SupervisorInfoForm()
     if form.validate_on_submit():
-        if request.form['option'] == 'home':
-            return redirect(url_for('index'))
-        else:
-            return 'Successfully submitted supervisor information!'
+        executeList.append(form.data["company"])
+        executeList.append(form.data["first_name"] + " " + form.data["last_name"])
+        executeList.append(form.data["title"])
+        executeList.append(form.data["email"])
+        sql = "INSERT INTO Supervisor (`company`, `supervisorName`, `title`, `email`) VALUES (%s, %s, %s, %s)"
+        executeInsert(sql, executeList, mycursor, mydb)
+
+        # if request.form['option'] == 'home':
+        #     return redirect(url_for('index'))
+        # else:
+        #     return 'Successfully submitted supervisor information!'
     return render_template('supervisor.html', form=form)
 
 @app.route('/input_internship_info', methods=['GET', 'POST'])
@@ -309,10 +315,48 @@ def internshipInfo():
     form = InternshipInfoForm()
     form2 = InternshipInfoForm2()
     if form.validate_on_submit():
-        if request.form['option'] == 'home':
-            return redirect(url_for('index'))
-        else:
-            return 'Successfully submitted internship information!'
+        executeList.append(form.data['email'])
+        month = " "
+        m = form2.data['startMonth']
+        for (index, mon) in month_list:
+            if str(index) == m:
+                month = mon
+                break
+        executeList.append(month)
+        year = " "
+        y = form2.data['startYear']
+        for (index, yr) in year_list:
+            if str(index) == y:
+                year = yr
+                break
+        executeList.append(str(year))
+        month = " "
+        m = form2.data['endMonth']
+        for (index, mon) in month_list:
+            if str(index) == m:
+                month = mon
+                break
+        executeList.append(month)
+        year = " "
+        y = form2.data['endYear']
+        for (index, yr) in year_list:
+            if str(index) == y:
+                year = yr
+                break
+        executeList.append(str(year))
+        executeList.append(form.data['address'])
+        executeList.append(form.data['phone'])
+        executeList.append(form.data['tot_hours'])
+        executeList.append(form.data['buID'])
+
+        sql = "INSERT INTO Internship (`supervisorEmail`, `startMonth`, `startYear`, `endMonth`, `endYear`, `address`, `phoneNumber`, `totalHours`, `BaylorID`)" \
+              "VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)"
+        executeInsert(sql, executeList, mycursor, mydb)
+
+        # if request.form['option'] == 'home':
+        #     return redirect(url_for('index'))
+        # else:
+        #     return 'Successfully submitted internship information!'
     return render_template('internship.html', form=form, form2=form2)
 
 @app.route('/input_SupervisorInternReviewQ_info', methods=['GET', 'POST'])
