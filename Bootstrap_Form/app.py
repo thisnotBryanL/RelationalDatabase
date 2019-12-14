@@ -82,7 +82,7 @@ class StudentInfoForm2(FlaskForm):
 class StudentSearchForm(FlaskForm):
     choices = [('Baylor ID', 'Baylor ID'),
                ('Name', 'Name')]
-    select = SelectField('Search for Student by:', choices=choices)
+    select = SelectField('Search by:', choices=choices)
     search = StringField('ID')
     firstName = StringField('First name')
     lastName = StringField('Last name')
