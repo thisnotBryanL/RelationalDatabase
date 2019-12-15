@@ -4,7 +4,6 @@ from flask_table import Table, Col,LinkCol
 from wtforms import StringField, SelectField, IntegerField
 from wtforms.validators import InputRequired, Email, Length, DataRequired, NumberRange
 from flask_bootstrap import Bootstrap
-from flask_bootstrap import Bootstrap
 from Bootstrap_Form.TableSchema import reviewType, reviewByStudent, basicInfo
 from TableSchema import *
 import mysql.connector
@@ -14,8 +13,8 @@ import mysql.connector
 mydb = mysql.connector.connect(
     host = "localhost",
     user = "root",
-    password = "password123",
-    database = "GP"
+    password = "BUboxtop2020",
+    database = "testdb"
 )
 
 #initialize cursor of database
@@ -116,6 +115,10 @@ class SupervisorInternReviewQForm(FlaskForm):
 class SupervisorInternReviewQForm2(FlaskForm):
     startYear = SelectField('Start Year', choices=year_list)
 
+class ReviewQuestions(FlaskForm):
+    review_list = SelectField('Review Question Option', choices=[(0,'---'), (1,'Portfolio Review'),
+                                                                 (2,'Supervisor Intern Review'),
+                                                                 (3,'Student Review')])
 
 class Results(Table):
     id = Col('Baylor ID ')
@@ -223,8 +226,8 @@ def index():
             return redirect(url_for('supervisorInfo'))
         elif request.form['option'] == 'Enter Internship Information':
             return redirect(url_for('internshipInfo'))
-        elif request.form['option'] == 'Supervisor\'s Intern Review Quesitons':
-            return redirect(url_for('SupInternReviewInfo'))
+        elif request.form['option'] == 'Review Questions':
+            return redirect(url_for('ReviewQ'))
     return render_template('index.html')
 
 
@@ -360,15 +363,22 @@ def internshipInfo():
     return render_template('internship.html', form=form, form2=form2)
 
 @app.route('/input_SupervisorInternReviewQ_info', methods=['GET', 'POST'])
-def SupInternReviewInfo():
-    form = SupervisorInternReviewQForm()
-    form2 = SupervisorInternReviewQForm2()
-    if form.validate_on_submit():
+def ReviewQ():
+    # form = SupervisorInternReviewQForm()
+    # form2 = SupervisorInternReviewQForm2()
+    form = ReviewQuestions()
+    # if form.validate_on_submit():
 #        if request.form['option'] == 'home':
 #            return redirect(url_for('index'))
 #        else:
-            return 'Successfully submitted Review information!'
-    return render_template('SupervisorInternReviewQ.html', form=form, form2=form2)
+#             return 'Successfully submitted Review information!'
+    if form.review_list.data == '1':
+        return 'Portfolio Review Page'
+    elif form.review_list.data == '2':
+        return 'Supervisor Intern Review Page'
+    elif form.review_list.data == '3':
+        return 'Student Review Page'
+    return render_template('ReviewQuestions.html', form=form)
 
 ######################## SUDENT QUERY DATA ########################
 

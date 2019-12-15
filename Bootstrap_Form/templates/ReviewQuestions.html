@@ -1,24 +1,19 @@
 {% extends "base.html" %}
-{% extends "ReviewQuestions.html" %}
 {% import "bootstrap/wtf.html" as wtf%}
 
 {% block title %}
-    Intern Review Form
+    Review Questions
 {% endblock %}
 
 {%  block content %}
-    <h1> Supervisor Intern Review Questions </h1>
+<h1> Review Questions </h1>
 <div class="container">
     <form method = "POST">
         <dl>
             {{ form.hidden_tag() }}
             <div style="width: 40%">
-<!--                {{ form.csrf_token }}-->
-<!--                {{ wtf.form_field(form.label) }}-->
-<!--                {{ wtf.form_field(form.question) }}-->
-<!--                {{ wtf.form_field(form.review_type) }}-->
-<!--                {{ wtf.form_field(form2.startYear) }}-->
-
+                {{ form.csrf_token }}
+                {{ wtf.form_field(form.review_list) }}
                 <br><br><br>
                 <input class="btn btn-primary" value="submit" type="submit"/>
             </div>
