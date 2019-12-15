@@ -291,46 +291,53 @@ def search_results(search):
 @app.route('/item/<int:id>', methods=['GET', 'POST'])
 def supervisorReviewLink(id):
     # Ask for YEAR of review
-    yearSearch = YearSearchForm()
+    types = SupervisorTypesForm()
     print('here')
     if request.method == 'POST':
-        yearNum = yearSearch.data['year']
+        yearNum = types.data['year']
 
         if len(yearNum) == 4 and yearNum.isdigit():
             print(yearNum)
             # Query the Supervisor Reviews for the specific student using their BUID and Year
             # and add it to results
-            studentInfoList.append(str(id))
             studentInfoList.append(str(yearNum))
-            SuperVisorList = studentInfoList
-
+            SupervisorList = studentInfoList
 
             print(studentInfoList)
-            print(SuperVisorList)
+            print(SupervisorList)
 
-            results = portfolioReview(mycursor, mydb, "SUPidyear", SuperVisorList)
+            if types.data['types'] == "Midterm Qualtrics Survey":
+                SupervisorList.append("midterm")
 
-            # Clears the list after use, or else append will keep appending
-            # if back button is pushed
-            studentInfoList.clear()
-            SuperVisorList.clear()
+            elif types.data['types'] == "Midterm Site Visit":
+                SupervisorList.append("site")
+
+            elif types.data['types'] == "End-of-Term Qualtrics Survey":
+                SupervisorList.append("site")
+
+            print(types.data['types'])
+
+            print ("SupervisorList", SupervisorList)
+            results = supReviewType(mycursor, "idyear", SupervisorList)
+            del studentInfoList[-1]
+            SupervisorList.clear()
 
             if len(results) > 0:
                 items = []
                 for row in results:
-                    instance = SuperVisorReviewItem('', '', '')
+                    instance = SupervisorReviewItem('', '', '')
                     instance.setValues(row)
                     items.append(instance)
 
-                superVisorTable = SuperVisorReviewsTable(items)
-                superVisorTable.border = True
-                return render_template('results.html', table=superVisorTable)
+                supervisorTable = SupervisorReviewsTable(items)
+                supervisorTable.border = True
+                return render_template('results.html', table=supervisorTable)
             else:
                 flash('No results found!')
                 return redirect(f'/item/{id}')
         else:
             flash('Please enter a 4 digit year!')
-    return render_template('yearForm.html' ,form=yearSearch)
+    return render_template('SupervisorTypes.html', form = types )
 
 @app.route('/item1/<int:id>', methods=['GET', 'POST'])
 def portfolioReviewLink(id):
@@ -382,6 +389,7 @@ def studentReviewLink(id):
             # and add it to results
             studentInfoList.append(str(yearNum))
             studentRList = studentInfoList
+            print ("studentRList", studentRList)
             results = reviewByStudent(mycursor, mydb, "idyear", studentRList)
 
             if len(results) > 0:
@@ -395,7 +403,7 @@ def studentReviewLink(id):
                 return render_template('results.html', table=studentReviewTable)
             else:
                 flash('No results found!')
-                studentInfoList[-1]
+                del studentInfoList[-1]
                 return redirect(f'/item2/{id}')
         else:
             flash('Please enter a 4 digit year!')
@@ -406,11 +414,6 @@ def studentReviewLink(id):
 def reviewQueryHomePage():
     search = ReviewSearchForm()
     if request.method == 'POST':
-        if (len(search.searchID.data) > 0):
-            if len(search.searchID.data) == 9 and search.search.data.isdigit():
-                return search_resultsForReview(search)
-            else:
-                flash('ID must be 9 digits')
         return search_resultsForReview(search)
     return render_template('reviewQueryHome.html', form=search)
 

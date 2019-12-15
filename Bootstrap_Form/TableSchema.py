@@ -146,7 +146,7 @@ this is how we will call the function in main
 if reviewType != "portfolio" and reviewType != "reviewByStudent":
     reviewType(mycursor, mydb, choice, executeList)"""
 #choice can be id, name, idyear, nameyear
-# def reviewType(mycursor, mydb, choice, executeList):
+def supReviewType(mycursor, choice, executeList):
     # # id and no year
     # if choice == "id":
     #     displayQReviewIDNoYear = """SELECT question, answer, comment
@@ -172,17 +172,17 @@ if reviewType != "portfolio" and reviewType != "reviewByStudent":
     #     reviewresults = mycursor.fetchall()
     #
     # "----------------------------------------------------------------------------------------------------------------------------------------------------------------"
-    # #id and year
-    # if choice == "idyear":
-    #     displayQReviewIDYear = """SELECT question, answer, comment
-    #     FROM SupervisorInternResponse, SupervisorInternReviewQ
-    #     WHERE baylorID = %s AND ReviewType = %s AND startYear = %s
-    #     AND SupervisorInternResponse.startYear = SupervisorInternReviewQ.startYear
-    #     AND SupervisorInternResponse.label = SupervisorInternReviewQ.label"""
-    #
-    #     mycursor.execute(displayQReviewIDYear, (baylorid , reviewtype, startyear))
-    #     mydb.commit()
-    #     reviewresults = mycursor.fetchall()
+    #id and year
+    if choice == "idyear":
+        displayQReviewIDYear = """SELECT question, answer, comment
+        FROM SupervisorInternResponse, SupervisorInternReviewQ
+        WHERE baylorID = %s AND SupervisorInternResponse.startYear = %s AND SupervisorInternResponse.reviewType = %s
+        AND SupervisorInternResponse.startYear = SupervisorInternReviewQ.startYear
+        AND SupervisorInternResponse.label = SupervisorInternReviewQ.label"""
+
+        mycursor.execute(displayQReviewIDYear, executeList)
+        reviewresults = mycursor.fetchall()
+        return reviewresults
     #
     #
     # #name and year

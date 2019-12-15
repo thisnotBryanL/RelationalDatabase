@@ -13,6 +13,12 @@ for i in range(20):
 month_list = [(0,'---'), (1, 'JAN'), (2,'FEB'), (3,'MAR'), (4,'APR'), (5,'MAY'), (6,'JUN'),
             (7,'JUL'), (8, 'AUG'), (9, 'SEP'), (10, 'OCT'), (11, 'NOV'), (12, 'DEC')]
 
+class SupervisorTypesForm(FlaskForm):
+    types = SelectField('Supervisor Review:', choices = [('Midterm Qualtrics Survey', 'Midterm Qualtrics Survey'),
+                                                        ('Midterm Site Visit', 'Midterm Site Visit'),
+                                                        ('End-of-Term Qualtrics Survey', 'End-of-Term Qualtrics Survey')])
+    year = StringField('Enter Year:')
+
 class StudentInfoForm(FlaskForm):
     student_id = StringField('student ID', validators=[InputRequired(), Length(9)])
     first_name = StringField('First Name', validators=[InputRequired()])
@@ -46,8 +52,6 @@ class ReviewSearchForm(FlaskForm):
                ('End-of-Term Qualtrics Survey','End-of-Term Qualtrics Survey')]
 
     select = SelectField('Search by:', choices=choices)
-    searchID = StringField('ID')
-
 
 class SupervisorInfoForm(FlaskForm):
     company = StringField('Company', validators=[InputRequired()])
@@ -76,6 +80,9 @@ class SupervisorInternReviewQForm(FlaskForm):
 
 class SupervisorInternReviewQForm2(FlaskForm):
     startYear = SelectField('Start Year', choices=year_list)
+
+class YearSearchForm(FlaskForm):
+    year = StringField('Enter Year:')
 
 #********************************************************************************************************************************************
 
@@ -191,7 +198,7 @@ class PortfolioReviewItemAllStudents(object):
         self.revname = list[7]
 #********************************************************************************************************************************************
 
-class SuperVisorReviewItem(object):
+class SupervisorReviewItem(object):
     def __init__(self,question,answer,comment):
         self.question = question
         self.answer = answer
@@ -202,7 +209,7 @@ class SuperVisorReviewItem(object):
         self.answer = list[1]
         self.comment = list[2]
 
-class SuperVisorReviewsTable(Table):
+class SupervisorReviewsTable(Table):
     question = Col('Questions')
     answer = Col('Answers')
     comment = Col('Comments')
@@ -232,6 +239,4 @@ class Item(object):
         self.grade = list[7]
         self.classn = list[5]
 
-class YearSearchForm(FlaskForm):
-    year = StringField('Enter Year:')
 
