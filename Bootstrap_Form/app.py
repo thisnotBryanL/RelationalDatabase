@@ -394,7 +394,7 @@ def StudentRevQ():
     form2 = Student_PortfolioReviewQForm2()
     if form.validate_on_submit():
         return redirect(url_for('ReviewQ'))
-    return render_template('Student_PortfolioReviewQ.html', form=form, form2=form2)
+    return render_template('Student_PortfolioReviewQ.html', form=form, form2=form2, header='Student')
 
 @app.route('/ReviewQ_info/Supervisor_Intern_Review_Questions', methods=['GET','POST'])
 def SupInternRevQ():
@@ -410,7 +410,7 @@ def PortfolioRevQ():
     form2 = Student_PortfolioReviewQForm2()
     if form.validate_on_submit():
         return redirect(url_for('ReviewQ'))
-    return render_template('Student_PortfolioReviewQ.html', form=form, form2=form2)
+    return render_template('Student_PortfolioReviewQ.html', form=form, form2=form2, header='Portfolio')
 
 
 ######################## SUDENT QUERY DATA ########################
