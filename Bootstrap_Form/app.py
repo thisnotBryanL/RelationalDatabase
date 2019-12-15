@@ -4,11 +4,12 @@ from flask_table import Table, Col,LinkCol
 from wtforms import StringField, SelectField, IntegerField
 from wtforms.validators import InputRequired, Email, Length, DataRequired, NumberRange
 from flask_bootstrap import Bootstrap
+from flask_bootstrap import Bootstrap
+from Bootstrap_Form.TableSchema import reviewByStudent, basicInfo
 from Bootstrap_Form.TableSchema import reviewType, reviewByStudent, basicInfo
 from TableSchema import *
 from Forms import *
 import mysql.connector
-
 
 #connect to database
 mydb = mysql.connector.connect(
@@ -32,102 +33,31 @@ app = Flask(__name__)
 Bootstrap(app)
 app.config['SECRET_KEY'] = 'DontTellAnyone'
 
+# Create Classes for forms and web pages
 
 
-class Results(Table):
-    id = Col('Baylor ID ')
-    fname = Col('First Name ')
-    lname = Col('Last Name ')
-    email = Col('Email ')
-    semester = Col('Semester' )
-    yr = Col('Year ')
-    major_minor = Col('Major ')
-    grade = Col('Grade ')
-    classYear = Col('Class')
-    supervisorReviewLink = LinkCol('Supervisor Reviews', 'supervisorReviewLink', url_kwargs=dict(id='id'))
-    portfolioReviewLink = LinkCol('Portfolio Reviews', 'portfolioReviewLink', url_kwargs=dict(id='id'))
-    studentReviewLink = LinkCol('Student Reviews', 'studentReviewLink', url_kwargs=dict(id='id'))
+executeList = [ ]
+def executeInsert(sqlStatement, executeList, mycursor, mydb):
+    print ("The execute list is", executeList)
+    try:
+        mycursor.execute(sqlStatement, executeList)
+        del executeList[:]
+        mydb.commit()
+    except mysql.connector.Error as error:
+        del executeList[:]
+        print ("duplicate entry")
+        flash ("Student with id #" + executeList[0] + " has already been entered")
 
 
-class SuperVisorReviewsTable(Table):
-    question = Col('Questions')
-    answer = Col('Answers')
-    comment = Col('Comments')
-
-class PortfolioReviewTable(Table):
-    question = Col('Questions')
-    answer = Col('Answers')
-    comment = Col('Comments')
-    reviewerName = Col('Reviewer Name')
-
-class StudentReviewTable(Table):
-    question = Col('Questions')
-    answer = Col('Answers')
-    comment = Col('Comments')
-
-class SuperVisorReviewItem(object):
-    def __init__(self,question,answer,comment):
-        self.question = question
-        self.answer = answer
-        self.comment = comment
-
-    def setValues(self,list):
-        self.question = list[0]
-        self.answer = list[1]
-        self.comment = list[2]
-
-class StudentReviewItem(object):
-    def __init__(self,question,answer,comment):
-        self.question = question
-        self.answer = answer
-        self.comment = comment
-
-    def setValues(self,list):
-        self.question = list[0]
-        self.answer = list[1]
-        self.comment = list[2]
-
-
-class PortfolioReviewItem(object):
-    def __init__(self,question,answer,comment,reviewerName):
-        self.question = question
-        self.answer = answer
-        self.comment = comment
-        self.reviewerName = reviewerName
-
-    def setValues(self,list):
-        self.question = list[0]
-        self.answer = list[1]
-        self.comment = list[2]
-        self.reviewerName = list[3]
-
-
-class Item(object):
-    def __init__(self, id, fname, lname, email, semester, yr, major_minor, grade, classYear):
-        self.id = id
-        self.fname = fname
-        self.lname = lname
-        self.email = email
-        self.semester = semester
-        self.yr = yr
-        self.major_minor = major_minor
-        self.grade = grade
-        self.classYear = classYear
-
-    def setValues (self, list):
-        self.id = list[0]
-        self.fname = list[2]
-        self.lname = list[1]
-        self.email = list[3]
-        self.semester = list[4]
-        self.yr = list[8]
-        self.major_minor = list[6]
-        self.grade = list[7]
-        self.classn = list[5]
-
-class YearSearchForm(FlaskForm):
-    year = StringField('Enter Year:')
-
+def studentExecuteInsert(sqlStatement, executeList, mycursor, mydb):
+    print ("The execute list is", executeList)
+    try:
+        mycursor.execute(sqlStatement, executeList)
+    except mysql.connector.Error as error:
+        print ("duplicate entry")
+        flash ("Student with id #" + executeList[0] + " has already been entered")
+    mydb.commit()
+    del executeList[:]
 
 @app.route('/', methods=['GET','POST'])
 def index():
@@ -196,18 +126,13 @@ def studentInfo():
         print ("the executeList is", executeList)
         sql = "INSERT INTO StudentInfo (`BaylorID`, `lastName`, `firstName`, `emailAddress`, `ADV_PR_semester`, `class`, `major_minor`, `ADV_PR_grade`, `ADV_PR_year`)" \
               "VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)"
-        executeInsert(sql, executeList, mycursor,mydb)
+        studentExecuteInsert(sql, executeList, mycursor,mydb)
        #END INSERT DATA
         # if request.form['option'] == 'home':
         #     return redirect(url_for('index'))
         # else:
         #     return 'Redirect'
-    # if trueorfalse == False:
-    #     error1 = "Student with ID #" + executeList[0] + " has already been inserted'\n'" \
-    #                                                     "If you would like to update their information, please go to the update page"
-    #
-    #     return render_template('submit.html', form=form, form2=form2, error=error)
-    # else:
+
     return render_template('submit.html', form=form, form2=form2)
 
 @app.route('/input_supervisor_info', methods=['GET', 'POST'])
@@ -398,46 +323,53 @@ def search_results(search):
 @app.route('/item/<int:id>', methods=['GET', 'POST'])
 def supervisorReviewLink(id):
     # Ask for YEAR of review
-    yearSearch = YearSearchForm()
+    types = SupervisorTypesForm()
     print('here')
     if request.method == 'POST':
-        yearNum = yearSearch.data['year']
+        yearNum = types.data['year']
 
         if len(yearNum) == 4 and yearNum.isdigit():
             print(yearNum)
             # Query the Supervisor Reviews for the specific student using their BUID and Year
             # and add it to results
-            studentInfoList.append(str(id))
             studentInfoList.append(str(yearNum))
-            SuperVisorList = studentInfoList
-
+            SupervisorList = studentInfoList
 
             print(studentInfoList)
-            print(SuperVisorList)
+            print(SupervisorList)
 
-            results = reviewType(mycursor, mydb, "SUPidyear", SuperVisorList)
+            if types.data['types'] == "Midterm Qualtrics Survey":
+                SupervisorList.append("midterm")
 
-            # Clears the list after use, or else append will keep appending
-            # if back button is pushed
-            studentInfoList.clear()
-            SuperVisorList.clear()
+            elif types.data['types'] == "Midterm Site Visit":
+                SupervisorList.append("site")
+
+            elif types.data['types'] == "End-of-Term Qualtrics Survey":
+                SupervisorList.append("site")
+
+            print(types.data['types'])
+
+            print ("SupervisorList", SupervisorList)
+            results = supReviewType(mycursor, "idyear", SupervisorList)
+            del studentInfoList[-1]
+            SupervisorList.clear()
 
             if len(results) > 0:
                 items = []
                 for row in results:
-                    instance = SuperVisorReviewItem('', '', '')
+                    instance = SupervisorReviewItem('', '', '')
                     instance.setValues(row)
                     items.append(instance)
 
-                superVisorTable = SuperVisorReviewsTable(items)
-                superVisorTable.border = True
-                return render_template('results.html', table=superVisorTable)
+                supervisorTable = SupervisorReviewsTable(items)
+                supervisorTable.border = True
+                return render_template('results.html', table=supervisorTable)
             else:
                 flash('No results found!')
                 return redirect(f'/item/{id}')
         else:
             flash('Please enter a 4 digit year!')
-    return render_template('yearForm.html' ,form=yearSearch)
+    return render_template('SupervisorTypes.html', form = types )
 
 @app.route('/item1/<int:id>', methods=['GET', 'POST'])
 def portfolioReviewLink(id):
@@ -455,7 +387,7 @@ def portfolioReviewLink(id):
             PortfolioList = studentInfoList
             print ("list:", PortfolioList)
 
-            results = reviewType(mycursor, mydb, "idyear", PortfolioList)
+            results = portfolioReview(mycursor, mydb, "idyear", PortfolioList)
 
             if len(results) > 0:
                 items = []
@@ -469,6 +401,7 @@ def portfolioReviewLink(id):
                 return render_template('results.html', table=portfolioReviewTable)
             else:
                 flash('No results found!')
+                del studentInfoList[-1]
                 return redirect(f'/item1/{id}')
         else:
             flash('Please enter a 4 digit year!')
@@ -488,6 +421,7 @@ def studentReviewLink(id):
             # and add it to results
             studentInfoList.append(str(yearNum))
             studentRList = studentInfoList
+            print ("studentRList", studentRList)
             results = reviewByStudent(mycursor, mydb, "idyear", studentRList)
 
             if len(results) > 0:
@@ -501,6 +435,7 @@ def studentReviewLink(id):
                 return render_template('results.html', table=studentReviewTable)
             else:
                 flash('No results found!')
+                del studentInfoList[-1]
                 return redirect(f'/item2/{id}')
         else:
             flash('Please enter a 4 digit year!')
@@ -511,64 +446,70 @@ def studentReviewLink(id):
 def reviewQueryHomePage():
     search = ReviewSearchForm()
     if request.method == 'POST':
-        if (len(search.searchID.data) > 0):
-            if len(search.searchID.data) == 9 and search.search.data.isdigit():
-                return search_resultsForReview(search)
-            else:
-                flash('ID must be 9 digits')
         return search_resultsForReview(search)
     return render_template('reviewQueryHome.html', form=search)
 
 @app.route('/reviewQuery/results')
 def search_resultsForReview(search):
-    results = []
-    choice = " "
-    stringf = " "
 
-    if search.select.data == "Review1":
-        print("REVIEW 1")
-        choice = "idTrue"
-        #Query the Review
-        '''
-        search_string = search.data['search']
-        results.append(search_string)
-        stringf = search_string
-        studentInfoList.append(stringf)
-        '''
+    items = []
+    if search.select.data == "Portfolio Review":
+        queryResults = displayPortfolioReviews(mycursor, mydb)
 
-        #elif statements for the other review types
+        if len(queryResults) == 0:
+            flash('No results found!')
+        else:
+            for row in queryResults:
+                print (row)
+                instance = PortfolioReviewItemAllStudents('', '', '', '', '', '', '', '')
+                instance.setValues(row)
+                items.append(instance)
+            table = PortfolioReviewAllStudentsTable(items)
+            table.border = True
+            return render_template('results.html', table=table)
 
-        #elif statement if BU ID was included
+    elif search.select.data == "Student Review":
+        queryResults = displayStudentReviews(mycursor, mydb)
+        if len(queryResults) == 0:
+            flash('No results found!')
+        else:
+            for row in queryResults:
+                print (row)
+                instance = StudentReviewItemAllStudents('', '', '', '', '', '', '')
+                instance.setValues(row)
+                items.append(instance)
+            table = StudentReviewAllStudentsTable(items)
+            table.border = True
+            return render_template('results.html', table=table)
+    else:
+        exList = []
+        if search.select.data == "Midterm Qualtrics Survey ":
+            exList.append("midterm")
+
+        elif search.select.data == "Midterm Site Visit":
+            exList.append("site")
+
+        elif search.select.data == "End-of-Term Qualtrics Survey":
+            exList.append("site")
+
+        print (search.select.data)
+
+        queryResults = displayReviews(mycursor, mydb, exList)
+        if len(queryResults) == 0:
+            flash('No results found!')
+        else:
+            for row in queryResults:
+                print (row)
+                instance = StudentReviewItemAllStudents('', '', '', '', '', '', '')
+                instance.setValues(row)
+                items.append(instance)
+            table = StudentReviewAllStudentsTable(items)
+            table.border = True
+            return render_template('results.html', table=table)
+            return render_template('results.html', table=table)
 
 
-    queryResults = []
-    print(len(queryResults))
 
-    if len(queryResults) == 0:
-        flash('No results found!')
-
-
-    ''''
-    elif search.data['search'] == stringf:
-        items = []
-        for row in queryResults:
-            instance = Item('', '', '', '', '', '', '', '', '')
-            instance.setValues(row)
-            items.append(instance)
-        table = Results(items)
-        table.border = True
-        return render_template('results.html', table=table)
-
-    elif search.data['firstName'] == firstNameSearch and search.data['lastName'] == lastNameSearch:
-        items = []
-        for row in queryResults:
-            instance = Item('', '', '', '', '', '', '', '', '')
-            instance.setValues(row)
-            items.append(instance)
-        table = Results(items)
-        table.border = True
-        return render_template('results.html', table=table)
-        '''
     return redirect('/reviewQuery')
 
 

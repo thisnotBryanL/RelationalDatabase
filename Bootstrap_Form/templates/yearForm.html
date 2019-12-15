@@ -1,3 +1,12 @@
+{% extends "base.html" %}
+{% import "bootstrap/wtf.html" as wtf%}
+
+{% block title %}
+    Student Form
+{% endblock %}
+
+{%  block content %}
+
 {% with messages = get_flashed_messages() %}
   {% if messages %}
     <ul class=flashes>
@@ -10,20 +19,11 @@
 {% from "_formhelpers.html" import render_field %}
 
 <body>
-  <div>
-    Project:
-    <a href="{{ url_for('index') }}">Home,</a>
-    <a href="{{ url_for('studentQueryHomePage') }}">Search for students,</a>
-    <a href="{{ url_for('studentInfo') }}">Add Students,</a>
-    <a href="{{ url_for('supervisorInfo') }}">Add Supervisors,</a>
-    <a href="{{ url_for('internshipInfo') }}">Add Internship Information,</a>
-    <a href="{{ url_for('SupInternReviewInfo') }}">Add Review Questions</a>
-  </div>
-  <hr>
-
+  <center>
   <form method=post >
       {{ render_field(form.year) }}
-    <p><input type=submit value=Sumbmit>
-
+    <p><input type=submit value=Sumbmit></p>
   </form>
+  </center>
 </body>
+{% endblock %}

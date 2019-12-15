@@ -1,17 +1,12 @@
-    <body>
-        <div>
-        Project:
-        <a href="{{ url_for('index') }}">Home,</a>
-        <a href="{{ url_for('studentQueryHomePage') }}">Search for students,</a>
-        <a href="{{ url_for('studentInfo') }}">Add Students,</a>
-        <a href="{{ url_for('supervisorInfo') }}">Add Supervisors,</a>
-        <a href="{{ url_for('internshipInfo') }}">Add Internship Information,</a>
-        <a href="{{ url_for('SupInternReviewInfo') }}">Add Review Questions</a>
-        </div>
-        <hr>
-        <form method = "POST" action="/">
-            {{table}}
-            <input class="btn btn-primary btn-lg btn-block" value="Look Up Student Information" type="submit"
-                   id="student" name="option">
-        </form>
-    </body>
+{% extends "base.html" %}
+{% import "bootstrap/wtf.html" as wtf%}
+
+{% block title %}
+    Results table
+{% endblock %}
+
+{% block content %}
+<center>
+<div class =table>{{table}}</div>
+</center>
+{% endblock %}

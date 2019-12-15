@@ -23,18 +23,8 @@
             {{ form.hidden_tag() }}
             <div style="width: 40%">
                 {{ form.csrf_token }}
-                {{ wtf.form_field(form.student_id) }}
-                {{ wtf.form_field(form.first_name) }}
-                {{ wtf.form_field(form.last_name) }}
-                {{ wtf.form_field(form.email) }}
-                {{ wtf.form_field(form.Class) }}
-            </div>
-            <div style="width: 150%">
-                {{ form2.major_minor }}
-                {{ form2.ADV_PR_Semester }}
-                {{ form2.ADV_PR_Grade }}
-                {{ form2.ADV_PR_Year }}
-            </div>
+                {{ wtf.form_field(form.year) }}
+                {{ wtf.form_field(form.types) }}
 
             <br><br><br>
             <input class="btn btn-primary" value="submit" type="submit"/>
