@@ -110,9 +110,17 @@ class InternshipInfoForm2(FlaskForm):
 class SupervisorInternReviewQForm(FlaskForm):
     label = StringField('Label', validators=[InputRequired()])
     question = StringField('Question', validators=[InputRequired()])
-    review_type = StringField('Review Type', validators=[InputRequired()])
 
 class SupervisorInternReviewQForm2(FlaskForm):
+    startYear = SelectField('Start Year', choices=year_list)
+    review_type = SelectField('Review Type', choices=[(0,'---'), (1,'Midterm Qualtrics Survey'), (2,'Midterm Site Visit'),
+                                                      (3,'End-of-Term Qualtrics Survey')])
+
+class Student_PortfolioReviewQForm(FlaskForm):
+    label = StringField('Label', validators=[InputRequired()])
+    question = StringField('Question', validators=[InputRequired()])
+
+class Student_PortfolioReviewQForm2(FlaskForm):
     startYear = SelectField('Start Year', choices=year_list)
 
 class ReviewQuestions(FlaskForm):
@@ -362,7 +370,7 @@ def internshipInfo():
         #     return 'Successfully submitted internship information!'
     return render_template('internship.html', form=form, form2=form2)
 
-@app.route('/input_SupervisorInternReviewQ_info', methods=['GET', 'POST'])
+@app.route('/ReviewQ_info', methods=['GET', 'POST'])
 def ReviewQ():
     # form = SupervisorInternReviewQForm()
     # form2 = SupervisorInternReviewQForm2()
@@ -373,12 +381,37 @@ def ReviewQ():
 #        else:
 #             return 'Successfully submitted Review information!'
     if form.review_list.data == '1':
-        return 'Portfolio Review Page'
+        return redirect(url_for('PortfolioRevQ'))
     elif form.review_list.data == '2':
-        return 'Supervisor Intern Review Page'
+        return redirect(url_for('SupInternRevQ'))
     elif form.review_list.data == '3':
-        return 'Student Review Page'
+        return redirect(url_for('StudentRevQ'))
     return render_template('ReviewQuestions.html', form=form)
+
+@app.route('/ReviewQ_info/Student_Review_Questions', methods=['GET','POST'])
+def StudentRevQ():
+    form = Student_PortfolioReviewQForm()
+    form2 = Student_PortfolioReviewQForm2()
+    if form.validate_on_submit():
+        return redirect(url_for('ReviewQ'))
+    return render_template('Student_PortfolioReviewQ.html', form=form, form2=form2)
+
+@app.route('/ReviewQ_info/Supervisor_Intern_Review_Questions', methods=['GET','POST'])
+def SupInternRevQ():
+    form = SupervisorInternReviewQForm()
+    form2 = SupervisorInternReviewQForm2()
+    if form.validate_on_submit():
+        return redirect(url_for('ReviewQ'))
+    return render_template('SupervisorInternReviewQ.html', form=form, form2=form2)
+
+@app.route('/ReviewQ_info/Portfolio_Review_Questions', methods=['GET','POST'])
+def PortfolioRevQ():
+    form = Student_PortfolioReviewQForm()
+    form2 = Student_PortfolioReviewQForm2()
+    if form.validate_on_submit():
+        return redirect(url_for('ReviewQ'))
+    return render_template('Student_PortfolioReviewQ.html', form=form, form2=form2)
+
 
 ######################## SUDENT QUERY DATA ########################
 

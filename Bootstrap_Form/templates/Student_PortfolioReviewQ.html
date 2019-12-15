@@ -6,7 +6,7 @@
 {% endblock %}
 
 {%  block content %}
-    <h1> Supervisor Intern Review Questions </h1>
+    <h1> Student/Portfolio Review Questions </h1>
 <div class="container">
     <form method = "POST">
         <dl>
@@ -15,7 +15,6 @@
                 {{ form.csrf_token }}
                 {{ wtf.form_field(form.label) }}
                 {{ wtf.form_field(form.question) }}
-                {{ wtf.form_field(form2.review_type) }}
                 {{ wtf.form_field(form2.startYear) }}
                 <br><br><br>
                 <input class="btn btn-primary" value="submit" type="submit"/>
