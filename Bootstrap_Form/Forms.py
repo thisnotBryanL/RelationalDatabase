@@ -240,3 +240,21 @@ class Item(object):
         self.classn = list[5]
 
 
+
+
+class SupervisorInternReviewQForm2(FlaskForm):
+    startYear = SelectField('Start Year', choices=year_list)
+    review_type = SelectField('Review Type', choices=[(0,'---'), (1,'Midterm Qualtrics Survey'), (2,'Midterm Site Visit'),
+                                                      (3,'End-of-Term Qualtrics Survey')])
+
+class Student_PortfolioReviewQForm(FlaskForm):
+    label = StringField('Label', validators=[InputRequired()])
+    question = StringField('Question', validators=[InputRequired()])
+
+class Student_PortfolioReviewQForm2(FlaskForm):
+    startYear = SelectField('Start Year', choices=year_list)
+
+class ReviewQuestions(FlaskForm):
+    review_list = SelectField('Review Question Option', choices=[(0,'---'), (1,'Portfolio Review'),
+                                                                 (2,'Supervisor Intern Review'),
+                                                                 (3,'Student Review')])

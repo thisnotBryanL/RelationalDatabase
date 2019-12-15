@@ -6,17 +6,17 @@ from wtforms.validators import InputRequired, Email, Length, DataRequired, Numbe
 from flask_bootstrap import Bootstrap
 from flask_bootstrap import Bootstrap
 from Bootstrap_Form.TableSchema import reviewByStudent, basicInfo
+from Bootstrap_Form.TableSchema import reviewByStudent, basicInfo
 from TableSchema import *
-import mysql.connector
 from Forms import *
-
+import mysql.connector
 
 #connect to database
 mydb = mysql.connector.connect(
     host = "localhost",
     user = "root",
-    password = "hoangdieu72",
-    database = "GP"
+    password = "BUboxtop2020",
+    database = "testdb"
 )
 
 #initialize cursor of database
@@ -70,8 +70,8 @@ def index():
             return redirect(url_for('supervisorInfo'))
         elif request.form['option'] == 'Enter Internship Information':
             return redirect(url_for('internshipInfo'))
-        elif request.form['option'] == 'Supervisor\'s Intern Review Quesitons':
-            return redirect(url_for('SupInternReviewInfo'))
+        elif request.form['option'] == 'Review Questions':
+            return redirect(url_for('ReviewQ'))
     return render_template('index.html')
 
 
@@ -201,16 +201,48 @@ def internshipInfo():
         #     return 'Successfully submitted internship information!'
     return render_template('internship.html', form=form, form2=form2)
 
-@app.route('/input_SupervisorInternReviewQ_info', methods=['GET', 'POST'])
-def SupInternReviewInfo():
-    form = SupervisorInternReviewQForm()
-    form2 = SupervisorInternReviewQForm2()
-    if form.validate_on_submit():
+@app.route('/ReviewQ_info', methods=['GET', 'POST'])
+def ReviewQ():
+    # form = SupervisorInternReviewQForm()
+    # form2 = SupervisorInternReviewQForm2()
+    form = ReviewQuestions()
+    # if form.validate_on_submit():
 #        if request.form['option'] == 'home':
 #            return redirect(url_for('index'))
 #        else:
-            return 'Successfully submitted Review information!'
+#             return 'Successfully submitted Review information!'
+    if form.review_list.data == '1':
+        return redirect(url_for('PortfolioRevQ'))
+    elif form.review_list.data == '2':
+        return redirect(url_for('SupInternRevQ'))
+    elif form.review_list.data == '3':
+        return redirect(url_for('StudentRevQ'))
+    return render_template('ReviewQuestions.html', form=form)
+
+@app.route('/ReviewQ_info/Student_Review_Questions', methods=['GET','POST'])
+def StudentRevQ():
+    form = Student_PortfolioReviewQForm()
+    form2 = Student_PortfolioReviewQForm2()
+    if form.validate_on_submit():
+        return redirect(url_for('ReviewQ'))
+    return render_template('Student_PortfolioReviewQ.html', form=form, form2=form2, header='Student')
+
+@app.route('/ReviewQ_info/Supervisor_Intern_Review_Questions', methods=['GET','POST'])
+def SupInternRevQ():
+    form = SupervisorInternReviewQForm()
+    form2 = SupervisorInternReviewQForm2()
+    if form.validate_on_submit():
+        return redirect(url_for('ReviewQ'))
     return render_template('SupervisorInternReviewQ.html', form=form, form2=form2)
+
+@app.route('/ReviewQ_info/Portfolio_Review_Questions', methods=['GET','POST'])
+def PortfolioRevQ():
+    form = Student_PortfolioReviewQForm()
+    form2 = Student_PortfolioReviewQForm2()
+    if form.validate_on_submit():
+        return redirect(url_for('ReviewQ'))
+    return render_template('Student_PortfolioReviewQ.html', form=form, form2=form2, header='Portfolio')
+
 
 ######################## SUDENT QUERY DATA ########################
 
