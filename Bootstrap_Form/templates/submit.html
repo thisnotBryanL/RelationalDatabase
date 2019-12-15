@@ -17,26 +17,30 @@
                     {% endif %}
                  {% endwith %}
 </div>
+
 <div class="container">
     <form method = "POST">
         <dl>
             {{ form.hidden_tag() }}
-            <div style="width: 40%">
-                {{ form.csrf_token }}
-                {{ wtf.form_field(form.student_id) }}
-                {{ wtf.form_field(form.first_name) }}
-                {{ wtf.form_field(form.last_name) }}
-                {{ wtf.form_field(form.email) }}
-                {{ wtf.form_field(form.Class) }}
+            <div class="row">
+                <div class="col-md-6" style="width: 40%">
+                    {{ form.csrf_token }}
+                    {{ wtf.form_field(form.student_id) }}
+                    {{ wtf.form_field(form.first_name) }}
+                    {{ wtf.form_field(form.last_name) }}
+                    {{ wtf.form_field(form.email) }}
+                </div>
+                <div class="col-md-6" style="width: 20%">
+                    {{ wtf.form_field(form2.Class) }}
+                    {{ wtf.form_field(form2.major_minor) }}
+                    {{ wtf.form_field(form2.ADV_PR_Semester) }}
+                </div>
+                <div class="col-md-6" style="width: 10%">
+                    {{ wtf.form_field(form2.ADV_PR_Grade) }}
+                    {{ wtf.form_field(form2.ADV_PR_Year) }}
+                </div>
             </div>
-            <div style="width: 150%">
-                {{ form2.major_minor }}
-                {{ form2.ADV_PR_Semester }}
-                {{ form2.ADV_PR_Grade }}
-                {{ form2.ADV_PR_Year }}
-            </div>
-
-            <br><br><br>
+            <br>
             <input class="btn btn-primary" value="submit" type="submit"/>
         </dl>
     </form>

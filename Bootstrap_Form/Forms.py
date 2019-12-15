@@ -24,13 +24,14 @@ class StudentInfoForm(FlaskForm):
     first_name = StringField('First Name', validators=[InputRequired()])
     last_name = StringField('Last Name', validators=[InputRequired()])
     email = StringField('email', validators=[InputRequired(), Email(message='Invalid email address')])
-    Class = StringField('Class', validators=[InputRequired()])
 
 
 class StudentInfoForm2(FlaskForm):
     grade_list = [(0, '---'), (1, 'A'), (2, 'B'), (3, 'C'), (4, 'D'), (5, 'F')]
+    class_list = [(0, '---'), (1, 'Freshman'), (2, 'Sophomore'), (3, 'Junior'), (4, 'Senior')]
 
-    major_minor = SelectField('Major/Minor', [DataRequired()], choices=[(0, "---"), (1, 'major'), (2, 'minor')])
+    Class = SelectField('Classifcation', choices=class_list)
+    major_minor = SelectField('Major or Minor', [DataRequired()], choices=[(0, "---"), (1, 'major'), (2, 'minor')])
     ADV_PR_Semester = SelectField('ADV PR Semester', choices=[(0, '---'), (1, 'Fall'), (2, 'Spring')])
     ADV_PR_Year = SelectField('Year', choices=year_list)
     ADV_PR_Grade = SelectField('Grade', choices=grade_list)

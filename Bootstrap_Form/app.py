@@ -8,7 +8,7 @@ from flask_bootstrap import Bootstrap
 from Bootstrap_Form.TableSchema import reviewByStudent, basicInfo
 from Bootstrap_Form.TableSchema import reviewByStudent, basicInfo
 from TableSchema import *
-from Forms import *
+from Bootstrap_Form.Forms import *
 import mysql.connector
 
 #connect to database
@@ -90,6 +90,15 @@ def studentInfo():
         else:
             majororminor = "minor"
 
+        if form2.data['Class'] == '1':
+           Class = "Freshman"
+        elif form2.data['Class'] == '2':
+           Class = "Sophomore"
+        elif form2.data['Class'] == '3':
+            Class = "Junior"
+        elif form2.data['Class'] == '4':
+            Class = "Senior"
+
         semester = " "
         if form2.data['ADV_PR_Semester'] == '1':
            semester = "Fall"
@@ -117,7 +126,7 @@ def studentInfo():
         executeList.append(form.data['first_name'])
         executeList.append(form.data['email'])
         executeList.append(semester)
-        executeList.append(form.data['Class'])
+        executeList.append(Class)
         executeList.append(majororminor)
         executeList.append(grade)
         executeList.append(yr)
