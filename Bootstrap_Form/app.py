@@ -5,7 +5,7 @@ from wtforms import StringField, SelectField, IntegerField
 from wtforms.validators import InputRequired, Email, Length, DataRequired, NumberRange
 from flask_bootstrap import Bootstrap
 from flask_bootstrap import Bootstrap
-from Bootstrap_Form.TableSchema import reviewType, reviewByStudent, basicInfo
+from Bootstrap_Form.TableSchema import reviewByStudent, basicInfo
 from TableSchema import *
 import mysql.connector
 from Forms import *
@@ -308,7 +308,7 @@ def supervisorReviewLink(id):
             print(studentInfoList)
             print(SuperVisorList)
 
-            results = reviewType(mycursor, mydb, "SUPidyear", SuperVisorList)
+            results = portfolioReview(mycursor, mydb, "SUPidyear", SuperVisorList)
 
             # Clears the list after use, or else append will keep appending
             # if back button is pushed
@@ -348,7 +348,7 @@ def portfolioReviewLink(id):
             PortfolioList = studentInfoList
             print ("list:", PortfolioList)
 
-            results = reviewType(mycursor, mydb, "idyear", PortfolioList)
+            results = portfolioReview(mycursor, mydb, "idyear", PortfolioList)
 
             if len(results) > 0:
                 items = []
@@ -362,6 +362,7 @@ def portfolioReviewLink(id):
                 return render_template('results.html', table=portfolioReviewTable)
             else:
                 flash('No results found!')
+                del studentInfoList[-1]
                 return redirect(f'/item1/{id}')
         else:
             flash('Please enter a 4 digit year!')
@@ -394,6 +395,7 @@ def studentReviewLink(id):
                 return render_template('results.html', table=studentReviewTable)
             else:
                 flash('No results found!')
+                studentInfoList[-1]
                 return redirect(f'/item2/{id}')
         else:
             flash('Please enter a 4 digit year!')

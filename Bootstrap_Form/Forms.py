@@ -5,7 +5,6 @@ from wtforms import StringField, SelectField, IntegerField
 from wtforms.validators import InputRequired, Email, Length, DataRequired, NumberRange
 from flask_bootstrap import Bootstrap
 from flask_bootstrap import Bootstrap
-from Bootstrap_Form.TableSchema import reviewType, reviewByStudent, basicInfo
 
 year_list = [(0, '---')]
 for i in range(20):
