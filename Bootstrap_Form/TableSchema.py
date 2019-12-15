@@ -371,57 +371,58 @@ def reviewByStudent(mycursor, mydb, choice, executeList):
 #         reviewresults = mycursor.fetchall()
 #
 #
-# """"**************************************************************************************************************************************************************************************************"""
-# #ask for certain type of reviews
-# """if reviewType = "Portfolio":
-#     displayPortfolioReviews(mycursor, mydb, choice, executeList)"""
-# def displayPortfolioReviews(mycursor, mydb, choice, executeList):
-#     displayAllPortfolio = """SELECT firstName, lastName, StudentInfo.BaylorID,
-#     PortfolioReviewQ.question, PortfolioResponses.answer, PortfolioResponses.comment,
-#     PortfolioReviewQ.startYear, reviewerName
-#     FROM StudentInfo, PortfolioReviewQ, PortfolioResponses
-#     WHERE StudentInfo.BaylorID = PortfolioResponses.baylorID
-#     AND PortfolioReviewQ.startYear = PortfolioResponses.startYear
-#     AND PortfolioReviewQ.label = PortfolioResponses.label"""
-#
-#     mycursor.execute(displayAllPortfolio)
-#     mydb.commit()
-#     reviewresults = mycursor.fetchall()
-#
-#
+""""**************************************************************************************************************************************************************************************************"""
+#ask for certain type of reviews
+"""if reviewType = "Portfolio":
+    displayPortfolioReviews(mycursor, mydb, choice, executeList)"""
+def displayPortfolioReviews(mycursor, mydb):
+    displayAllPortfolio = """SELECT firstName, lastName, StudentInfo.BaylorID,
+    PortfolioReviewQ.question, PortfolioResponses.answer, PortfolioResponses.comment,
+    PortfolioReviewQ.startYear, reviewerName
+    FROM StudentInfo, PortfolioReviewQ, PortfolioResponses
+    WHERE StudentInfo.BaylorID = PortfolioResponses.baylorID
+    AND PortfolioReviewQ.startYear = PortfolioResponses.startYear
+    AND PortfolioReviewQ.label = PortfolioResponses.label"""
+
+    mycursor.execute(displayAllPortfolio)
+    reviewresults = mycursor.fetchall()
+    return reviewresults
+
+
 # "----------------------------------------------------------------------------------------------------------------------------------------------------------------"
 # """if reviewType = "Student":
 #     displayStudentReviews(mycursor, mydb, choice, executeList)"""
-# def displayStudentReviews(mycursor, mydb, choice, executeList):
-#     displayAllStudent = """SELECT firstName, lastName, StudentInfo.BaylorID,
-#     StudentReviewQ.question, StudentResponse.answer, StudentResponse.comment,
-#     StudentResponse.startYear
-#     FROM StudentInfo, PortfolioReviewQ, PortfolioResponse
-#     WHERE StudentInfo.BaylorID = StudentResponse.baylorID
-#     AND StudentReviewQ.startYear = StudentResponse.startYear
-#     AND StudentReviewQ.label = StudentResponse.label"""
-#
-#     mycursor.execute(displayAllStudent)
-#     mydb.commit()
-#     reviewresults = mycursor.fetchall()
+def displayStudentReviews(mycursor, mydb):
+    displayAllStudent = """SELECT firstName, lastName, StudentInfo.BaylorID,
+    StudentReviewQ.question, StudentResponse.answer, StudentResponse.comment,
+    StudentResponse.startYear
+    FROM StudentInfo, StudentReviewQ, StudentResponse
+    WHERE StudentInfo.BaylorID = StudentResponse.baylorID
+    AND StudentReviewQ.startYear = StudentResponse.startYear
+    AND StudentReviewQ.label = StudentResponse.label"""
+
+    mycursor.execute(displayAllStudent)
+    reviewresults = mycursor.fetchall()
+    return reviewresults
 #
 #
 # "----------------------------------------------------------------------------------------------------------------------------------------------------------------"
 # """elif reviewType != "Student" AND reviewType != "Portfolio":
 #     displayReviews(mycursor, mydb, choice, executeList)"""
-# def displayReviews(mycursor, mydb, choice, executeList):
-#     displayReviews = """SELECT firstName, lastName, StudentInfo.BaylorID,
-#     SupervisorInternReviewQ.question, SupervisorInternResponse.answer, SupervisorInternResponse.comment,
-#     SupervisorInternResponse.startYear
-#     FROM StudentInfo, SupervisorInternReviewQ, SupervisorInternResponse
-#     WHERE reviewType = %s
-#     AND StudentInfo.BaylorID = SupervisorInternResponse.baylorID
-#     AND SupervisorInternReviewQ.startYear = SupervisorInternResponse.startYear
-#     AND SupervisorInternReviewQ.label = StudentResponse.label"""
-#
-#     mycursor.execute(displayReviews, (reviewType))
-#     mydb.commit()
-#     reviewresults = mycursor.fetchall()
+#review types can be midterm, endterm, site
+def displayReviews(mycursor, mydb, executeList):
+    displayReviews = """SELECT firstName, lastName, StudentInfo.BaylorID,
+    SupervisorInternReviewQ.question, SupervisorInternResponse.answer, SupervisorInternResponse.comment,
+    SupervisorInternResponse.startYear
+    FROM StudentInfo, SupervisorInternReviewQ, SupervisorInternResponse
+    WHERE SupervisorInternResponse.reviewType = %s
+    AND StudentInfo.BaylorID = SupervisorInternResponse.baylorID
+    AND SupervisorInternReviewQ.startYear = SupervisorInternResponse.startYear
+    AND SupervisorInternReviewQ.label = SupervisorInternResponse.label"""
+
+    mycursor.execute(displayReviews, executeList)
+    reviewresults = mycursor.fetchall()
+    return reviewresults
 #
 #
 # """"**************************************************************************************************************************************************************************************************"""

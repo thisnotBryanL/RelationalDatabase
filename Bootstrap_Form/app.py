@@ -8,6 +8,7 @@ from flask_bootstrap import Bootstrap
 from Bootstrap_Form.TableSchema import reviewType, reviewByStudent, basicInfo
 from TableSchema import *
 import mysql.connector
+from Forms import *
 
 
 #connect to database
@@ -33,184 +34,30 @@ Bootstrap(app)
 app.config['SECRET_KEY'] = 'DontTellAnyone'
 
 # Create Classes for forms and web pages
-year_list = [(0, '---')]
-for i in range(20):
-    year_list.append((i + 1, 2000 + i))
 
-month_list = [(0,'---'), (1, 'JAN'), (2,'FEB'), (3,'MAR'), (4,'APR'), (5,'MAY'), (6,'JUN'),
-            (7,'JUL'), (8, 'AUG'), (9, 'SEP'), (10, 'OCT'), (11, 'NOV'), (12, 'DEC')]
 
 executeList = [ ]
 def executeInsert(sqlStatement, executeList, mycursor, mydb):
     print ("The execute list is", executeList)
     try:
         mycursor.execute(sqlStatement, executeList)
+        del executeList[:]
         mydb.commit()
     except mysql.connector.Error as error:
+        del executeList[:]
         print ("duplicate entry")
+        flash ("Student with id #" + executeList[0] + " has already been entered")
+
+
+def studentExecuteInsert(sqlStatement, executeList, mycursor, mydb):
+    print ("The execute list is", executeList)
+    try:
+        mycursor.execute(sqlStatement, executeList)
+    except mysql.connector.Error as error:
+        print ("duplicate entry")
+        flash ("Student with id #" + executeList[0] + " has already been entered")
     mydb.commit()
     del executeList[:]
-
-
-
-class StudentInfoForm(FlaskForm):
-    student_id = StringField('student ID', validators=[InputRequired(), Length(9)])
-    first_name = StringField('First Name', validators=[InputRequired()])
-    last_name = StringField('Last Name', validators=[InputRequired()])
-    email = StringField('email', validators=[InputRequired(), Email(message='Invalid email address')])
-    Class = StringField('Class', validators=[InputRequired()])
-
-
-class StudentInfoForm2(FlaskForm):
-    grade_list = [(0, '---'), (1, 'A'), (2, 'B'), (3, 'C'), (4, 'D'), (5, 'F')]
-
-    major_minor = SelectField('Major/Minor', [DataRequired()], choices=[(0, "---"), (1, 'major'), (2, 'minor')])
-    ADV_PR_Semester = SelectField('ADV PR Semester', choices=[(0, '---'), (1, 'Fall'), (2, 'Spring')])
-    ADV_PR_Year = SelectField('Year', choices=year_list)
-    ADV_PR_Grade = SelectField('Grade', choices=grade_list)
-
-class StudentSearchForm(FlaskForm):
-    choices = [('Baylor ID', 'Baylor ID'),
-               ('Name', 'Name')]
-    select = SelectField('Search by:', choices=choices)
-    search = StringField('ID')
-    firstName = StringField('First name')
-    lastName = StringField('Last name')
-
-
-class ReviewSearchForm(FlaskForm):
-    choices = [('Review1', 'Review1'),
-               ('Review2', 'Review2'),
-               ('Review3', 'Review3'),
-               ('Review4', 'Review4')]
-
-    select = SelectField('Search by:', choices=choices)
-    searchID = StringField('ID')
-
-
-class SupervisorInfoForm(FlaskForm):
-    company = StringField('Company', validators=[InputRequired()])
-    first_name = StringField('First Name', validators=[InputRequired()])
-    last_name = StringField('Last Name', validators=[InputRequired()])
-    title = StringField('Title', validators=[InputRequired()])
-    email = StringField('Email', validators=[InputRequired(), Email(message='Invalid email address')])
-
-class InternshipInfoForm(FlaskForm):
-    email = StringField('Supervisor Email', validators=[InputRequired(), Email(message='Invalid email address')])
-    address = StringField('Company Address', validators=[InputRequired()])
-    phone = StringField('Phone Number', validators=[InputRequired()])
-    tot_hours = IntegerField('Total Hours', validators=[InputRequired()])
-    buID = StringField('Student ID', validators=[InputRequired(), Length(9)])
-
-class InternshipInfoForm2(FlaskForm):
-    startMonth = SelectField('Start Month', choices=month_list)
-    startYear = SelectField('Start Year', choices=year_list)
-    endMonth = SelectField('End Month', choices=month_list)
-    endYear = SelectField('End Year', choices=year_list)
-
-class SupervisorInternReviewQForm(FlaskForm):
-    label = StringField('Label', validators=[InputRequired()])
-    question = StringField('Question', validators=[InputRequired()])
-    review_type = StringField('Review Type', validators=[InputRequired()])
-
-class SupervisorInternReviewQForm2(FlaskForm):
-    startYear = SelectField('Start Year', choices=year_list)
-
-
-class Results(Table):
-    id = Col('Baylor ID ')
-    fname = Col('First Name ')
-    lname = Col('Last Name ')
-    email = Col('Email ')
-    semester = Col('Semester' )
-    yr = Col('Year ')
-    major_minor = Col('Major ')
-    grade = Col('Grade ')
-    classYear = Col('Class')
-    supervisorReviewLink = LinkCol('Supervisor Reviews', 'supervisorReviewLink', url_kwargs=dict(id='id'))
-    portfolioReviewLink = LinkCol('Portfolio Reviews', 'portfolioReviewLink', url_kwargs=dict(id='id'))
-    studentReviewLink = LinkCol('Student Reviews', 'studentReviewLink', url_kwargs=dict(id='id'))
-
-
-class SuperVisorReviewsTable(Table):
-    question = Col('Questions')
-    answer = Col('Answers')
-    comment = Col('Comments')
-
-class PortfolioReviewTable(Table):
-    question = Col('Questions')
-    answer = Col('Answers')
-    comment = Col('Comments')
-    reviewerName = Col('Reviewer Name')
-
-class StudentReviewTable(Table):
-    question = Col('Questions')
-    answer = Col('Answers')
-    comment = Col('Comments')
-
-class SuperVisorReviewItem(object):
-    def __init__(self,question,answer,comment):
-        self.question = question
-        self.answer = answer
-        self.comment = comment
-
-    def setValues(self,list):
-        self.question = list[0]
-        self.answer = list[1]
-        self.comment = list[2]
-
-class StudentReviewItem(object):
-    def __init__(self,question,answer,comment):
-        self.question = question
-        self.answer = answer
-        self.comment = comment
-
-    def setValues(self,list):
-        self.question = list[0]
-        self.answer = list[1]
-        self.comment = list[2]
-
-
-class PortfolioReviewItem(object):
-    def __init__(self,question,answer,comment,reviewerName):
-        self.question = question
-        self.answer = answer
-        self.comment = comment
-        self.reviewerName = reviewerName
-
-    def setValues(self,list):
-        self.question = list[0]
-        self.answer = list[1]
-        self.comment = list[2]
-        self.reviewerName = list[3]
-
-
-class Item(object):
-    def __init__(self, id, fname, lname, email, semester, yr, major_minor, grade, classYear):
-        self.id = id
-        self.fname = fname
-        self.lname = lname
-        self.email = email
-        self.semester = semester
-        self.yr = yr
-        self.major_minor = major_minor
-        self.grade = grade
-        self.classYear = classYear
-
-    def setValues (self, list):
-        self.id = list[0]
-        self.fname = list[2]
-        self.lname = list[1]
-        self.email = list[3]
-        self.semester = list[4]
-        self.yr = list[8]
-        self.major_minor = list[6]
-        self.grade = list[7]
-        self.classn = list[5]
-
-class YearSearchForm(FlaskForm):
-    year = StringField('Enter Year:')
-
 
 @app.route('/', methods=['GET','POST'])
 def index():
@@ -279,18 +126,13 @@ def studentInfo():
         print ("the executeList is", executeList)
         sql = "INSERT INTO StudentInfo (`BaylorID`, `lastName`, `firstName`, `emailAddress`, `ADV_PR_semester`, `class`, `major_minor`, `ADV_PR_grade`, `ADV_PR_year`)" \
               "VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)"
-        executeInsert(sql, executeList, mycursor,mydb)
+        studentExecuteInsert(sql, executeList, mycursor,mydb)
        #END INSERT DATA
         # if request.form['option'] == 'home':
         #     return redirect(url_for('index'))
         # else:
         #     return 'Redirect'
-    # if trueorfalse == False:
-    #     error1 = "Student with ID #" + executeList[0] + " has already been inserted'\n'" \
-    #                                                     "If you would like to update their information, please go to the update page"
-    #
-    #     return render_template('submit.html', form=form, form2=form2, error=error)
-    # else:
+
     return render_template('submit.html', form=form, form2=form2)
 
 @app.route('/input_supervisor_info', methods=['GET', 'POST'])
@@ -572,54 +414,65 @@ def reviewQueryHomePage():
 
 @app.route('/reviewQuery/results')
 def search_resultsForReview(search):
-    results = []
-    choice = " "
-    stringf = " "
 
-    if search.select.data == "Review1":
-        print("REVIEW 1")
-        choice = "idTrue"
-        #Query the Review
-        '''
-        search_string = search.data['search']
-        results.append(search_string)
-        stringf = search_string
-        studentInfoList.append(stringf)
-        '''
+    items = []
+    if search.select.data == "Portfolio Review":
+        queryResults = displayPortfolioReviews(mycursor, mydb)
 
-        #elif statements for the other review types
+        if len(queryResults) == 0:
+            flash('No results found!')
+        else:
+            for row in queryResults:
+                print (row)
+                instance = PortfolioReviewItemAllStudents('', '', '', '', '', '', '', '')
+                instance.setValues(row)
+                items.append(instance)
+            table = PortfolioReviewAllStudentsTable(items)
+            table.border = True
+            return render_template('results.html', table=table)
 
-        #elif statement if BU ID was included
+    elif search.select.data == "Student Review":
+        queryResults = displayStudentReviews(mycursor, mydb)
+        if len(queryResults) == 0:
+            flash('No results found!')
+        else:
+            for row in queryResults:
+                print (row)
+                instance = StudentReviewItemAllStudents('', '', '', '', '', '', '')
+                instance.setValues(row)
+                items.append(instance)
+            table = StudentReviewAllStudentsTable(items)
+            table.border = True
+            return render_template('results.html', table=table)
+    else:
+        exList = []
+        if search.select.data == "Midterm Qualtrics Survey ":
+            exList.append("midterm")
+
+        elif search.select.data == "Midterm Site Visit":
+            exList.append("site")
+
+        elif search.select.data == "End-of-Term Qualtrics Survey":
+            exList.append("site")
+
+        print (search.select.data)
+
+        queryResults = displayReviews(mycursor, mydb, exList)
+        if len(queryResults) == 0:
+            flash('No results found!')
+        else:
+            for row in queryResults:
+                print (row)
+                instance = StudentReviewItemAllStudents('', '', '', '', '', '', '')
+                instance.setValues(row)
+                items.append(instance)
+            table = StudentReviewAllStudentsTable(items)
+            table.border = True
+            return render_template('results.html', table=table)
+            return render_template('results.html', table=table)
 
 
-    queryResults = []
-    print(len(queryResults))
 
-    if len(queryResults) == 0:
-        flash('No results found!')
-
-
-    ''''
-    elif search.data['search'] == stringf:
-        items = []
-        for row in queryResults:
-            instance = Item('', '', '', '', '', '', '', '', '')
-            instance.setValues(row)
-            items.append(instance)
-        table = Results(items)
-        table.border = True
-        return render_template('results.html', table=table)
-
-    elif search.data['firstName'] == firstNameSearch and search.data['lastName'] == lastNameSearch:
-        items = []
-        for row in queryResults:
-            instance = Item('', '', '', '', '', '', '', '', '')
-            instance.setValues(row)
-            items.append(instance)
-        table = Results(items)
-        table.border = True
-        return render_template('results.html', table=table)
-        '''
     return redirect('/reviewQuery')
 
 
