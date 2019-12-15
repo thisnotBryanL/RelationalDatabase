@@ -330,9 +330,10 @@ def search_results(search):
         return render_template('results.html', table=table)
 
 
-@app.route('/item/<int:id>', methods=['GET', 'POST'])
+@app.route('/item/<string:id>', methods=['GET', 'POST'])
 def supervisorReviewLink(id):
     # Ask for YEAR of review
+    print( id)
     types = SupervisorTypesForm()
     print('here')
     if request.method == 'POST':
@@ -381,11 +382,10 @@ def supervisorReviewLink(id):
             flash('Please enter a 4 digit year!')
     return render_template('SupervisorTypes.html', form = types )
 
-@app.route('/item1/<int:id>', methods=['GET', 'POST'])
+@app.route('/item1/<string:id>', methods=['GET', 'POST'])
 def portfolioReviewLink(id):
     # Ask for YEAR of review
     yearSearch = YearSearchForm()
-    print('here')
     if request.method == 'POST':
         yearNum = yearSearch.data['year']
 
@@ -417,7 +417,7 @@ def portfolioReviewLink(id):
             flash('Please enter a 4 digit year!')
     return render_template('yearForm.html' ,form=yearSearch)
 
-@app.route('/item2/<int:id>', methods=['GET', 'POST'])
+@app.route('/item2/<string:id>', methods=['GET', 'POST'])
 def studentReviewLink(id):
     # Ask for YEAR of review
     yearSearch = YearSearchForm()
@@ -518,11 +518,7 @@ def search_resultsForReview(search):
             return render_template('results.html', table=table)
             return render_template('results.html', table=table)
 
-
-
     return redirect('/reviewQuery')
-
-
 
 if __name__ == '__main__':
     app.run(debug=True)
