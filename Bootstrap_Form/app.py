@@ -136,6 +136,7 @@ def studentInfo():
         sql = "INSERT INTO StudentInfo (`BaylorID`, `lastName`, `firstName`, `emailAddress`, `ADV_PR_semester`, `class`, `major_minor`, `ADV_PR_grade`, `ADV_PR_year`)" \
               "VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)"
         studentExecuteInsert(sql, executeList, mycursor,mydb)
+        return redirect(url_for('index'))
        #END INSERT DATA
         # if request.form['option'] == 'home':
         #     return redirect(url_for('index'))
