@@ -137,6 +137,7 @@ def studentInfo():
               "VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)"
         studentExecuteInsert(sql, executeList, mycursor,mydb)
         return redirect(url_for('index'))
+
        #END INSERT DATA
         # if request.form['option'] == 'home':
         #     return redirect(url_for('index'))
