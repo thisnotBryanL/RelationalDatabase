@@ -759,7 +759,7 @@ def search_results_Questions(form):
         mycursor.execute(sql, executeList)
         results = mycursor.fetchall()
 
-
+#
     if len(results) == 0:
         flash('No results found!')
         return redirect('/searchQuestions/')
