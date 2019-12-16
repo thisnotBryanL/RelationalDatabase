@@ -12,20 +12,23 @@
     <form method = "POST">
         <dl>
             {{ form.hidden_tag() }}
-            <div style="width: 40%">
+            <div class="col-md-6" style="width: 40%">
                 {{ form.csrf_token }}
+                {{ wtf.form_field(form.buID) }}
                 {{ wtf.form_field(form.email) }}
-                {{ wtf.form_field(form2.startMonth) }}
-                {{ wtf.form_field(form2.startYear) }}
-                {{ wtf.form_field(form2.endMonth) }}
-                {{ wtf.form_field(form2.endYear) }}
                 {{ wtf.form_field(form.address) }}
                 {{ wtf.form_field(form.phone) }}
                 {{ wtf.form_field(form.tot_hours) }}
-                {{ wtf.form_field(form.buID) }}
-
-                <br><br><br>
+            </div>
+            <div class="col-md-6" style="width: 10%">
+                {{ wtf.form_field(form2.startMonth) }}
+                {{ wtf.form_field(form2.endMonth) }}
+                <br><br><br><br><br><br><br><br>
                 <input class="btn btn-primary" value="submit" type="submit"/>
+            </div>
+            <div class="col-md-6" style="width: 10%">
+                {{ wtf.form_field(form2.startYear) }}
+                {{ wtf.form_field(form2.endYear) }}
             </div>
         </dl>
     </form>
