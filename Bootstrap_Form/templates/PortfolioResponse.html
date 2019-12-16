@@ -1,0 +1,46 @@
+{% extends "base.html" %}
+{% import "bootstrap/wtf.html" as wtf%}
+
+{% block title %}
+    Short Answer Form
+{% endblock %}
+
+{%  block content %}
+<style>
+    .MyClass {
+        margin:  auto;
+        align-items: center;
+        justify-content: space-around;
+        display: flex;
+        float: none;
+    }
+    #title{
+        margin: 0 auto;
+        align-items: center;
+        justify-content: space-around;
+        display: flex;
+    }
+</style>
+<h1 id="title"> Portfolio Response </h1>
+<hr>
+<div class="MyClass">
+    <form method = "POST" action="{{url_for('portfolioResponsePage')}}">
+        <dl>
+            {{ form.hidden_tag() }}
+            <div style="width: 150%">
+                {{ form.csrf_token }}
+                {{ wtf.form_field(form.answers) }}
+                {{ wtf.form_field(form.comments) }}
+                {{ wtf.form_field(form.baylorID) }}
+                {{ wtf.form_field(form.dateOfReview)}}
+                {{ wtf.form_field(form.email)}}
+                {{ wtf.form_field(form.reviewerName)}}
+                <br><br><br>
+                <input class="btn btn-primary" value="submit" type="submit"/>
+            </div>
+        </dl>
+
+    </form>
+</div>
+
+{% endblock %}
