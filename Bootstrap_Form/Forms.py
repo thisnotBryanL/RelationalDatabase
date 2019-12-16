@@ -64,7 +64,7 @@ class SupervisorInfoForm(FlaskForm):
 class InternshipInfoForm(FlaskForm):
     email = StringField('Supervisor Email', validators=[InputRequired(), Email(message='Invalid email address')])
     address = StringField('Company Address', validators=[InputRequired()])
-    phone = StringField('Phone Number', validators=[InputRequired()])
+    phone = StringField('Phone Number', validators=[InputRequired(), Length(10)])
     tot_hours = IntegerField('Total Hours', validators=[InputRequired()])
     buID = StringField('Student ID', validators=[InputRequired(), Length(9)])
 

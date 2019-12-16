@@ -4,8 +4,6 @@ from flask_table import Table, Col,LinkCol
 from wtforms import StringField, SelectField, IntegerField
 from wtforms.validators import InputRequired, Email, Length, DataRequired, NumberRange
 from flask_bootstrap import Bootstrap
-from flask_bootstrap import Bootstrap
-from Bootstrap_Form.TableSchema import reviewByStudent, basicInfo
 from Bootstrap_Form.TableSchema import reviewByStudent, basicInfo
 from Bootstrap_Form.qualtricsParser import qualtricsParser
 from TableSchema import *
@@ -37,17 +35,14 @@ app.config['SECRET_KEY'] = 'DontTellAnyone'
 # Create Classes for forms and web pages
 
 
-executeList = [ ]
 def executeInsert(sqlStatement, executeList, mycursor, mydb):
     print ("The execute list is", executeList)
     try:
         mycursor.execute(sqlStatement, executeList)
-        del executeList[:]
         mydb.commit()
     except mysql.connector.Error as error:
-        del executeList[:]
         print ("duplicate entry")
-        flash ("Student with id #" + executeList[0] + " has already been entered")
+        flash ("Attempting to enter a student and supervisor that has already been entered")
 
 
 def studentExecuteInsert(sqlStatement, executeList, mycursor, mydb):
@@ -58,7 +53,6 @@ def studentExecuteInsert(sqlStatement, executeList, mycursor, mydb):
         print ("duplicate entry")
         flash ("Student with id #" + executeList[0] + " has already been entered")
     mydb.commit()
-    del executeList[:]
 
 @app.route('/', methods=['GET','POST'])
 def index():
@@ -172,6 +166,7 @@ def supervisorInfo():
 def internshipInfo():
     form = InternshipInfoForm()
     form2 = InternshipInfoForm2()
+
     if form.validate_on_submit():
         executeList.append(form.data['email'])
         month = " "
@@ -207,14 +202,19 @@ def internshipInfo():
         executeList.append(form.data['tot_hours'])
         executeList.append(form.data['buID'])
 
-        sql = "INSERT INTO Internship (`supervisorEmail`, `startMonth`, `startYear`, `endMonth`, `endYear`, `address`, `phoneNumber`, `totalHours`, `BaylorID`)" \
-              "VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)"
-        executeInsert(sql, executeList, mycursor, mydb)
+        # validate that start date comes before year date
 
-        # if request.form['option'] == 'home':
-        #     return redirect(url_for('index'))
-        # else:
-        #     return 'Successfully submitted internship information!'
+        if int(form2.startYear.data) <= int(form2.endYear.data):
+            print('startYeartart year is smaller', form2.startYear.data)
+            if int(form2.startMonth.data) <= int(form2.endMonth.data):
+                # print('start month is smaller', form2.startMonth.data)
+                sql = "INSERT INTO Internship (`supervisorEmail`, `startMonth`, `startYear`, `endMonth`, `endYear`, `address`, `phoneNumber`, `totalHours`, `BaylorID`)" \
+                       "VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)"
+                executeInsert(sql, executeList, mycursor, mydb)
+            else:
+                flash('Start Month Must Come Before End Month')
+        else:
+            flash('Start Year Must Come Before End Year')
     return render_template('internship.html', form=form, form2=form2)
 
 @app.route('/ReviewQ_info', methods=['GET', 'POST'])
