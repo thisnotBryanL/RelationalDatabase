@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+{% import "bootstrap/wtf.html" as wtf%}
+
+{% block title %}
+    Student Form
+{% endblock %}
+
+{%  block content %}
+    <h1> Student Information </h1>
+<div class="ErrorClass">
+                    {% with messages = get_flashed_messages() %}
+                {% if messages %}
+                    {% for message in messages %}
+                        <li style="color:red;">{{ message }}</li>
+                        </div>
+                    {% endfor %}
+                    {% endif %}
+                 {% endwith %}
+</div>
+<div class="container">
+    <form method = "POST">
+        <dl>
+            {{ form.hidden_tag() }}
+            <div style="width: 40%">
+                {{ form.csrf_token }}
+                {{ wtf.form_field(form.year) }}
+
+            <br><br><br>
+            <input class="btn btn-primary" value="submit" type="submit"/>
+        </dl>
+    </form>
+</div>
+{% endblock %}

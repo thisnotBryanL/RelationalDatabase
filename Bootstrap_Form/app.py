@@ -26,8 +26,6 @@ mycursor = mydb.cursor()
 createTables(mycursor)
 print('done')
 
-studentInfoList = []
-
 # Create app
 app = Flask(__name__)
 Bootstrap(app)
@@ -36,17 +34,15 @@ app.config['SECRET_KEY'] = 'DontTellAnyone'
 # Create Classes for forms and web pages
 
 
-executeList = [ ]
 def executeInsert(sqlStatement, executeList, mycursor, mydb):
     print ("The execute list is", executeList)
     try:
         mycursor.execute(sqlStatement, executeList)
-        del executeList[:]
         mydb.commit()
     except mysql.connector.Error as error:
-        del executeList[:]
         print ("duplicate entry")
         flash ("Student with id #" + executeList[0] + " has already been entered")
+    mydb.commit()
 
 
 def studentExecuteInsert(sqlStatement, executeList, mycursor, mydb):
@@ -57,7 +53,6 @@ def studentExecuteInsert(sqlStatement, executeList, mycursor, mydb):
         print ("duplicate entry")
         flash ("Student with id #" + executeList[0] + " has already been entered")
     mydb.commit()
-    del executeList[:]
 
 @app.route('/', methods=['GET','POST'])
 def index():
@@ -79,6 +74,7 @@ def index():
 
 @app.route('/input_student_info', methods=['GET', 'POST'])
 def studentInfo():
+    executeList = []
     form = StudentInfoForm()
     form2 = StudentInfoForm2()
     if (form.validate_on_submit() and form2.major_minor.data != '0' and form2.ADV_PR_Semester.data != '0' and
@@ -137,6 +133,7 @@ def studentInfo():
 
 @app.route('/input_supervisor_info', methods=['GET', 'POST'])
 def supervisorInfo():
+    executeList = []
     form = SupervisorInfoForm()
     if form.validate_on_submit():
         executeList.append(form.data["company"])
@@ -154,6 +151,7 @@ def supervisorInfo():
 
 @app.route('/input_internship_info', methods=['GET', 'POST'])
 def internshipInfo():
+    executeList = []
     form = InternshipInfoForm()
     form2 = InternshipInfoForm2()
     if form.validate_on_submit():
@@ -190,15 +188,13 @@ def internshipInfo():
         executeList.append(form.data['phone'])
         executeList.append(form.data['tot_hours'])
         executeList.append(form.data['buID'])
+        print ("the execute list is", executeList)
 
         sql = "INSERT INTO Internship (`supervisorEmail`, `startMonth`, `startYear`, `endMonth`, `endYear`, `address`, `phoneNumber`, `totalHours`, `BaylorID`)" \
               "VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)"
-        executeInsert(sql, executeList, mycursor, mydb)
 
-        # if request.form['option'] == 'home':
-        #     return redirect(url_for('index'))
-        # else:
-        #     return 'Successfully submitted internship information!'
+        mycursor.execute(sql, executeList)
+        mydb.commit()
     return render_template('internship.html', form=form, form2=form2)
 
 @app.route('/input_SupervisorInternReviewQ_info', methods=['GET', 'POST'])
@@ -216,7 +212,6 @@ def SupInternReviewInfo():
 
 @app.route('/studentQuery', methods=['GET', "POST"])
 def studentQueryHomePage():
-    del studentInfoList [:]
     search = StudentSearchForm()
     if request.method == 'POST':
         if(search.select.data == "Baylor ID"):
@@ -235,6 +230,7 @@ def studentQueryHomePage():
 @app.route('/studentQuery/results')
 def search_results(search):
     results = []
+    studentInfoList = []
     choice = " "
     stringf = " "
 
@@ -290,9 +286,12 @@ def search_results(search):
 
 @app.route('/item/<string:id>', methods=['GET', 'POST'])
 def supervisorReviewLink(id):
+    print (str(id))
     # Ask for YEAR of review
     types = SupervisorTypesForm()
     print('here')
+    exList = []
+    exList.append(str(id))
     if request.method == 'POST':
         yearNum = types.data['year']
 
@@ -300,27 +299,28 @@ def supervisorReviewLink(id):
             print(yearNum)
             # Query the Supervisor Reviews for the specific student using their BUID and Year
             # and add it to results
-            studentInfoList.append(str(yearNum))
-            SupervisorList = studentInfoList
-
-            print(studentInfoList)
-            print(SupervisorList)
+            exList.append(str(yearNum))
+            print(exList)
 
             if types.data['types'] == "Midterm Qualtrics Survey":
-                SupervisorList.append("midterm")
+                exList.append("midterm")
+                exList.append("midterm")
+
 
             elif types.data['types'] == "Midterm Site Visit":
-                SupervisorList.append("site")
+                exList.append("site")
+                exList.append("site")
+
 
             elif types.data['types'] == "End-of-Term Qualtrics Survey":
-                SupervisorList.append("site")
+                exList.append("endterm")
+                exList.append("endterm")
+
 
             print(types.data['types'])
 
-            print ("SupervisorList", SupervisorList)
-            results = supReviewType(mycursor, "idyear", SupervisorList)
-            del studentInfoList[-1]
-            SupervisorList.clear()
+            print ("SupervisorList", exList)
+            results = supReviewType(mycursor, "idyear", exList)
 
             if len(results) > 0:
                 items = []
@@ -335,15 +335,113 @@ def supervisorReviewLink(id):
             else:
                 flash('No results found!')
                 return redirect(f'/item/{id}')
+
+        elif len(yearNum) != 4 and yearNum.isdigit():
+            flash('Please enter a 4 digit year or leave year field blank!')
+        else:
+            if types.data['types'] == "Midterm Qualtrics Survey":
+                exList.append("midterm")
+                exList.append("midterm")
+
+
+            elif types.data['types'] == "Midterm Site Visit":
+                exList.append("site")
+                exList.append("site")
+
+
+            elif types.data['types'] == "End-of-Term Qualtrics Survey":
+                exList.append("endterm")
+                exList.append("endterm")
+
+            print(types.data['types'])
+
+            print("SupervisorList", exList)
+            results = supReviewType(mycursor, "id", exList)
+
+            if len(results) > 0:
+                items = []
+                for row in results:
+                    instance = SupervisorReviewItem('', '', '')
+                    instance.setValues(row)
+                    items.append(instance)
+
+                supervisorTable = SupervisorReviewsTable(items)
+                supervisorTable.border = True
+                return render_template('results.html', table=supervisorTable)
+            else:
+                flash('No results found!')
+                return redirect(f'/item/{id}')
+
+    return render_template('SupervisorTypes.html', form = types )
+
+@app.route('/item3/<string:id>', methods=['GET', 'POST'])
+def yearLink(id):
+    print (str(id))
+    # Ask for YEAR of review
+    year = YearSearchForm()
+    print('here')
+    exList = []
+    exList.append(str(id))
+    if request.method == 'POST':
+        yearNum = year.data['year']
+
+        if len(yearNum) == 4 and yearNum.isdigit():
+            print(yearNum)
+            # Query the Supervisor Reviews for the specific student using their BUID and Year
+            # and add it to results
+            exList.append(str(yearNum))
+            exList.append(str(yearNum))
+            print ("exList is", exList)
+
+            supResults = displayReviewForStudent(mycursor, "sup", exList)
+            items = []
+            if len(supResults) > 0:
+                for row in supResults:
+                    instance = IDReviewPerYearItem('', '', '', '')
+                    instance.setValues(row)
+                    items.append(instance)
+
+            studentResults = displayReviewForStudent(mycursor, "student", exList)
+            if len(studentResults) > 0:
+                for row in studentResults:
+                    row = list(row)
+                    #append a space so we can list the review type as "student"
+                    row.append("student")
+                    print (row)
+                    instance = IDReviewPerYearItem('', '', '', '')
+                    instance.setValues(row)
+                    items.append(instance)
+
+            portfolioResults = displayReviewForStudent (mycursor, "portfolio", exList)
+            if len(portfolioResults) > 0:
+                for row in portfolioResults:
+                    row = list(row)
+                    #append a space so we can list the review type as "student"
+                    row.append("portfolio")
+                    print (row)
+                    instance = IDReviewPerYearItem('', '', '', '')
+                    instance.setValues(row)
+                    items.append(instance)
+
+            if len(supResults) > 0 or len(studentResults) > 0 or len(portfolioResults) > 0:
+                supervisorTable = IDReviewPerYearTable(items)
+                supervisorTable.border = True
+                return render_template('results.html', table=supervisorTable)
+
+            else:
+                flash('No results found!')
+                return redirect(f'/item3/{id}')
         else:
             flash('Please enter a 4 digit year!')
-    return render_template('SupervisorTypes.html', form = types )
+    return render_template('yearForm.html', form = year )
 
 @app.route('/item1/<string:id>', methods=['GET', 'POST'])
 def portfolioReviewLink(id):
     # Ask for YEAR of review
     yearSearch = YearSearchForm()
     print('here')
+    exList = []
+    exList.append(str(id))
     if request.method == 'POST':
         yearNum = yearSearch.data['year']
 
@@ -351,11 +449,10 @@ def portfolioReviewLink(id):
             print(yearNum)
             # Query the Portfolio Reviews for the specific student using their BUID and Year
             # and add it to results
-            studentInfoList.append(str(yearNum))
-            PortfolioList = studentInfoList
-            print ("list:", PortfolioList)
+            exList.append(str(yearNum))
+            print ("list:", exList)
 
-            results = portfolioReview(mycursor, mydb, "idyear", PortfolioList)
+            results = portfolioReview(mycursor, mydb, "idyear", exList)
 
             if len(results) > 0:
                 items = []
@@ -369,16 +466,35 @@ def portfolioReviewLink(id):
                 return render_template('results.html', table=portfolioReviewTable)
             else:
                 flash('No results found!')
-                del studentInfoList[-1]
                 return redirect(f'/item1/{id}')
-        else:
+        elif len(yearNum) != 4 and yearNum.isdigit():
             flash('Please enter a 4 digit year!')
+        else:
+            print ("list:", exList)
+
+            results = portfolioReview(mycursor, mydb, "id", exList)
+
+            if len(results) > 0:
+                items = []
+                for row in results:
+                    instance = PortfolioReviewItem('', '', '', '')
+                    instance.setValues(row)
+                    items.append(instance)
+
+                portfolioReviewTable = PortfolioReviewTable(items)
+                portfolioReviewTable.border = True
+                return render_template('results.html', table=portfolioReviewTable)
+            else:
+                flash('No results found!')
+                return redirect(f'/item1/{id}')
     return render_template('yearForm.html' ,form=yearSearch)
 
-@app.route('/item2/<int:id>', methods=['GET', 'POST'])
+@app.route('/item2/<string:id>', methods=['GET', 'POST'])
 def studentReviewLink(id):
     # Ask for YEAR of review
     yearSearch = YearSearchForm()
+    exList = []
+    exList.append(str(id))
     print('here')
     if request.method == 'POST':
         yearNum = yearSearch.data['year']
@@ -387,10 +503,9 @@ def studentReviewLink(id):
             print(yearNum)
             # Query the Supervisor Reviews for the specific student using their BUID and Year
             # and add it to results
-            studentInfoList.append(str(yearNum))
-            studentRList = studentInfoList
-            print ("studentRList", studentRList)
-            results = reviewByStudent(mycursor, mydb, "idyear", studentRList)
+            exList.append(str(yearNum))
+            print ("studentRList", exList)
+            results = reviewByStudent(mycursor, mydb, "idyear", exList)
 
             if len(results) > 0:
                 items = []
@@ -403,10 +518,26 @@ def studentReviewLink(id):
                 return render_template('results.html', table=studentReviewTable)
             else:
                 flash('No results found!')
-                del studentInfoList[-1]
                 return redirect(f'/item2/{id}')
+        elif len(yearNum) != 4 and yearNum.isdigit():
+            flash('Please enter a 4 digit year or leave the year field blank!')
         else:
-            flash('Please enter a 4 digit year!')
+            print ("studentRList", exList)
+            results = reviewByStudent(mycursor, mydb, "id", exList)
+
+            if len(results) > 0:
+                items = []
+                for row in results:
+                    instance = StudentReviewItem('', '', ' ')
+                    instance.setValues(row)
+                    items.append(instance)
+                    studentReviewTable = StudentReviewTable(items)
+                    studentReviewTable.border = True
+                return render_template('results.html', table=studentReviewTable)
+            else:
+                flash('No results found!')
+                return redirect(f'/item2/{id}')
+
     return render_template('yearForm.html' ,form=yearSearch)
 
 
@@ -453,11 +584,16 @@ def search_resultsForReview(search):
         exList = []
         if search.select.data == "Midterm Qualtrics Survey ":
             exList.append("midterm")
+            exList.append("midterm")
+
 
         elif search.select.data == "Midterm Site Visit":
             exList.append("site")
+            exList.append("site")
+
 
         elif search.select.data == "End-of-Term Qualtrics Survey":
+            exList.append("site")
             exList.append("site")
 
         print (search.select.data)
@@ -474,13 +610,68 @@ def search_resultsForReview(search):
             table = StudentReviewAllStudentsTable(items)
             table.border = True
             return render_template('results.html', table=table)
-            return render_template('results.html', table=table)
 
 
 
     return redirect('/reviewQuery')
 
+labelChoicesList = []
+@app.route('/ReviewAnalysis', methods=['GET', "POST"])
+def GetLabel():
+    search = GetLabelForm()
+    if request.method == 'POST':
+        executeList = []
+        #label = search.data['label']
+        reviewType = search.data['reviewType']
+        startYear = int(search.data['startYear']) - 1
+        startYear = "20" + str(startYear)
+        endYear = int(search.data['endYear']) - 1
+        endYear = "20" + str(endYear)
+        executeList.append(startYear)
+        executeList.append(endYear)
 
+
+        if reviewType == "Portfolio Review":
+            print("the executeList is", executeList)
+            sql = "SELECT label FROM PortfolioReviewQ WHERE startYear BETWEEN %s AND %s"
+            mycursor.execute(sql, executeList)
+            results = mycursor.fetchall()
+            print ("IN HERE")
+
+        elif reviewType == "Student Review":
+            sql = "SELECT label FROM StudentReviewQ WHERE startYear BETWEEN %s AND %s"
+            mycursor.execute(sql, executeList)
+            results = mycursor.fetchall()
+
+        else:
+            if reviewType == "Midterm Qualtrics Survey":
+                executeList.append("midterm")
+
+            elif reviewType == "Midterm Site Visit":
+                executeList.append("site")
+
+            elif reviewType == "End-of-Term Qualtrics Survey":
+                executeList.append("site")
+
+            sql = "SELECT label FROM SupervisorInternReviewQ WHERE startYear BETWEEN %s AND %s AND reviewType = %s"
+            mycursor.execute(sql, executeList)
+            results = mycursor.fetchall()
+
+        if len(results) == 0:
+            flash('No results found!')
+            # return redirect(f'/item5/{id}')
+        else:
+            for row in results:
+                labelChoicesList.append(row)
+
+            return redirect("/ReviewAnalysis/LabelPage'")
+    return render_template('reviewAnalysis.html', form=search)
+
+@app.route('/ReviewAnalysis/LabelPage', methods=['GET', "POST"])
+def LabelPage():
+    search = LabelChoice()
+    search.lbl = []
+    return render_template("labelchoices.html", form = search)
 
 if __name__ == '__main__':
     app.run(debug=True)
