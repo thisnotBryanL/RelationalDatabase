@@ -119,13 +119,13 @@ class ReviewQuestions(FlaskForm):
 
 #********************************************************************************************************************************************
 class LabelItem(object):
-    def __init__(self, id, year, type):
-        self.id = id
+    def __init__(self, label, year, type):
+        self.label = label
         self.year = year
         self.type = type
 
     def setValues(self,list):
-        self.id = list[0]
+        self.label = list[0]
         self.year = list[1]
         self.type = list[2]
 
@@ -158,9 +158,9 @@ class Results(Table):
 
 class QuestionsResults(Table):
     label = Col('Label ')
-    question = Col('Question ')
-    startYear = Col('Start Year ')
-    answerLink = LinkCol('answer this question', 'answerLink', url_kwargs=dict(id='label',year='startYear'))
+    year = Col('Start Year ')
+    type = Col('Review Type ')
+    answerLink = LinkCol('answer this question', 'answerLink', url_kwargs=dict(id='label',year='year'))
 
 
 #********************************************************************************************************************************************
