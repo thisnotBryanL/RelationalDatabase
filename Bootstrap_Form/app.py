@@ -71,6 +71,8 @@ def index():
             return redirect(url_for('ReviewQ'))
         elif request.form['option'] == 'Look up Review Questions':
             return redirect(url_for('REAL_Question_search_page'))
+        elif request.form['option'] == 'Portfolio Response':
+            return redirect(url_for('portfolioResponsePage'))
     return render_template('index.html')
 
 
@@ -914,6 +916,12 @@ def answerLinkv2(id, year):
 def QualtricsImport():
     qualtricsParser()
     return render_template('QualtricsImport.html')
+
+@app.route('/PortfolioResponse')
+def portfolioResponsePage():
+    form = PortfolioAnswerForm()
+
+    return render_template('PortfolioResponse.html', form=form)
 
 
 if __name__ == '__main__':
