@@ -352,6 +352,21 @@ class studentResponsesMultipleChoiceForm(FlaskForm):
     comments = StringField('Comments:')
     baylorID = StringField('BU ID:')
     answerLabel = StringField('Answer Label: ')
+    email = StringField('Email: ')
+
+class shortAnswerForm(FlaskForm):
+    answers = StringField('Answer: ')
+    comments = StringField('Comments:')
+    baylorID = StringField('BU ID:')
+    answerLabel = StringField('Answer Label: ')
+    email = StringField('Email: ')
+
+class PortfolioAnswerForm(FlaskForm):
+    answers = StringField('Answer: ')
+    comments = StringField('Comments:')
+    baylorID = StringField('BU ID:')
+    dateOfReview = StringField('Date of review: ')
+    email = StringField('Email: ')
 
 #********************************************************************************************************************************************
 class searchQuestions(FlaskForm):
@@ -368,3 +383,4 @@ class QuestionItem(object):
         self.question = list[0]
         self.label = list[1]
         self.startYear = list[2]
+

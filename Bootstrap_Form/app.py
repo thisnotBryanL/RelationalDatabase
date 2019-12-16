@@ -7,6 +7,7 @@ from flask_bootstrap import Bootstrap
 from flask_bootstrap import Bootstrap
 from Bootstrap_Form.TableSchema import reviewByStudent, basicInfo
 from Bootstrap_Form.TableSchema import reviewByStudent, basicInfo
+from Bootstrap_Form.qualtricsParser import qualtricsParser
 from TableSchema import *
 from Bootstrap_Form.Forms import *
 import mysql.connector
@@ -78,8 +79,6 @@ def index():
             return redirect(url_for('REAL_Question_search_page'))
     return render_template('index.html')
 
-
-######################## INFORMATION INPUT FORMS ########################
 
 ####################### INFORMATION INPUT FORMS ########################
 
@@ -752,7 +751,11 @@ def studentMultipleChoiceAnswerPage():
 
     return render_template('multipleChoiceAnswerForm.html', form=form)
 
+@app.route('/studentAnswersShortAnswer/', methods=['GET', 'POST'])
+def shortAnswerPage():
+    form = shortAnswerForm()
 
+    return render_template('shortAnswerPage.html', form=form)
 
 
 @app.route('/searchLabels/', methods=['GET', 'POST'])
@@ -882,19 +885,36 @@ def answerLinkv2(id, year):
 
     """
     If count(*) is greater than one then relocate to multiple choice answer page
-
-    else 
-    relocate to short answer page
-    """
-    form = studentResponsesMultipleChoiceForm()
     # form.multipleChoiceAnswers.choices = ['QUERY TUPLE RESULTS HERE']
     selectChoices = [('1', 'BAD'), ('2', 'Okay'), ('3', 'Good')]
 
     form.multipleChoiceAnswers.choices = selectChoices
+    #form = shortAnswerForm()
+    '''
+
     if request.method == 'POST':
         print('SUBMIT BUTTON HAS BEEN PRESSED WITH ANSWER CHOICE: ', form.multipleChoiceAnswers.data)
-
+'''
     return render_template('multipleChoiceAnswerForm.html', form=form)
+    
+    
+    else 
+    relocate to short answer page
+    """
+
+    form = shortAnswerForm()
+    '''
+
+    if request.method == 'POST':
+        print('SUBMIT BUTTON HAS BEEN PRESSED WITH ANSWER CHOICE: ', form.multipleChoiceAnswers.data)
+'''
+    return render_template('shortAnswerPage.html', form=form)
+
+@app.route('/QualtricsImported')
+def QualtricsImport():
+    qualtricsParser()
+    return render_template('QualtricsImport.html')
+
 
 if __name__ == '__main__':
     app.run(debug=True)
