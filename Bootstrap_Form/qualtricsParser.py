@@ -133,31 +133,23 @@ def qualtricsParser():
            }
 
     downloadRequestResponse = requests.request("POST", url, json=data, headers=headers)
-    print(downloadRequestResponse.json())
 
     try:
         progressId = downloadRequestResponse.json()["result"]["progressId"]
     except KeyError:
-        print(downloadRequestResponse.json())
         sys.exit(2)
 
     isFile = None
 
     # Step 2: Checking on Data Export Progress and waiting until export is ready
     while progressStatus != "complete" and progressStatus != "failed" and isFile is None:
-        if isFile is None:
-            print("file not ready")
-        else:
-            print("progressStatus=", progressStatus)
         requestCheckUrl = url + progressId
         requestCheckResponse = requests.request("GET", requestCheckUrl, headers=headers)
         try:
             isFile = requestCheckResponse.json()["result"]["fileId"]
         except KeyError:
             1 == 1
-        print(requestCheckResponse.json())
         requestCheckProgress = requestCheckResponse.json()["result"]["percentComplete"]
-        print("Download is " + str(requestCheckProgress) + " complete")
         progressStatus = requestCheckResponse.json()["result"]["status"]
 
     # step 2.1: Check for error
@@ -172,7 +164,6 @@ def qualtricsParser():
 
     # Step 4: Unzipping the file
     zipfile.ZipFile(io.BytesIO(requestDownload.content)).extractall("MyQualtricsDownload")
-    print('Complete')
 
 
     with open("MyQualtricsDownload/(TEST)Journalism project--Portfolio Review Form.json",'r') as myFile:
@@ -187,4 +178,5 @@ def qualtricsParser():
 
     for i in range (len(data['responses'])):
         for j in range(len(qid_list)):
+
             print(data['responses'][i]['values'][qid_list[j]])
