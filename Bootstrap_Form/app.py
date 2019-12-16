@@ -1017,10 +1017,31 @@ def answerLink(id, id1, id2, id3):
 @app.route('/searchQuestions/', methods=['GET', 'POST'])
 def REAL_Question_search_page():
     form = searchQuestions()
+    form2 = searchQuestions1()
+
+    executeList = []
     if request.method == 'POST':
+        # label = form.data['label']
+        # year = " "
+        # year = form.data['startYear']
+        # yr = "20" + str(year)
+        # reviewType = form2.data['types']
+        #
+        # if reviewType == "Portfolio Review":
+        #     executeList.append(label)
+        #     executeList.append(yr)
+        #     sql = "select * question from PortfolioReviewQ where PortfolioReviewQ.label = %s AND startYear = %s"
+        #     mycursor.execute(sql, executeList)
+        #     mydb.commit()
+        #     results = mycursor.fetchall()
+        #
+        #     if len(results) == 0:
+        #         flash("No results")
+        #     return redirect('/searchQuestions/')
+
         return newSearchResults(form)
 
-    return render_template('questionSearchPage.html', form=form)
+    return render_template('questionSearchPage.html', form=form, form2=form2)
 
 
 @app.route('/searchQuestions/results')
@@ -1033,10 +1054,12 @@ def newSearchResults(form):
         return redirect('/searchQuestions/')
     else:
         print('HEre')
-        items = [QuestionItem('This is a question', 'this is a label', 'this is a start year')]
-        table = ACTUALQuestionsResults(items)
-        table.border = True
-        return render_template('results.html', table=table)
+        # items = [QuestionItem('This is a question', 'this is a label', 'this is a start year')]
+        # table = ACTUALQuestionsResults(items)
+        # table.border = True
+        return redirect(url_for("index"))
+        # return render_template('results.html', table=table)
+    return redirect (url_for("index"))
 
 
 @app.route('/answerItem/<string:id>/<string:year>', methods=['GET', 'POST'])

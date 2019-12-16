@@ -401,6 +401,15 @@ class searchQuestions(FlaskForm):
     label = StringField('Label:', validators=[InputRequired()])
     startYear = StringField('Start Year:', validators=[InputRequired()])
 
+
+class searchQuestions1(FlaskForm):
+    choices = [('Portfolio Review', 'Portfolio Review'),
+               ('Student Review', 'Student Review'),
+               ('Midterm Qualtrics Survey ', 'Midterm Qualtrics Survey'),
+               ('Midterm Site Visit', 'Midterm Site Visit'),
+               ('End-of-Term Qualtrics Survey','End-of-Term Qualtrics Survey')]
+    types = SelectField('Review Type:', choices=choices)
+
 class QuestionItem(object):
     def __init__(self,question,label,startYear):
         self.question = question
