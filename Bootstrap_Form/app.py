@@ -37,6 +37,7 @@ app.config['SECRET_KEY'] = 'DontTellAnyone'
 # Create Classes for forms and web pages
 
 
+
 def executeInsert(sqlStatement, executeList, mycursor, mydb):
     print ("The execute list is", executeList)
     try:
@@ -55,7 +56,6 @@ def studentExecuteInsert(sqlStatement, executeList, mycursor, mydb):
         print ("duplicate entry")
         flash ("Attempting to enter either a student or supervisor that has already been entered")
     mydb.commit()
-
 @app.route('/', methods=['GET','POST'])
 def index():
     if request.method == 'POST':
@@ -73,6 +73,8 @@ def index():
             return redirect(url_for('ReviewQ'))
         elif request.form['option'] == 'Look up Review Questions':
             return redirect(url_for('REAL_Question_search_page'))
+        elif request.form['option'] == 'Enter Review Questions':
+            return redirect(url_for('ReviewQ'))
         elif request.form['option'] == 'Portfolio Response':
             return redirect(url_for('portfolioResponsePage'))
     return render_template('index.html')
@@ -165,6 +167,7 @@ def internshipInfo():
     executeList = []
     form = InternshipInfoForm()
     form2 = InternshipInfoForm2()
+
     if form.validate_on_submit():
         executeList.append(form.data['email'])
         month = " "
@@ -200,7 +203,7 @@ def internshipInfo():
         executeList.append(form.data['tot_hours'])
         executeList.append(form.data['buID'])
         print ("the execute list is", executeList)
-        #
+
         # validate that start date comes before year date
 
         if int(form2.startYear.data) <= int(form2.endYear.data):
@@ -809,14 +812,17 @@ def search_resultsForReview(search):
 #     return render_template('multipleChoiceAnswerForm.html', form=form)
 #
 
+    form.multipleChoiceAnswers.choices = selectChoices
+    if request.method == 'POST':
+        print('SUBMIT BUTTON HAS BEEN PRESSED WITH ANSWER CHOICE: ', form.multipleChoiceAnswers.data)
 
-    # return render_template('multipleChoiceAnswerForm.html', form=form)
+    return render_template('multipleChoiceAnswerForm.html', form=form)
 
 @app.route('/studentAnswersShortAnswer/', methods=['GET', 'POST'])
 def shortAnswerPage():
     form = shortAnswerForm()
 
-@app.route('/searchQuestions/', methods=['GET', 'POST'])
+@app.route('/searchLabel/', methods=['GET', 'POST'])
 def questionSearchPage():
     form = GetLabelForm()
     if request.method == 'POST':
@@ -825,7 +831,7 @@ def questionSearchPage():
     return render_template('getLabelFormV2.html', form=form)
 
 
-@app.route('/searchQuestions/results')
+@app.route('/searchLabel/results')
 def search_results_Questions(form):
     results = []
 
@@ -899,7 +905,7 @@ def search_results_Questions(form):
         table.border = True
         return render_template('results.html', table=table)
 
-@app.route('/answerItem/<string:id>/<string:id1>/<string:id2>/<string:id3>', methods=['GET', 'POST'])
+@app.route('/labelItem/<string:id>/<string:id1>/<string:id2>/<string:id3>', methods=['GET', 'POST'])
 def answerLink(id, id1, id2, id3):
     type = id1
     label = id

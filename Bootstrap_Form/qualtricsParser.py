@@ -86,11 +86,68 @@ def qualtricsParser():
     qid_list = ["QID68_TEXT","QID69_TEXT","QID172807676","QID58","QID59","QID60","QID61",
                 "QID55_TEXT","QID62","QID63","QID64","QID65","QID66","QID67_TEXT"]
 
+    Qlist = [
+        ["QID68_TEXT", "Student Baylor ID?", "12-16-2019"],
+        ["QID69_TEXT","Portfolio Reviewer Name","12-16-2019"],
+        ["QID172807676","Photo Resolution","12-16-2019"],
+        ["QID58","Photo Editing","12-16-2019"],
+        ["QID59","Photo Technique","12-16-2019"],
+        ["QID60","Photo Variety","12-16-2019"],
+        ["QUID61","Photo Creativity","12-16-2019"],
+        ["QUID55_TEXT","Photo Comments","12-16-2019"],
+        ["QID62","Video Quality","12-16-2019"],
+        ["QID63","Video Editing","12-16-2019"],
+        ["QID64","Video Technique","12-16-2019"],
+        ["QID65","Video Effectiveness","12-16-2019"],
+        ["QID66","Video Creativity","12-16-2019"],
+        ["QID67_TEXT","Video Comment","12-16-2019"]
+    ]
+
+    # AnswerChoicesList = [
+    #     ["QID68_TEXT", "12-15-2019", ANSWERLBL, VALUE]
+    # ]
+
+    '''
+    for row in QList:
+        sql = "INSERT INTO PortfolioReviewQ (label, question, startYear) VALUES (%s, %s, %s)"
+        mycursor.execute(sql, row)
+
+    sql = "INSERT INTO PortfolioResponses (label, startYear,baylorID,answer,dateOfReview,reviewerName) VALUES ( %s, %s,%s, %s, %s,%s)"
+    '''
+    '''
     #THIS IS THE AMOUNT OF ENTRY PER USER
     print('Responses = ',len(data['responses']))
     user_count = len(data['responses'])
 
+    ResponseList = [['','','','','','']]
+
+
     for i in range (len(data['responses'])):
         for j in range(len(qid_list)):
 
-            print(data['responses'][i]['values'][qid_list[j]])
+            values = data['responses'][i]['values'][qid_list[j]]
+            if j == 0:
+                baylorID = values
+                ResponseList[i][2] = baylorID
+            elif j == 1:
+                reviewerName = values
+                ResponseList[i][5] = reviewerName
+
+            if values == 1:
+                newvalues = 'Above Average'
+            elif values == 2 or values == 4:
+                newvalues = 'Average'
+            elif values == 3 or values == 5:
+                newvalues = 'Below Average'
+            else:
+                newvalues = ''
+
+
+            ResponseList[i][0] =  newvalues
+            ResponseList[i][1] = "2019"
+            ResponseList[i][4] = "12-16-2019"
+            ResponseList[i][3]= values
+
+            print(data['responses'][i]['values'][qid_list[j]],newvalues)
+
+    '''
