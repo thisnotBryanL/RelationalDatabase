@@ -16,8 +16,8 @@ import mysql.connector
 mydb = mysql.connector.connect(
     host = "localhost",
     user = "root",
-    password = "hoangdieu72",
-    database = "GP"
+    password = "BUboxtop2020",
+    database = "testdb"
 )
 
 #initialize cursor of database

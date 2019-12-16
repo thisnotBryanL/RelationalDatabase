@@ -20,7 +20,7 @@ class SupervisorTypesForm(FlaskForm):
     year = StringField('Enter Year (Or leave Blank):')
 
 class StudentInfoForm(FlaskForm):
-    student_id = StringField('student ID', validators=[InputRequired(), Length(9)])
+    student_id = StringField('student ID', validators=[InputRequired(), Length(9, message='Enter a 9 Digit ID Number')])
     first_name = StringField('First Name', validators=[InputRequired()])
     last_name = StringField('Last Name', validators=[InputRequired()])
     email = StringField('email', validators=[InputRequired(), Email(message='Invalid email address')])
@@ -350,28 +350,28 @@ class ReviewQuestions(FlaskForm):
 class studentResponsesMultipleChoiceForm(FlaskForm):
     multipleChoiceAnswers = SelectField('Answer Choices: ', choices=[])
     comments = StringField('Comments:')
-    baylorID = StringField('BU ID:')
-    answerLabel = StringField('Answer Label: ')
-    email = StringField('Email: ')
+    baylorID = StringField('BU ID:', validators=[InputRequired(), Length(9)])
+    answerLabel = StringField('Answer Label: ', validators=[InputRequired()])
+    email = StringField('Email: ', validators=[InputRequired(), Email(message='Invalid email address')])
 
 class shortAnswerForm(FlaskForm):
-    answers = StringField('Answer: ')
+    answers = StringField('Answer: ', validators=[InputRequired()])
     comments = StringField('Comments:')
-    baylorID = StringField('BU ID:')
-    answerLabel = StringField('Answer Label: ')
-    email = StringField('Email: ')
+    baylorID = StringField('BU ID:', validators=[InputRequired(), Length(9, message='Enter a 9 Digit ID Number')])
+    answerLabel = StringField('Answer Label: ', validators=[InputRequired()])
+    email = StringField('Email: ', validators=[InputRequired(), Email(message='Invalid email address')])
 
 class PortfolioAnswerForm(FlaskForm):
-    answers = StringField('Answer: ')
+    answers = StringField('Answer: ', validators=[InputRequired()])
     comments = StringField('Comments:')
-    baylorID = StringField('BU ID:')
-    dateOfReview = StringField('Date of review: ')
-    email = StringField('Email: ')
+    baylorID = StringField('BU ID:', validators=[InputRequired(), Length(9, message='Enter a 9 Digit ID Number')])
+    dateOfReview = StringField('Date of review: ', validators=[InputRequired()])
+    email = StringField('Email: ', validators=[InputRequired(), Email(message='Invalid email address')])
 
 #********************************************************************************************************************************************
 class searchQuestions(FlaskForm):
-    label = StringField('Label:')
-    startYear = StringField('Start Year:')
+    label = StringField('Label:', validators=[InputRequired()])
+    startYear = StringField('Start Year:', validators=[InputRequired()])
 
 class QuestionItem(object):
     def __init__(self,question,label,startYear):
