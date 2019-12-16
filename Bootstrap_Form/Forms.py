@@ -120,6 +120,13 @@ class Results(Table):
     portfolioReviewLink = LinkCol('Portfolio Reviews', 'portfolioReviewLink', url_kwargs=dict(id='id'))
     studentReviewLink = LinkCol('Student Reviews', 'studentReviewLink', url_kwargs=dict(id='id'))
 
+class QuestionsResults(Table):
+    label = Col('Label ')
+    question = Col('Question ')
+    startYear = Col('Start Year ')
+    answerLink = LinkCol('answer this question', 'answerLink', url_kwargs=dict(id='label',year='startYear'))
+
+
 #********************************************************************************************************************************************
 class PortfolioReviewTable(Table):
     question = Col('Questions')
@@ -284,3 +291,19 @@ class studentResponsesMultipleChoiceForm(FlaskForm):
     comments = StringField('Comments:')
     baylorID = StringField('BU ID:')
     answerLabel = StringField('Answer Label: ')
+
+#********************************************************************************************************************************************
+class searchQuestions(FlaskForm):
+    label = StringField('Label:')
+    startYear = StringField('Start Year:')
+
+class QuestionItem(object):
+    def __init__(self,question,label,startYear):
+        self.question = question
+        self.label = label
+        self.startYear = startYear
+
+    def setValues(self,list):
+        self.question = list[0]
+        self.label = list[1]
+        self.startYear = list[2]
