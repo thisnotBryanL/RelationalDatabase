@@ -28,7 +28,7 @@ class StudentInfoForm(FlaskForm):
 
 class StudentInfoForm2(FlaskForm):
     grade_list = [(0, '---'), (1, 'A'), (2, 'B'), (3, 'C'), (4, 'D'), (5, 'F')]
-    class_list = [(0, '---'), (1, 'Freshman'), (2, 'Sophomore'), (3, 'Junior'), (4, 'Senior')]
+    class_list = [(0, '---'), ('Freshman', 'Freshman'), ('Sophomore', 'Sophomore'), ('Junior', 'Junior'), ('Senior', 'Senior')]
 
     Class = SelectField('Classifcation', choices=class_list)
     major_minor = SelectField('Major or Minor', [DataRequired()], choices=[(0, "---"), (1, 'major'), (2, 'minor')])
@@ -119,20 +119,20 @@ class ReviewQuestions(FlaskForm):
 
 #********************************************************************************************************************************************
 class LabelItem(object):
-    def __init__(self, label, year, type):
+    def __init__(self, label, type):
         self.label = label
-        self.year = year
         self.type = type
 
     def setValues(self,list):
         self.label = list[0]
-        self.year = list[1]
-        self.type = list[2]
+        self.type = list[1]
 
-class LabelTable(Table):
-    id = Col('Question Label')
-    year = Col('Year')
-    type = Col('Review Type')
+# class LabelTable(Table):
+#     label = Col('Question Label')
+#     type = Col('Review Type')
+#     # portfolioReviewLink = LinkCol('Portfolio Reviews', 'portfolioReviewLink', url_kwargs=dict(id='id'))
+
+
 #********************************************************************************************************************************************
 class LabelChoice(FlaskForm):
     lbl = SelectField(choices = [])
@@ -158,9 +158,8 @@ class Results(Table):
 
 class QuestionsResults(Table):
     label = Col('Label ')
-    year = Col('Start Year ')
     type = Col('Review Type ')
-    answerLink = LinkCol('answer this question', 'answerLink', url_kwargs=dict(id='label',year='year'))
+    answerLink = LinkCol('answer this question', 'answerLink', url_kwargs=dict(id='label'))
 
 
 #********************************************************************************************************************************************

@@ -361,15 +361,15 @@ def displayReviews(mycursor, mydb, executeList):
 #     displayForSpecificLabelStudent(mycursor, mydb, executeList)"""
 # def displayForSpecificLabelStudent(mycursor, mydb, executeList):
 #     #by year
-#     displayReviewsY = """SELECT StudentResponse.label, StudentResponse.answer
-#     COUNT(*) as number__of_times_answer_was_chosen
-#     FROM StudentReviewQ, StudentResponse, StudentAnswerChoices,
-#     WHERE StudentAnswerChoices.label = %s AND StudentAnswerChoices.startYear BETWEEN %s and %s
-#     AND StudentAnswerChoices.startYear = StudentResponse.startYear
-#     AND StudentReviewQ.label = StudentResponse.label
-#     AND StudentAnswerChoices.label = StudentResponse.label
-#     AND StudentAnswerChoices.startYear = StudentReviewQ.label
-#     GROUP BY StudentAnswerChoices.startYear, StudentResponse.answer"""
+displayReviewsY = """SELECT StudentResponse.label, StudentResponse.answer
+    COUNT(*) as number__of_times_answer_was_chosen
+    FROM StudentReviewQ, StudentResponse, StudentAnswerChoices,
+    WHERE StudentAnswerChoices.label = %s AND StudentAnswerChoices.startYear BETWEEN %s and %s
+    AND StudentAnswerChoices.startYear = StudentResponse.startYear
+    AND StudentReviewQ.label = StudentResponse.label
+    AND StudentAnswerChoices.label = StudentResponse.label
+    AND StudentAnswerChoices.startYear = StudentReviewQ.label
+    GROUP BY StudentAnswerChoices.startYear, StudentResponse.answer"""
 #
 #     mycursor.execute(displayReviewsY, (questionlabel, startyear, endyear))
 #     mydb.commit()

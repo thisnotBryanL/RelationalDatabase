@@ -15,7 +15,7 @@ import mysql.connector
 mydb = mysql.connector.connect(
     host = "localhost",
     user = "root",
-    password = "hoangdieu72",
+    password = "password123",
     database = "GP"
 )
 
@@ -120,7 +120,7 @@ def studentInfo():
         executeList.append(form.data['first_name'])
         executeList.append(form.data['email'])
         executeList.append(semester)
-        executeList.append(form.data['Class'])
+        executeList.append(form2.data['Class'])
         executeList.append(majororminor)
         executeList.append(grade)
         executeList.append(yr)
@@ -622,64 +622,76 @@ def search_resultsForReview(search):
 
     return redirect('/reviewQuery')
 
-labelChoicesList = []
-@app.route('/ReviewAnalysis', methods=['GET', "POST"])
-def GetLabel():
-    search = GetLabelForm()
-    if request.method == 'POST':
-        executeList = []
-        #label = search.data['label']
-        reviewType = search.data['reviewType']
-        startYear = int(search.data['startYear']) - 1
-        startYear = "20" + str(startYear)
-        endYear = int(search.data['endYear']) - 1
-        endYear = "20" + str(endYear)
-        executeList.append(startYear)
-        executeList.append(endYear)
-
-
-        if reviewType == "Portfolio Review":
-            print("the executeList is", executeList)
-            sql = "SELECT label FROM PortfolioReviewQ WHERE startYear BETWEEN %s AND %s"
-            mycursor.execute(sql, executeList)
-            results = mycursor.fetchall()
-            print ("IN HERE")
-
-        elif reviewType == "Student Review":
-            sql = "SELECT label FROM StudentReviewQ WHERE startYear BETWEEN %s AND %s"
-            mycursor.execute(sql, executeList)
-            results = mycursor.fetchall()
-
-        else:
-            if reviewType == "Midterm Qualtrics Survey":
-                executeList.append("midterm")
-
-            elif reviewType == "Midterm Site Visit":
-                executeList.append("site")
-
-            elif reviewType == "End-of-Term Qualtrics Survey":
-                executeList.append("site")
-
-            sql = "SELECT label FROM SupervisorInternReviewQ WHERE startYear BETWEEN %s AND %s AND reviewType = %s"
-            mycursor.execute(sql, executeList)
-            results = mycursor.fetchall()
-
-        if len(results) == 0:
-            flash('No results found!')
-            # return redirect(f'/item5/{id}')
-        else:
-            for row in results:
-                labelChoicesList.append(row)
-
-            return redirect("/ReviewAnalysis/LabelPage'")
-    return render_template('reviewAnalysis.html', form=search)
-
-@app.route('/ReviewAnalysis/LabelPage', methods=['GET', "POST"])
-def LabelPage():
-    search = LabelChoice()
-    search.lbl = []
-    return render_template("labelchoices.html", form = search)
-
+# @app.route('/ReviewAnalysis', methods=['GET', "POST"])
+# def GetLabel():
+#     search = GetLabelForm()
+#     if request.method == 'POST':
+#         executeList = []
+#         #label = search.data['label']
+#         reviewType = search.data['reviewType']
+#         startYear = int(search.data['startYear']) - 1
+#         startYear = "20" + str(startYear)
+#         endYear = int(search.data['endYear']) - 1
+#         endYear = "20" + str(endYear)
+#         executeList.append(startYear)
+#         executeList.append(endYear)
+#
+#         if reviewType == "Portfolio Review":
+#             print("the executeList is", executeList)
+#             sql = "SELECT label FROM PortfolioReviewQ WHERE startYear BETWEEN %s AND %s"
+#             mycursor.execute(sql, executeList)
+#             results = mycursor.fetchall()
+#             print ("IN HERE")
+#
+#         elif reviewType == "Student Review":
+#             sql = "SELECT label FROM StudentReviewQ WHERE startYear BETWEEN %s AND %s"
+#             mycursor.execute(sql, executeList)
+#             results = mycursor.fetchall()
+#
+#         else:
+#             if reviewType == "Midterm Qualtrics Survey":
+#                 executeList.append("midterm")
+#
+#             elif reviewType == "Midterm Site Visit":
+#                 executeList.append("site")
+#
+#             elif reviewType == "End-of-Term Qualtrics Survey":
+#                 executeList.append("site")
+#
+#             sql = "SELECT label FROM SupervisorInternReviewQ WHERE startYear BETWEEN %s AND %s AND reviewType = %s"
+#             mycursor.execute(sql, executeList)
+#             results = mycursor.fetchall()
+#
+#         if len(results) == 0:
+#             flash('No results found!')
+#             return redirect(f'/item5/{id}')
+#         else:
+#             items = []
+#             for row in results:
+#                 instance = LabelItem( " ", " ", " ")
+#                 row = list(row)
+#                 if reviewType == "Portfolio Review":
+#                     row.append("Portfolio")
+#
+#                 if reviewType == "Student Review":
+#                     row.append("Student")
+#                 instance.setValues(row)
+#                 items.append(row)
+#
+#             table = LabelTable(items)
+#             table.border = True
+#             return render_template('results.html', table=table)
+#
+#
+#             return redirect("/ReviewAnalysis/LabelPage'")
+#     return render_template('reviewAnalysis.html', form=search)
+#
+# @app.route('/ReviewAnalysis/LabelPage', methods=['GET', "POST"])
+# def LabelPage():
+#     search = LabelChoice()
+#     search.lbl = []
+#     return render_template("labelchoices.html", form = search)
+#
 
 # add this <string:label> to the route when done
 # it will take question label
@@ -711,28 +723,69 @@ def questionSearchPage():
 def search_results_Questions(form):
     results = []
 
-    """QUERY FOR LABEL ITEM HERE"""
+    executeList = []
+    # label = search.data['label']
+    reviewType = form.reviewType.data
+    startYear = int(form.startYear.data) - 1
+    startYear = "20" + str(startYear)
+    endYear = int(form.endYear.data) - 1
+    endYear = "20" + str(endYear)
+    executeList.append(startYear)
+    executeList.append(endYear)
+
+    if reviewType == "Portfolio Review":
+        print("the executeList is", executeList)
+        sql = "SELECT label FROM PortfolioReviewQ WHERE startYear BETWEEN %s AND %s"
+        mycursor.execute(sql, executeList)
+        results = mycursor.fetchall()
+        print("IN HERE")
+
+    elif reviewType == "Student Review":
+        sql = "SELECT label FROM StudentReviewQ WHERE startYear BETWEEN %s AND %s"
+        mycursor.execute(sql, executeList)
+        results = mycursor.fetchall()
+
+    else:
+        if reviewType == "Midterm Qualtrics Survey":
+            executeList.append("midterm")
+
+        elif reviewType == "Midterm Site Visit":
+            executeList.append("site")
+
+        elif reviewType == "End-of-Term Qualtrics Survey":
+            executeList.append("site")
+
+        sql = "SELECT label FROM SupervisorInternReviewQ WHERE startYear BETWEEN %s AND %s AND reviewType = %s"
+        mycursor.execute(sql, executeList)
+        results = mycursor.fetchall()
 
 
-    if len(results) > 0:
+    if len(results) == 0:
         flash('No results found!')
         return redirect('/searchQuestions/')
     else:
+        items = []
+        for row in results:
+            instance = LabelItem(" ", " ")
+            row = list(row)
+            if reviewType == "Portfolio Review":
+                row.append("Portfolio")
 
-        items = [LabelItem('This is a LABEL', 'this is a YEAR', 'this is a TYPE')]
+            if reviewType == "Student Review":
+                row.append("Student")
 
-
-
+            print ("the row is", row)
+            instance.setValues(row)
+            items.append(instance)
 
         table = QuestionsResults(items)
         table.border = True
         return render_template('results.html', table=table)
 
 
-@app.route('/answerItem/<string:id>/<string:year>', methods=['GET', 'POST'])
-def answerLink(id, year):
+@app.route('/answerItem/<string:id>', methods=['GET', 'POST'])
+def answerLink(id):
     print(id)
-    print(year)
 
     """
     If count(*) is greater than one then relocate to multiple choice answer page
@@ -749,7 +802,7 @@ def answerLink(id, year):
     #     print('SUBMIT BUTTON HAS BEEN PRESSED WITH ANSWER CHOICE: ', form.multipleChoiceAnswers.data)
     #
     # return render_template('multipleChoiceAnswerForm.html', form=form)
-    return year
+    return id
 
 
 if __name__ == '__main__':
