@@ -14,8 +14,8 @@ import mysql.connector
 mydb = mysql.connector.connect(
     host = "localhost",
     user = "root",
-    password = "BUboxtop2020",
-    database = "testdb"
+    password = "hoangdieu72",
+    database = "GP"
 )
 #
 #initialize cursor of database
@@ -72,6 +72,8 @@ def index():
             return redirect(url_for('ReviewQ'))
         elif request.form['option'] == 'Look up Review Questions':
             return redirect(url_for('REAL_Question_search_page'))
+        elif request.form['option'] == 'Enter Review Questions':
+            return redirect(url_for('ReviewQ'))
         elif request.form['option'] == 'Portfolio Response':
             return redirect(url_for('portfolioResponsePage'))
     return render_template('index.html')
@@ -828,7 +830,7 @@ def studentMultipleChoiceAnswerPage():
 def shortAnswerPage():
     form = shortAnswerForm()
 
-@app.route('/searchQuestions/', methods=['GET', 'POST'])
+@app.route('/searchLabel/', methods=['GET', 'POST'])
 def questionSearchPage():
     form = GetLabelForm()
     if request.method == 'POST':
@@ -837,7 +839,7 @@ def questionSearchPage():
     return render_template('getLabelFormV2.html', form=form)
 
 
-@app.route('/searchQuestions/results')
+@app.route('/searchLabel/results')
 def search_results_Questions(form):
     results = []
 
@@ -911,7 +913,7 @@ def search_results_Questions(form):
         table.border = True
         return render_template('results.html', table=table)
 
-@app.route('/answerItem/<string:id>/<string:id1>/<string:id2>/<string:id3>', methods=['GET', 'POST'])
+@app.route('/labelItem/<string:id>/<string:id1>/<string:id2>/<string:id3>', methods=['GET', 'POST'])
 def answerLink(id, id1, id2, id3):
     type = id1
     label = id
