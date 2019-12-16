@@ -4,8 +4,6 @@ from flask_table import Table, Col,LinkCol
 from wtforms import StringField, SelectField, IntegerField
 from wtforms.validators import InputRequired, Email, Length, DataRequired, NumberRange
 from flask_bootstrap import Bootstrap
-from flask_bootstrap import Bootstrap
-from Bootstrap_Form.TableSchema import reviewByStudent, basicInfo
 from Bootstrap_Form.TableSchema import reviewByStudent, basicInfo
 from Bootstrap_Form.qualtricsParser import qualtricsParser
 from TableSchema import *
@@ -37,18 +35,16 @@ app.config['SECRET_KEY'] = 'DontTellAnyone'
 # Create Classes for forms and web pages
 
 
+
+executeList = [ ]
 def executeInsert(sqlStatement, executeList, mycursor, mydb):
     print ("The execute list is", executeList)
-    mycursor.execute(sqlStatement, executeList)
-    # try:
-    #     print ("the eeexecute list is", executeList)
-    #     mycursor.execute(sqlStatement, executeList)
-    #     mydb.commit()
-    # except mysql.connector.Error as error:
-    #     print ("duplicate entry")
-    #     flash ("Attempting to enter either a student or supervisor that has already been entered")
-    #     return redirect ('/input_internship_info')
-
+    try:
+        mycursor.execute(sqlStatement, executeList)
+        mydb.commit()
+    except mysql.connector.Error as error:
+        print ("duplicate entry")
+        flash ("Invalid entry of student/supervisor")
 
 
 def studentExecuteInsert(sqlStatement, executeList, mycursor, mydb):
@@ -59,7 +55,6 @@ def studentExecuteInsert(sqlStatement, executeList, mycursor, mydb):
         print ("duplicate entry")
         flash ("Attempting to enter either a student or supervisor that has already been entered")
     mydb.commit()
-
 @app.route('/', methods=['GET','POST'])
 def index():
     if request.method == 'POST':
@@ -99,6 +94,16 @@ def studentInfo():
            majororminor = "major"
         else:
             majororminor = "minor"
+
+        Class = " "
+        if form2.data['Class'] == '1':
+           Class = "Freshman"
+        elif form2.data['Class'] == '2':
+           Class = "Sophomore"
+        elif form2.data['Class'] == '3':
+            Class = "Junior"
+        elif form2.data['Class'] == '4':
+            Class = "Senior"
 
         semester = " "
         if form2.data['ADV_PR_Semester'] == '1':
@@ -158,6 +163,7 @@ def supervisorInfo():
         executeList.append(form.data["email"])
         sql = "INSERT INTO Supervisor (`company`, `supervisorName`, `title`, `email`) VALUES (%s, %s, %s, %s)"
         executeInsert(sql, executeList, mycursor, mydb)
+        return redirect(url_for('index'))
 
         # if request.form['option'] == 'home':
         #     return redirect(url_for('index'))
@@ -170,6 +176,7 @@ def internshipInfo():
     executeList = []
     form = InternshipInfoForm()
     form2 = InternshipInfoForm2()
+
     if form.validate_on_submit():
         executeList.append(form.data['email'])
         month = " "
@@ -206,10 +213,20 @@ def internshipInfo():
         executeList.append(form.data['buID'])
         print ("the execute list is", executeList)
 
-        sql = "INSERT INTO Internship (`supervisorEmail`, `startMonth`, `startYear`, `endMonth`, `endYear`, `address`, `phoneNumber`, `totalHours`, `BaylorID`)" \
-              "VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)"
+        # validate that start date comes before year date
 
-        executeInsert(sql, executeList, mycursor, mydb)
+        if int(form2.startYear.data) <= int(form2.endYear.data):
+            print('startYeartart year is smaller', form2.startYear.data)
+            if int(form2.startMonth.data) <= int(form2.endMonth.data):
+                # print('start month is smaller', form2.startMonth.data)
+                sql = "INSERT INTO Internship (`supervisorEmail`, `startMonth`, `startYear`, `endMonth`, `endYear`, `address`, `phoneNumber`, `totalHours`, `BaylorID`)" \
+                       "VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)"
+                executeInsert(sql, executeList, mycursor, mydb)
+                return redirect(url_for('index'))
+            else:
+                flash('Start Month Must Come Before End Month')
+        else:
+            flash('Start Year Must Come Before End Year')
     return render_template('internship.html', form=form, form2=form2)
 
 @app.route('/ReviewQ_info', methods=['GET', 'POST'])
@@ -791,20 +808,21 @@ def search_resultsForReview(search):
 
 # add this <string:label> to the route when done
 # it will take question label
-# @app.route('/studentAnswersMultipleChoice/', methods=['GET', 'POST'])
-# def studentMultipleChoiceAnswerPage():
-#     form = studentResponsesMultipleChoiceForm()
-#     # form.multipleChoiceAnswers.choices = ['QUERY TUPLE RESULTS HERE']
-#     selectChoices = [('1', 'BAD'), ('2', 'Okay'), ('3', 'Good')]
-#
-#     form.multipleChoiceAnswers.choices = selectChoices
-#     if request.method == 'POST':
-#         print('SUBMIT BUTTON HAS BEEN PRESSED WITH ANSWER CHOICE: ', form.multipleChoiceAnswers.data)
-#
-#     return render_template('multipleChoiceAnswerForm.html', form=form)
-#
+@app.route('/studentAnswersMultipleChoice/', methods=['GET', 'POST'])
+def studentMultipleChoiceAnswerPage():
+    form = studentResponsesMultipleChoiceForm()
+    # form.multipleChoiceAnswers.choices = ['QUERY TUPLE RESULTS HERE']
+    selectChoices = [('1', 'BAD'), ('2', 'Okay'), ('3', 'Good')]
 
+    form.multipleChoiceAnswers.choices = selectChoices
+    if request.method == 'POST':
+        print('SUBMIT BUTTON HAS BEEN PRESSED WITH ANSWER CHOICE: ', form.multipleChoiceAnswers.data)
 
+    return render_template('multipleChoiceAnswerForm.html', form=form)
+
+@app.route('/studentAnswersShortAnswer/', methods=['GET', 'POST'])
+def shortAnswerPage():
+    form = shortAnswerForm()
 
 @app.route('/searchLabel/', methods=['GET', 'POST'])
 def questionSearchPage():
