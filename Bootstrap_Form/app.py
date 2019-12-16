@@ -288,7 +288,7 @@ def search_results(search):
         return render_template('results.html', table=table)
 
 
-@app.route('/item/<int:id>', methods=['GET', 'POST'])
+@app.route('/item/<string:id>', methods=['GET', 'POST'])
 def supervisorReviewLink(id):
     # Ask for YEAR of review
     types = SupervisorTypesForm()
@@ -339,7 +339,7 @@ def supervisorReviewLink(id):
             flash('Please enter a 4 digit year!')
     return render_template('SupervisorTypes.html', form = types )
 
-@app.route('/item1/<int:id>', methods=['GET', 'POST'])
+@app.route('/item1/<string:id>', methods=['GET', 'POST'])
 def portfolioReviewLink(id):
     # Ask for YEAR of review
     yearSearch = YearSearchForm()

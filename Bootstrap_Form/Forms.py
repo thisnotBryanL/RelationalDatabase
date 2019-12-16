@@ -24,13 +24,14 @@ class StudentInfoForm(FlaskForm):
     first_name = StringField('First Name', validators=[InputRequired()])
     last_name = StringField('Last Name', validators=[InputRequired()])
     email = StringField('email', validators=[InputRequired(), Email(message='Invalid email address')])
-    Class = StringField('Class', validators=[InputRequired()])
 
 
 class StudentInfoForm2(FlaskForm):
     grade_list = [(0, '---'), (1, 'A'), (2, 'B'), (3, 'C'), (4, 'D'), (5, 'F')]
+    class_list = [(0, '---'), (1, 'Freshman'), (2, 'Sophomore'), (3, 'Junior'), (4, 'Senior')]
 
-    major_minor = SelectField('Major/Minor', [DataRequired()], choices=[(0, "---"), (1, 'major'), (2, 'minor')])
+    Class = SelectField('Classifcation', choices=class_list)
+    major_minor = SelectField('Major or Minor', [DataRequired()], choices=[(0, "---"), (1, 'major'), (2, 'minor')])
     ADV_PR_Semester = SelectField('ADV PR Semester', choices=[(0, '---'), (1, 'Fall'), (2, 'Spring')])
     ADV_PR_Year = SelectField('Year', choices=year_list)
     ADV_PR_Grade = SelectField('Grade', choices=grade_list)
@@ -73,6 +74,9 @@ class InternshipInfoForm2(FlaskForm):
     endMonth = SelectField('End Month', choices=month_list)
     endYear = SelectField('End Year', choices=year_list)
 
+    class YearSearchForm(FlaskForm):
+        year = StringField('Enter Year:')
+
 class SupervisorInternReviewQForm(FlaskForm):
     label = StringField('Label', validators=[InputRequired()])
     question = StringField('Question', validators=[InputRequired()])
@@ -80,9 +84,25 @@ class SupervisorInternReviewQForm(FlaskForm):
 
 class SupervisorInternReviewQForm2(FlaskForm):
     startYear = SelectField('Start Year', choices=year_list)
+    review_type = SelectField('Review Type', choices=[(0,'---'), (1,'Midterm Qualtrics Survey'), (2,'Midterm Site Visit'),
+                                                      (3,'End-of-Term Qualtrics Survey')])
+
+class Student_PortfolioReviewQForm(FlaskForm):
+    label = StringField('Label', validators=[InputRequired()])
+    question = StringField('Question', validators=[InputRequired()])
+
+class Student_PortfolioReviewQForm2(FlaskForm):
+    startYear = SelectField('Start Year', choices=year_list)
+
 
 class YearSearchForm(FlaskForm):
     year = StringField('Enter Year:')
+
+class ReviewQuestions(FlaskForm):
+    review_list = SelectField('Review Question Option', choices=[(0, '---'), (1, 'Portfolio Review'),
+                                                                     (2, 'Supervisor Intern Review'),
+                                                                     (3, 'Student Review')])
+
 
 #********************************************************************************************************************************************
 
@@ -96,7 +116,7 @@ class Results(Table):
     major_minor = Col('Major ')
     grade = Col('Grade ')
     classYear = Col('Class')
-    supervisorReviewLink = LinkCol('Supervisor Reviews', 'supervisorReviewLink', url_kwargs=dict(id='id'))
+    supervisorReviewLink = LinkCol('Supervisor Reviews', 'supervisorReviewLink', url_kwargs=dict(id ='id'))
     portfolioReviewLink = LinkCol('Portfolio Reviews', 'portfolioReviewLink', url_kwargs=dict(id='id'))
     studentReviewLink = LinkCol('Student Reviews', 'studentReviewLink', url_kwargs=dict(id='id'))
 
@@ -240,3 +260,27 @@ class Item(object):
         self.classn = list[5]
 
 
+
+
+class SupervisorInternReviewQForm2(FlaskForm):
+    startYear = SelectField('Start Year', choices=year_list)
+    review_type = SelectField('Review Type', choices=[(0,'---'), (1,'Midterm Qualtrics Survey'), (2,'Midterm Site Visit'),
+                                                      (3,'End-of-Term Qualtrics Survey')])
+
+class Student_PortfolioReviewQForm(FlaskForm):
+    label = StringField('Label', validators=[InputRequired()])
+    question = StringField('Question', validators=[InputRequired()])
+
+class Student_PortfolioReviewQForm2(FlaskForm):
+    startYear = SelectField('Start Year', choices=year_list)
+
+class ReviewQuestions(FlaskForm):
+    review_list = SelectField('Review Question Option', choices=[(0,'---'), (1,'Portfolio Review'),
+                                                                 (2,'Supervisor Intern Review'),
+                                                                 (3,'Student Review')])
+#********************************************************************************************************************************************
+class studentResponsesMultipleChoiceForm(FlaskForm):
+    multipleChoiceAnswers = SelectField('Answer Choices: ', choices=[])
+    comments = StringField('Comments:')
+    baylorID = StringField('BU ID:')
+    answerLabel = StringField('Answer Label: ')
