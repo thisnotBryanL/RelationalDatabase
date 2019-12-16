@@ -213,8 +213,15 @@ def internshipInfo():
 
         # validate that start date comes before year date
 
-        if int(form2.startYear.data) <= int(form2.endYear.data):
+        if int(form2.startYear.data) < int(form2.endYear.data):
             print('startYeartart year is smaller', form2.startYear.data)
+            # print('start month is smaller', form2.startMonth.data)
+            sql = "INSERT INTO Internship (`supervisorEmail`, `startMonth`, `startYear`, `endMonth`, `endYear`, `address`, `phoneNumber`, `totalHours`, `BaylorID`)" \
+                   "VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)"
+            executeInsert(sql, executeList, mycursor, mydb)
+            return redirect(url_for('index'))
+        elif int(form2.startYear.data) == int(form2.endYear.data):
+            print('startYeartart year is equal', form2.startYear.data)
             if int(form2.startMonth.data) <= int(form2.endMonth.data):
                 # print('start month is smaller', form2.startMonth.data)
                 sql = "INSERT INTO Internship (`supervisorEmail`, `startMonth`, `startYear`, `endMonth`, `endYear`, `address`, `phoneNumber`, `totalHours`, `BaylorID`)" \
