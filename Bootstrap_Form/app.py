@@ -1048,7 +1048,7 @@ def REAL_Question_search_page():
 def newSearchResults(form):
     results = []
     print('Here?')
-
+#
     if len(results) > 0:
         flash('No results found!')
         return redirect('/searchQuestions/')
