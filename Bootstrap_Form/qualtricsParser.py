@@ -67,8 +67,8 @@ def qualtricsParser():
         progressStatus = requestCheckResponse.json()["result"]["status"]
 
     # step 2.1: Check for error
-    if progressStatus is "failed":
-        raise Exception("export failed")
+    # if progressStatus is "failed":
+    #     raise Exception("export failed")
 
     fileId = requestCheckResponse.json()["result"]["fileId"]
 

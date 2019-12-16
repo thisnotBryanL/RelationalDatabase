@@ -119,13 +119,18 @@ class ReviewQuestions(FlaskForm):
 
 #********************************************************************************************************************************************
 class LabelItem(object):
-    def __init__(self, label, type):
+    def __init__(self, label, type, startyear, endyear):
         self.label = label
         self.type = type
+        self.startyear = startyear
+        self.endyear = endyear
 
     def setValues(self,list):
         self.label = list[0]
         self.type = list[1]
+        self.startyear = list[2]
+        self.endyear = list[3]
+
 
 # class LabelTable(Table):
 #     label = Col('Question Label')
@@ -159,7 +164,10 @@ class Results(Table):
 class QuestionsResults(Table):
     label = Col('Label ')
     type = Col('Review Type ')
-    answerLink = LinkCol('answer this question', 'answerLink', url_kwargs=dict(id='label'))
+    startyear = Col('Start Year')
+    endyear = Col('End Year')
+
+    answerLink = LinkCol('View These Answers', 'answerLink', url_kwargs=dict(id='label', id1 = 'type', id2= 'startyear', id3= 'endyear'))
 
 class ACTUALQuestionsResults(Table):
     question = Col('Question ')
@@ -168,6 +176,25 @@ class ACTUALQuestionsResults(Table):
     answerLinkv2 = LinkCol('Answer this question', 'answerLinkv2', url_kwargs=dict(id='label', year='startYear'))
 
 
+#********************************************************************************************************************************************
+class LabelYearTable(Table):
+    label = Col('Label')
+    question = Col('Question')
+    answer = Col('answer')
+    num = Col('Number of Times Chosen')
+
+class LabelYearItem(object):
+    def __init__(self,label,question,answer,num):
+        self.label = label
+        self.question = question
+        self.answer = answer
+        self.num = num
+
+    def setValues(self,list):
+        self.label = list[1]
+        self.question = list[0]
+        self.answer = list[2]
+        self.num = list[3]
 #********************************************************************************************************************************************
 class PortfolioReviewTable(Table):
     question = Col('Questions')
@@ -332,8 +359,8 @@ class Item(object):
 
 class SupervisorInternReviewQForm2(FlaskForm):
     startYear = SelectField('Start Year', choices=year_list)
-    review_type = SelectField('Review Type', choices=[(0,'---'), (1,'Midterm Qualtrics Survey'), (2,'Midterm Site Visit'),
-                                                      (3,'End-of-Term Qualtrics Survey')])
+    review_type = SelectField('Review Type', choices=[(0,'---'), ('midterm','Midterm Qualtrics Survey'), ('site','Midterm Site Visit'),
+                                                      ('endterm','End-of-Term Qualtrics Survey')])
 
 class Student_PortfolioReviewQForm(FlaskForm):
     label = StringField('Label', validators=[InputRequired()])
@@ -384,4 +411,3 @@ class QuestionItem(object):
         self.question = list[0]
         self.label = list[1]
         self.startYear = list[2]
-
