@@ -367,6 +367,7 @@ class PortfolioAnswerForm(FlaskForm):
     baylorID = StringField('BU ID:', validators=[InputRequired(), Length(9, message='Enter a 9 Digit ID Number')])
     dateOfReview = StringField('Date of review: ', validators=[InputRequired()])
     email = StringField('Email: ', validators=[InputRequired(), Email(message='Invalid email address')])
+    reviewerName = StringField('Reviewer Name', validators=[InputRequired()])
 
 #********************************************************************************************************************************************
 class searchQuestions(FlaskForm):

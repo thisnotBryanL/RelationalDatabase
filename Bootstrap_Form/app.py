@@ -42,7 +42,7 @@ def executeInsert(sqlStatement, executeList, mycursor, mydb):
         mydb.commit()
     except mysql.connector.Error as error:
         print ("duplicate entry")
-        flash ("Attempting to enter a student and supervisor that has already been entered")
+        flash ("Invalid entry of student/supervisor")
 
 
 def studentExecuteInsert(sqlStatement, executeList, mycursor, mydb):
@@ -80,6 +80,7 @@ def index():
 
 @app.route('/input_student_info', methods=['GET', 'POST'])
 def studentInfo():
+    executeList = []
     form = StudentInfoForm()
     form2 = StudentInfoForm2()
     if (form.validate_on_submit() and form2.major_minor.data != '0' and form2.ADV_PR_Semester.data != '0' and
@@ -91,6 +92,7 @@ def studentInfo():
         else:
             majororminor = "minor"
 
+        Class = " "
         if form2.data['Class'] == '1':
            Class = "Freshman"
         elif form2.data['Class'] == '2':
@@ -149,6 +151,7 @@ def studentInfo():
 
 @app.route('/input_supervisor_info', methods=['GET', 'POST'])
 def supervisorInfo():
+    executeList = []
     form = SupervisorInfoForm()
     if form.validate_on_submit():
         executeList.append(form.data["company"])
@@ -157,6 +160,7 @@ def supervisorInfo():
         executeList.append(form.data["email"])
         sql = "INSERT INTO Supervisor (`company`, `supervisorName`, `title`, `email`) VALUES (%s, %s, %s, %s)"
         executeInsert(sql, executeList, mycursor, mydb)
+        return redirect(url_for('index'))
 
         # if request.form['option'] == 'home':
         #     return redirect(url_for('index'))
@@ -166,6 +170,7 @@ def supervisorInfo():
 
 @app.route('/input_internship_info', methods=['GET', 'POST'])
 def internshipInfo():
+    executeList = []
     form = InternshipInfoForm()
     form2 = InternshipInfoForm2()
 
@@ -213,6 +218,7 @@ def internshipInfo():
                 sql = "INSERT INTO Internship (`supervisorEmail`, `startMonth`, `startYear`, `endMonth`, `endYear`, `address`, `phoneNumber`, `totalHours`, `BaylorID`)" \
                        "VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)"
                 executeInsert(sql, executeList, mycursor, mydb)
+                return redirect(url_for('index'))
             else:
                 flash('Start Month Must Come Before End Month')
         else:
