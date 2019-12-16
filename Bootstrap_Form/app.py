@@ -254,7 +254,6 @@ def PortfolioRevQ():
         return redirect(url_for('ReviewQ'))
     return render_template('Student_PortfolioReviewQ.html', form=form, form2=form2, header='Portfolio')
 
-
 ######################## SUDENT QUERY DATA ########################
 
 @app.route('/studentQuery', methods=['GET', "POST"])
