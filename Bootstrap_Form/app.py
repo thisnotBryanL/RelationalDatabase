@@ -37,17 +37,18 @@ app.config['SECRET_KEY'] = 'DontTellAnyone'
 # Create Classes for forms and web pages
 
 
-executeList = [ ]
 def executeInsert(sqlStatement, executeList, mycursor, mydb):
     print ("The execute list is", executeList)
-    try:
-        mycursor.execute(sqlStatement, executeList)
-        del executeList[:]
-        mydb.commit()
-    except mysql.connector.Error as error:
-        del executeList[:]
-        print ("duplicate entry")
-        flash ("Student with id #" + executeList[0] + " has already been entered")
+    mycursor.execute(sqlStatement, executeList)
+    # try:
+    #     print ("the eeexecute list is", executeList)
+    #     mycursor.execute(sqlStatement, executeList)
+    #     mydb.commit()
+    # except mysql.connector.Error as error:
+    #     print ("duplicate entry")
+    #     flash ("Attempting to enter either a student or supervisor that has already been entered")
+    #     return redirect ('/input_internship_info')
+
 
 
 def studentExecuteInsert(sqlStatement, executeList, mycursor, mydb):
@@ -56,9 +57,8 @@ def studentExecuteInsert(sqlStatement, executeList, mycursor, mydb):
         mycursor.execute(sqlStatement, executeList)
     except mysql.connector.Error as error:
         print ("duplicate entry")
-        flash ("Student with id #" + executeList[0] + " has already been entered")
+        flash ("Attempting to enter either a student or supervisor that has already been entered")
     mydb.commit()
-    del executeList[:]
 
 @app.route('/', methods=['GET','POST'])
 def index():
@@ -205,8 +205,7 @@ def internshipInfo():
         sql = "INSERT INTO Internship (`supervisorEmail`, `startMonth`, `startYear`, `endMonth`, `endYear`, `address`, `phoneNumber`, `totalHours`, `BaylorID`)" \
               "VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)"
 
-        mycursor.execute(sql, executeList)
-        mydb.commit()
+        executeInsert(sql, executeList, mycursor, mydb)
     return render_template('internship.html', form=form, form2=form2)
 
 @app.route('/ReviewQ_info', methods=['GET', 'POST'])
@@ -232,6 +231,25 @@ def StudentRevQ():
     form = Student_PortfolioReviewQForm()
     form2 = Student_PortfolioReviewQForm2()
     if form.validate_on_submit():
+        lbl = form.data['label']
+        ques = form.data['question']
+        year = " "
+        year = int(form2.data['startYear']) - 1
+        yr = "20" + str(year)
+        executeList = []
+        executeList.append(lbl)
+        executeList.append(ques)
+        executeList.append(yr)
+
+
+        sql = "INSERT INTO StudentReviewQ (label, question, startYear) VALUES (%s, %s, %s)"
+        try:
+            mycursor.execute(sql, executeList)
+            mydb.commit()
+        except mysql.connector.Error as error:
+            flash ("Cannot allow for duplicate entry")
+            return redirect ('/ReviewQ_info/Student_Review_Questions')
+
         return redirect(url_for('ReviewQ'))
     return render_template('Student_PortfolioReviewQ.html', form=form, form2=form2, header='Student')
 
@@ -240,6 +258,27 @@ def SupInternRevQ():
     form = SupervisorInternReviewQForm()
     form2 = SupervisorInternReviewQForm2()
     if form.validate_on_submit():
+        lbl = form.data['label']
+        ques = form.data['question']
+        year = " "
+        year = int(form2.data['startYear']) - 1
+        yr = "20" + str(year)
+        type = form2.data['review_type']
+        print ("the type is", type)
+        executeList = []
+        executeList.append(lbl)
+        executeList.append(ques)
+        executeList.append(type)
+        executeList.append(yr)
+
+        sql = "INSERT INTO SupervisorInternReviewQ (label, question, reviewType,  startYear) VALUES (%s, %s, %s, %s)"
+        try:
+            mycursor.execute(sql, executeList)
+            mydb.commit()
+        except mysql.connector.Error as error:
+            flash ("Cannot allow for duplicate entry")
+            return redirect ('/ReviewQ_info/Supervisor_Intern_Review_Questions')
+
         return redirect(url_for('ReviewQ'))
     return render_template('SupervisorInternReviewQ.html', form=form, form2=form2)
 
@@ -248,6 +287,23 @@ def PortfolioRevQ():
     form = Student_PortfolioReviewQForm()
     form2 = Student_PortfolioReviewQForm2()
     if form.validate_on_submit():
+        lbl = form.data['label']
+        ques = form.data['question']
+        year = " "
+        year = int(form2.data['startYear']) - 1
+        yr = "20" + str(year)
+        executeList = []
+        executeList.append(lbl)
+        executeList.append(ques)
+        executeList.append(yr)
+
+        sql = "INSERT INTO PortfolioReviewQ (label, question, startYear) VALUES (%s, %s, %s)"
+        try:
+            mycursor.execute(sql, executeList)
+            mydb.commit()
+        except mysql.connector.Error as error:
+            flash ("Cannot allow for duplicate entry")
+            return redirect ('/ReviewQ_info/Portfolio_Review_Questions')
         return redirect(url_for('ReviewQ'))
     return render_template('Student_PortfolioReviewQ.html', form=form, form2=form2, header='Portfolio')
 
@@ -795,14 +851,13 @@ def search_results_Questions(form):
         mycursor.execute(sql, executeList)
         results = mycursor.fetchall()
 
-#
     if len(results) == 0:
         flash('No results found!')
         return redirect('/searchQuestions/')
     else:
         items = []
         for row in results:
-            instance = LabelItem(" ", " ")
+            instance = LabelItem(" ", " ", " ", " ")
             row = list(row)
             if reviewType == "Portfolio Review":
                 row.append("Portfolio")
@@ -832,8 +887,8 @@ def search_results_Questions(form):
 
 @app.route('/answerItem/<string:id>/<string:id1>/<string:id2>/<string:id3>', methods=['GET', 'POST'])
 def answerLink(id, id1, id2, id3):
-    type = id
-    label = id1
+    type = id1
+    label = id
     syear = id2
     eyear = id3
 
@@ -845,45 +900,66 @@ def answerLink(id, id1, id2, id3):
         executeList.append("midterm")
         executeList.append("midterm")
         executeList.append("midterm")
-        executeList.append(type)
-        executeList.append(type)
-        executeList.append(type)
+        executeList.append(label)
+        executeList.append(label)
+        executeList.append(label)
         executeList.append(syear)
         executeList.append(eyear)
+        print (executeList)
         results = displayForSpecificLabelSup(mycursor, executeList)
         for i in range(0,2):
             executeList.pop()
-        aggresults = displayForSpecificLabelSupAgg(mycursor, executeList)
+        # aggresults = displayForSpecificLabelSupAgg(mycursor, executeList)
 
 
     elif id1 == "endterm":
         executeList.append("endterm")
         executeList.append("endterm")
         executeList.append("endterm")
-        executeList.append(type)
-        executeList.append(type)
-        executeList.append(type)
+        executeList.append(label)
+        executeList.append(label)
+        executeList.append(label)
         executeList.append(syear)
         executeList.append(eyear)
         results = displayForSpecificLabelSup(mycursor, executeList)
         for i in range(0,2):
             executeList.pop()
-        aggresults = displayForSpecificLabelSupAgg(mycursor, executeList)
+        # aggresults = displayForSpecificLabelSupAgg(mycursor, executeList)
 
 #
     elif id1 == "site":
         executeList.append("site")
         executeList.append("site")
         executeList.append("site")
-        executeList.append(type)
-        executeList.append(type)
-        executeList.append(type)
+        executeList.append(label)
+        executeList.append(label)
+        executeList.append(label)
         executeList.append(syear)
         executeList.append(eyear)
         results = displayForSpecificLabelSup(mycursor, executeList)
         for i in range(0,2):
             executeList.pop()
-        aggresults = displayForSpecificLabelSupAgg(mycursor, executeList)
+        # aggresults = displayForSpecificLabelSupAgg(mycursor, executeList)
+
+    elif id1 == "Student":
+        executeList.append(label)
+        executeList.append(label)
+        executeList.append(label)
+        executeList.append(syear)
+        executeList.append(eyear)
+        print ("the list is", executeList)
+        results = displayForSpecificLabelStudent(mycursor, executeList)
+
+    elif id1 == "Portfolio":
+        executeList.append(label)
+        executeList.append(label)
+        executeList.append(label)
+        executeList.append(syear)
+        executeList.append(eyear)
+        print ("the list is", executeList)
+
+        results = displayForSpecificLabelPortfolio(mycursor, executeList)
+
 
 
     if len(results) == 0:
@@ -893,7 +969,7 @@ def answerLink(id, id1, id2, id3):
         items = [ ]
         for row in results:
             print (row)
-            instance = LabelYearItem (" ", " ", " ", " ", " ")
+            instance = LabelYearItem (" ", " ", " ", " ")
             instance.setValues(row)
             items.append(instance)
         table = LabelYearTable(items)

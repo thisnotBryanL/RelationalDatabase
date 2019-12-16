@@ -359,8 +359,8 @@ class Item(object):
 
 class SupervisorInternReviewQForm2(FlaskForm):
     startYear = SelectField('Start Year', choices=year_list)
-    review_type = SelectField('Review Type', choices=[(0,'---'), (1,'Midterm Qualtrics Survey'), (2,'Midterm Site Visit'),
-                                                      (3,'End-of-Term Qualtrics Survey')])
+    review_type = SelectField('Review Type', choices=[(0,'---'), ('midterm','Midterm Qualtrics Survey'), ('site','Midterm Site Visit'),
+                                                      ('endterm','End-of-Term Qualtrics Survey')])
 
 class Student_PortfolioReviewQForm(FlaskForm):
     label = StringField('Label', validators=[InputRequired()])
