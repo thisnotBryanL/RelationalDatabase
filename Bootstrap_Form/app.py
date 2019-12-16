@@ -19,7 +19,7 @@ mydb = mysql.connector.connect(
     password = "password123",
     database = "GP"
 )
-
+#
 #initialize cursor of database
 mycursor = mydb.cursor()
 
