@@ -15,8 +15,8 @@ import mysql.connector
 mydb = mysql.connector.connect(
     host = "localhost",
     user = "root",
-    password = "BUboxtop2020",
-    database = "testdb"
+    password = "hoangdieu72",
+    database = "GP"
 )
 
 #initialize cursor of database
@@ -516,9 +516,23 @@ def search_resultsForReview(search):
             table = StudentReviewAllStudentsTable(items)
             table.border = True
             return render_template('results.html', table=table)
-            return render_template('results.html', table=table)
-
     return redirect('/reviewQuery')
+
+
+#add this <string:label> to the route when done
+#it will take question label
+@app.route('/studentAnswersMultipleChoice/', methods=['GET', 'POST'])
+def studentMultipleChoiceAnswerPage():
+    form = studentResponsesMultipleChoiceForm()
+    #form.multipleChoiceAnswers.choices = ['QUERY TUPLE RESULTS HERE']
+    selectChoices = [('1','BAD'),('2','Okay'),('3','Good')]
+
+    form.multipleChoiceAnswers.choices = selectChoices
+    if request.method == 'POST':
+        print('SUBMIT BUTTON HAS BEEN PRESSED WITH ANSWER CHOICE: ', form.multipleChoiceAnswers.data)
+
+    return render_template('multipleChoiceAnswerForm.html', form=form)
+
 
 if __name__ == '__main__':
     app.run(debug=True)

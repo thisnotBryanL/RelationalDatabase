@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+{% import "bootstrap/wtf.html" as wtf%}
+
+{% block title %}
+    Multiple Choice Form
+{% endblock %}
+
+{%  block content %}
+<style>
+    .MyClass {
+        margin:  auto;
+        align-items: center;
+        justify-content: space-around;
+        display: flex;
+        float: none;
+    }
+</style>
+
+<div class="MyClass">
+    <form method = "POST" action="{{url_for('studentMultipleChoiceAnswerPage')}}">
+        <dl>
+            {{ form.hidden_tag() }}
+            <div style="width: 150%">
+                {{ form.csrf_token }}
+                {{ wtf.form_field(form.multipleChoiceAnswers) }}
+                {{ wtf.form_field(form.comments) }}
+                {{ wtf.form_field(form.baylorID) }}
+                {{ wtf.form_field(form.answerLabel)}}
+                <br><br><br>
+                <input class="btn btn-primary" value="submit" type="submit"/>
+            </div>
+        </dl>
+
+    </form>
+</div>
+
+{% endblock %}
