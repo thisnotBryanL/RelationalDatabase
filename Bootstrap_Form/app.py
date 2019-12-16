@@ -759,20 +759,31 @@ def search_results_Questions(form):
         mycursor.execute(sql, executeList)
         results = mycursor.fetchall()
 
-#
     if len(results) == 0:
         flash('No results found!')
         return redirect('/searchQuestions/')
     else:
         items = []
         for row in results:
-            instance = LabelItem(" ", " ")
+            instance = LabelItem(" ", " ", " ", " ")
             row = list(row)
             if reviewType == "Portfolio Review":
                 row.append("Portfolio")
 
-            if reviewType == "Student Review":
+            elif reviewType == "Student Review":
                 row.append("Student")
+
+            elif reviewType == "Midterm Qualtrics Survey":
+                row.append("midterm")
+
+            elif reviewType == "Midterm Site Visit":
+                row.append("midterm")
+
+            elif reviewType == "End-of-Term Qualtrics Survey":
+                row.append("site")
+
+            row.append(startYear)
+            row.append(endYear)
 
             print ("the row is", row)
             instance.setValues(row)
@@ -782,10 +793,75 @@ def search_results_Questions(form):
         table.border = True
         return render_template('results.html', table=table)
 
+@app.route('/answerItem/<string:id>/<string:id1>/<string:id2>/<string:id3>', methods=['GET', 'POST'])
+def answerLink(id, id1, id2, id3):
+    type = id
+    label = id1
+    syear = id2
+    eyear = id3
 
-@app.route('/answerItem/<string:id>', methods=['GET', 'POST'])
-def answerLink(id):
-    print(id)
+    results = []
+    aggresults = []
+    executeList = []
+    totalCount = 0
+    if id1 == "midterm":
+        executeList.append("midterm")
+        executeList.append("midterm")
+        executeList.append("midterm")
+        executeList.append(type)
+        executeList.append(type)
+        executeList.append(type)
+        executeList.append(syear)
+        executeList.append(eyear)
+        results = displayForSpecificLabelSup(mycursor, executeList)
+        for i in range(0,2):
+            executeList.pop()
+        aggresults = displayForSpecificLabelSupAgg(mycursor, executeList)
+
+
+    elif id1 == "endterm":
+        executeList.append("endterm")
+        executeList.append("endterm")
+        executeList.append("endterm")
+        executeList.append(type)
+        executeList.append(type)
+        executeList.append(type)
+        executeList.append(syear)
+        executeList.append(eyear)
+        results = displayForSpecificLabelSup(mycursor, executeList)
+        for i in range(0,2):
+            executeList.pop()
+        aggresults = displayForSpecificLabelSupAgg(mycursor, executeList)
+
+
+    elif id1 == "site":
+        executeList.append("site")
+        executeList.append("site")
+        executeList.append("site")
+        executeList.append(type)
+        executeList.append(type)
+        executeList.append(type)
+        executeList.append(syear)
+        executeList.append(eyear)
+        results = displayForSpecificLabelSup(mycursor, executeList)
+        for i in range(0,2):
+            executeList.pop()
+        aggresults = displayForSpecificLabelSupAgg(mycursor, executeList)
+
+
+    if len(results) == 0:
+        flash('No results found!')
+        return redirect('/searchQuestions/')
+    else:
+        items = [ ]
+        for row in results:
+            print (row)
+            instance = LabelYearItem (" ", " ", " ", " ", " ")
+            instance.setValues(row)
+            items.append(instance)
+        table = LabelYearTable(items)
+        table.border = True
+        return render_template('results.html', table=table)
 
     """
     If count(*) is greater than one then relocate to multiple choice answer page
@@ -802,7 +878,7 @@ def answerLink(id):
     #     print('SUBMIT BUTTON HAS BEEN PRESSED WITH ANSWER CHOICE: ', form.multipleChoiceAnswers.data)
     #
     # return render_template('multipleChoiceAnswerForm.html', form=form)
-    return id
+    return id1
 
 
 if __name__ == '__main__':

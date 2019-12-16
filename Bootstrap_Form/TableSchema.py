@@ -91,6 +91,12 @@ def createTables(mycursor):
                      "startYear CHAR (4),"
                      "PRIMARY KEY (label, startYear))")
 
+    sql = "INSERT INTO PortfolioReviewQ (label, question, startYear) VALUES (%s, %s, %s)"
+    sql = "INSERT INTO PortfolioResponses (label, question, startYear) VALUES (%s, %s, %s)"
+
+
+
+
     #will need to ask user for number of answer choices
     mycursor.execute("CREATE TABLE IF NOT EXISTS PortfolioAnswerChoices(label VARCHAR (50),"
                      "startYear CHAR (4),"
@@ -134,10 +140,6 @@ def basicInfo(mycursor, mydb, choice, executeList):
         mycursor.execute(basicInfoName, executeList)
         basicInfoResults = mycursor.fetchall()
         return basicInfoResults
-
-
-
-
 "----------------------------------------------------------------------------------------------------------------------------------------------------------------"
 #REVIEW FOR SPECIFIC TYPE
 #IF REVIEW != PORTFOLIO
@@ -321,38 +323,44 @@ def displayReviews(mycursor, mydb, executeList):
 
 """"**************************************************************************************************************************************************************************************************"""
 # #certain question label for certain review type of certain year range
-# """if reviewType != "Student" AND reviewType != "Portfolio":
-# def displayForSpecificLabelSup(mycursor, executeList):
-#     #by year
-#     displayReviewsY = """SELECT SupervisorInternResponse.label, SupervisorInternResponse.answer
-#     COUNT(*) as number__of_times_answer_was_chosen
-#     FROM SupervisorInternReviewQ, SupervisorInternResponse, SupervisorInternAnswerChoices,
-#     WHERE SupervisorInternAnswerChoices.ReviewType = %s AND SupervisorInternAnswerChoices.label = %s
-#     AND SupervisorInternAnswerChoices.startYear BETWEEN %s AND %s
-#     AND SupervisorInternReviewQ.startYear = SupervisorInternResponse.startYear
-#     AND SupervisorInternReviewQ.label = StudentResponse.label
-#     AND SupervisorInternAnswerChoices.label = SupervisorInternReviewQ.label
-#     AND SupervisorInternAnswerChoices.startYear = SupervisorInternReviewQ.label
-#     GROUP BY SupervisorInternAnswerChoices.startYear, SupervisorInternResponse.answer"""
-#
-#     mycursor.execute(displayReviewsY, (reviewType, questionlabel, startyear, endyear))
-#     reviewresults = mycursor.fetchall()
-#
-#     #aggregate
-#     displayReviewsA = """SELECT SupervisorInternResponse.label, SupervisorInternResponse.answer
-#     COUNT(*) as number__of_times_answer_was_chosen
-#     FROM SupervisorInternReviewQ, SupervisorInternResponse, SupervisorInternAnswerChoices,
-#     WHERE SupervisorInternAnswerChoices.ReviewType = %s AND SupervisorInternAnswerChoices.label = %s
-#     AND SupervisorInternAnswerChoices.startYear BETWEEN %s and %s
-#     AND SupervisorInternReviewQ.startYear = SupervisorInternResponse.startYear
-#     AND SupervisorInternReviewQ.label = StudentResponse.label
-#     AND SupervisorInternAnswerChoices.label = SupervisorInternReviewQ.label
-#     AND SupervisorInternAnswerChoices.startYear = SupervisorInternReviewQ.label
-#     GROUP BY SupervisorInternResponse.answer"""
-#
-#     mycursor.execute(displayReviewsA, (reviewType, questionlabel, startyear, endyear))
-#     mydb.commit()
-#     reviewresults = mycursor.fetchall()
+
+def displayForSpecificLabelSup(mycursor, executeList):
+    #by year
+    displayReviewsY = """SELECT SupervisorInternReviewQ.question, SupervisorInternResponse.label, SupervisorInternResponse.answer,
+    COUNT(*) as number__of_times_answer_was_chosen
+    FROM SupervisorInternReviewQ, SupervisorInternResponse, SupervisorInternAnswerChoices
+    WHERE SupervisorInternAnswerChoices.reviewType = %s
+	AND SupervisorInternReviewQ.reviewType = %s
+    AND SupervisorInternResponse.reviewType = %s
+    AND SupervisorInternAnswerChoices.label = %s
+	AND SupervisorInternReviewQ.label = %s
+    AND SupervisorInternResponse.label = %s
+    AND SupervisorInternReviewQ.startYear = SupervisorInternResponse.startYear
+    AND SupervisorInternAnswerChoices.startYear = SupervisorInternReviewQ.startYear
+    AND SupervisorInternAnswerChoices.startYear BETWEEN %s AND %s
+	GROUP BY SupervisorInternReviewQ.question, SupervisorInternResponse.label, SupervisorInternResponse.answer"""
+
+    mycursor.execute(displayReviewsY, executeList)
+    reviewresults = mycursor.fetchall()
+    return reviewresults
+
+def displayForSpecificLabelSupAgg(mycursor, executeList):
+    #aggregate
+    displayReviewsA = """SELECT COUNT(*) as number__of_times_answer_was_chosen, SupervisorInternReviewQ.question, SupervisorInternResponse.label, SupervisorInternResponse.answer
+        FROM SupervisorInternReviewQ, SupervisorInternResponse, SupervisorInternAnswerChoices
+        WHERE SupervisorInternAnswerChoices.reviewType = %s
+    	AND SupervisorInternReviewQ.reviewType = %s
+        AND SupervisorInternResponse.reviewType = %s
+        AND SupervisorInternAnswerChoices.label = %s
+    	AND SupervisorInternReviewQ.label = %s
+        AND SupervisorInternResponse.label = %s
+        AND SupervisorInternReviewQ.startYear = SupervisorInternResponse.startYear
+        AND SupervisorInternAnswerChoices.startYear = SupervisorInternReviewQ.startYear
+    	GROUP BY SupervisorInternReviewQ.question, SupervisorInternResponse.label, SupervisorInternResponse.answer"""
+
+    mycursor.execute(displayReviewsA, executeList)
+    reviewresults = mycursor.fetchall()
+    return reviewresults
 #
 #     #number__of_times_answer_was_chosen > 1, display it for both queries
 # "----------------------------------------------------------------------------------------------------------------------------------------------------------------"
