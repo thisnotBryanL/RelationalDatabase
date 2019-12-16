@@ -28,10 +28,10 @@
                     </a>
                     <ul class="dropdown-menu">
                         <li><a href="{{ url_for('studentQueryHomePage') }}">Search Students</a></li>
+                        <li><a href="{{ url_for('REAL_Question_search_page') }}">Search Questions</a></li>
                         <li><a href="{{ url_for('reviewQueryHomePage') }}">Search Reviews</a></li>
-                        <li><a href="{{ url_for('questionSearchPage') }}">Search Questions</a></li>
-                        <li><a href="{{ url_for('internshipInfo') }}">Search Internship Information</a></li>
-                        <li><a href="{{ url_for('SupInternReviewInfo') }}">Search Internship Information</a></li>
+                        <li><a href="{{ url_for('questionSearchPage') }}">Search Reviews by Range</a></li>
+                        <li><a href="{{ url_for('ReviewQ') }}">Search Review Question</a></li>
                     </ul>
                 </li>
                 <li class="dropdown">
@@ -42,11 +42,11 @@
                         <li><a href="{{ url_for('studentInfo') }}">Add Students</a></li>
                         <li><a href="{{ url_for('supervisorInfo') }}">Add Supervisors</a></li>
                         <li><a href="{{ url_for('internshipInfo') }}">Add Internship Information</a></li>
-                        <li><a href="{{ url_for('SupInternReviewInfo') }}">Add Internship Information</a></li>
+                        <li><a href="{{ url_for('ReviewQ') }}">Add Internship Information</a></li>
                     </ul>
             </ul>
             <ul class="nav navbar-nav navbar-right">
-                <li><a href="{{ url_for('SupInternReviewInfo') }}">Import Qualtrics</a></li>
+                <li><a href="{{ url_for('QualtricsImport') }}">Import Qualtrics</a></li>
 
             </ul>
         </div>

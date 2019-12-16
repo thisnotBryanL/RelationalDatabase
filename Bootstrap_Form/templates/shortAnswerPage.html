@@ -2,7 +2,7 @@
 {% import "bootstrap/wtf.html" as wtf%}
 
 {% block title %}
-    Multiple Choice Form
+    Short Answer Form
 {% endblock %}
 
 {%  block content %}
@@ -17,12 +17,12 @@
 </style>
 
 <div class="MyClass">
-    <form method = "POST" action="{{url_for('studentMultipleChoiceAnswerPage')}}">
+    <form method = "POST" action="{{url_for('shortAnswerPage')}}">
         <dl>
             {{ form.hidden_tag() }}
             <div style="width: 150%">
                 {{ form.csrf_token }}
-                {{ wtf.form_field(form.multipleChoiceAnswers) }}
+                {{ wtf.form_field(form.answers) }}
                 {{ wtf.form_field(form.comments) }}
                 {{ wtf.form_field(form.baylorID) }}
                 {{ wtf.form_field(form.answerLabel)}}

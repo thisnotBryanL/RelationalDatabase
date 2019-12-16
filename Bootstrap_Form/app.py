@@ -7,6 +7,7 @@ from flask_bootstrap import Bootstrap
 from flask_bootstrap import Bootstrap
 from Bootstrap_Form.TableSchema import reviewByStudent, basicInfo
 from Bootstrap_Form.TableSchema import reviewByStudent, basicInfo
+from Bootstrap_Form.qualtricsParser import qualtricsParser
 from TableSchema import *
 from Bootstrap_Form.Forms import *
 import mysql.connector
@@ -64,7 +65,7 @@ def index():
     if request.method == 'POST':
         if request.form['option'] == 'Look Up Student Information':
             return redirect(url_for('studentQueryHomePage'))
-        elif request.form['option'] == 'Look up Review Questions':
+        elif request.form['option'] == 'Look up Review By Label':
             return redirect(url_for('questionSearchPage'))
         elif request.form['option'] == 'Enter Student Information':
             return redirect(url_for('studentInfo'))
@@ -74,6 +75,8 @@ def index():
             return redirect(url_for('internshipInfo'))
         elif request.form['option'] == 'Review Questions':
             return redirect(url_for('ReviewQ'))
+        elif request.form['option'] == 'Look up Review Questions':
+            return redirect(url_for('REAL_Question_search_page'))
     return render_template('index.html')
 
 
@@ -130,6 +133,8 @@ def studentInfo():
         sql = "INSERT INTO StudentInfo (`BaylorID`, `lastName`, `firstName`, `emailAddress`, `ADV_PR_semester`, `class`, `major_minor`, `ADV_PR_grade`, `ADV_PR_year`)" \
               "VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)"
         studentExecuteInsert(sql, executeList, mycursor,mydb)
+        return redirect(url_for('index'))
+
        #END INSERT DATA
         # if request.form['option'] == 'home':
         #     return redirect(url_for('index'))
@@ -204,16 +209,47 @@ def internshipInfo():
         mydb.commit()
     return render_template('internship.html', form=form, form2=form2)
 
-@app.route('/input_SupervisorInternReviewQ_info', methods=['GET', 'POST'])
-def SupInternReviewInfo():
-    form = SupervisorInternReviewQForm()
-    form2 = SupervisorInternReviewQForm2()
-    if form.validate_on_submit():
+@app.route('/ReviewQ_info', methods=['GET', 'POST'])
+def ReviewQ():
+    # form = SupervisorInternReviewQForm()
+    # form2 = SupervisorInternReviewQForm2()
+    form = ReviewQuestions()
+    # if form.validate_on_submit():
 #        if request.form['option'] == 'home':
 #            return redirect(url_for('index'))
 #        else:
-            return 'Successfully submitted Review information!'
+#             return 'Successfully submitted Review information!'
+    if form.review_list.data == '1':
+        return redirect(url_for('PortfolioRevQ'))
+    elif form.review_list.data == '2':
+        return redirect(url_for('SupInternRevQ'))
+    elif form.review_list.data == '3':
+        return redirect(url_for('StudentRevQ'))
+    return render_template('ReviewQuestions.html', form=form)
+
+@app.route('/ReviewQ_info/Student_Review_Questions', methods=['GET','POST'])
+def StudentRevQ():
+    form = Student_PortfolioReviewQForm()
+    form2 = Student_PortfolioReviewQForm2()
+    if form.validate_on_submit():
+        return redirect(url_for('ReviewQ'))
+    return render_template('Student_PortfolioReviewQ.html', form=form, form2=form2, header='Student')
+
+@app.route('/ReviewQ_info/Supervisor_Intern_Review_Questions', methods=['GET','POST'])
+def SupInternRevQ():
+    form = SupervisorInternReviewQForm()
+    form2 = SupervisorInternReviewQForm2()
+    if form.validate_on_submit():
+        return redirect(url_for('ReviewQ'))
     return render_template('SupervisorInternReviewQ.html', form=form, form2=form2)
+
+@app.route('/ReviewQ_info/Portfolio_Review_Questions', methods=['GET','POST'])
+def PortfolioRevQ():
+    form = Student_PortfolioReviewQForm()
+    form2 = Student_PortfolioReviewQForm2()
+    if form.validate_on_submit():
+        return redirect(url_for('ReviewQ'))
+    return render_template('Student_PortfolioReviewQ.html', form=form, form2=form2, header='Portfolio')
 
 ######################## SUDENT QUERY DATA ########################
 
@@ -759,13 +795,14 @@ def search_results_Questions(form):
         mycursor.execute(sql, executeList)
         results = mycursor.fetchall()
 
+#
     if len(results) == 0:
         flash('No results found!')
         return redirect('/searchQuestions/')
     else:
         items = []
         for row in results:
-            instance = LabelItem(" ", " ", " ", " ")
+            instance = LabelItem(" ", " ")
             row = list(row)
             if reviewType == "Portfolio Review":
                 row.append("Portfolio")
@@ -879,6 +916,69 @@ def answerLink(id, id1, id2, id3):
     #
     # return render_template('multipleChoiceAnswerForm.html', form=form)
     return id1
+
+
+@app.route('/searchQuestions/', methods=['GET', 'POST'])
+def REAL_Question_search_page():
+    form = searchQuestions()
+    if request.method == 'POST':
+        return newSearchResults(form)
+
+    return render_template('questionSearchPage.html', form=form)
+
+
+@app.route('/searchQuestions/results')
+def newSearchResults(form):
+    results = []
+    print('Here?')
+
+    if len(results) > 0:
+        flash('No results found!')
+        return redirect('/searchQuestions/')
+    else:
+        print('HEre')
+        items = [QuestionItem('This is a question', 'this is a label', 'this is a start year')]
+        table = ACTUALQuestionsResults(items)
+        table.border = True
+        return render_template('results.html', table=table)
+
+
+@app.route('/answerItem/<string:id>/<string:year>', methods=['GET', 'POST'])
+def answerLinkv2(id, year):
+    print(id)
+    print(year)
+
+    """
+    If count(*) is greater than one then relocate to multiple choice answer page
+    # form.multipleChoiceAnswers.choices = ['QUERY TUPLE RESULTS HERE']
+    selectChoices = [('1', 'BAD'), ('2', 'Okay'), ('3', 'Good')]
+
+    form.multipleChoiceAnswers.choices = selectChoices
+    #form = shortAnswerForm()
+    '''
+
+    if request.method == 'POST':
+        print('SUBMIT BUTTON HAS BEEN PRESSED WITH ANSWER CHOICE: ', form.multipleChoiceAnswers.data)
+'''
+    return render_template('multipleChoiceAnswerForm.html', form=form)
+    
+    
+    else 
+    relocate to short answer page
+    """
+
+    form = shortAnswerForm()
+    '''
+
+    if request.method == 'POST':
+        print('SUBMIT BUTTON HAS BEEN PRESSED WITH ANSWER CHOICE: ', form.multipleChoiceAnswers.data)
+'''
+    return render_template('shortAnswerPage.html', form=form)
+
+@app.route('/QualtricsImported')
+def QualtricsImport():
+    qualtricsParser()
+    return render_template('QualtricsImport.html')
 
 
 if __name__ == '__main__':

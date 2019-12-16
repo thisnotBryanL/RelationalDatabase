@@ -137,12 +137,15 @@ class LabelItem(object):
 #     type = Col('Review Type')
 #     # portfolioReviewLink = LinkCol('Portfolio Reviews', 'portfolioReviewLink', url_kwargs=dict(id='id'))
 
+
 #********************************************************************************************************************************************
 class LabelChoice(FlaskForm):
     lbl = SelectField(choices = [])
 
 
 #********************************************************************************************************************************************
+
+
 class Results(Table):
     id = Col('Baylor ID ')
     fname = Col('First Name ')
@@ -166,6 +169,13 @@ class QuestionsResults(Table):
 
     answerLink = LinkCol('View These Answers', 'answerLink', url_kwargs=dict(id='label', id1 = 'type', id2= 'startyear', id3= 'endyear'))
 
+class ACTUALQuestionsResults(Table):
+    question = Col('Question ')
+    label = Col('Label ')
+    startYear = Col('StartYear')
+    answerLinkv2 = LinkCol('Answer this question', 'answerLinkv2', url_kwargs=dict(id='label', year='startYear'))
+
+
 #********************************************************************************************************************************************
 class LabelYearTable(Table):
     label = Col('Label')
@@ -186,7 +196,6 @@ class LabelYearItem(object):
         self.answer = list[2]
         self.num = list[3]
 #********************************************************************************************************************************************
-
 class PortfolioReviewTable(Table):
     question = Col('Questions')
     answer = Col('Answers')
@@ -303,6 +312,7 @@ class IDReviewPerYearTable(Table):
     comment = Col('Comments')
 
 #********************************************************************************************************************************************
+
 class SupervisorReviewItem(object):
     def __init__(self,question,answer,comment):
         self.question = question
@@ -319,6 +329,8 @@ class SupervisorReviewsTable(Table):
     answer = Col('Answers')
     comment = Col('Comments')
 #********************************************************************************************************************************************
+
+
 class Item(object):
     def __init__(self, id, fname, lname, email, semester, yr, major_minor, grade, classYear):
         self.id = id
@@ -344,6 +356,7 @@ class Item(object):
 
 
 
+
 class SupervisorInternReviewQForm2(FlaskForm):
     startYear = SelectField('Start Year', choices=year_list)
     review_type = SelectField('Review Type', choices=[(0,'---'), (1,'Midterm Qualtrics Survey'), (2,'Midterm Site Visit'),
@@ -366,6 +379,21 @@ class studentResponsesMultipleChoiceForm(FlaskForm):
     comments = StringField('Comments:')
     baylorID = StringField('BU ID:')
     answerLabel = StringField('Answer Label: ')
+    email = StringField('Email: ')
+
+class shortAnswerForm(FlaskForm):
+    answers = StringField('Answer: ')
+    comments = StringField('Comments:')
+    baylorID = StringField('BU ID:')
+    answerLabel = StringField('Answer Label: ')
+    email = StringField('Email: ')
+
+class PortfolioAnswerForm(FlaskForm):
+    answers = StringField('Answer: ')
+    comments = StringField('Comments:')
+    baylorID = StringField('BU ID:')
+    dateOfReview = StringField('Date of review: ')
+    email = StringField('Email: ')
 
 #********************************************************************************************************************************************
 class searchQuestions(FlaskForm):
