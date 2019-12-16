@@ -15,7 +15,7 @@ import mysql.connector
 mydb = mysql.connector.connect(
     host = "localhost",
     user = "root",
-    password = "password123",
+    password = "hoangdieu72",
     database = "GP"
 )
 
@@ -64,7 +64,7 @@ def index():
     if request.method == 'POST':
         if request.form['option'] == 'Look Up Student Information':
             return redirect(url_for('studentQueryHomePage'))
-        elif request.form['option'] == 'Look up Review Questions':
+        elif request.form['option'] == 'Look up Review By Label':
             return redirect(url_for('questionSearchPage'))
         elif request.form['option'] == 'Enter Student Information':
             return redirect(url_for('studentInfo'))
@@ -74,6 +74,8 @@ def index():
             return redirect(url_for('internshipInfo'))
         elif request.form['option'] == 'Review Questions':
             return redirect(url_for('ReviewQ'))
+        elif request.form['option'] == 'Look up Review Questions':
+            return redirect(url_for('REAL_Question_search_page'))
     return render_template('index.html')
 
 
@@ -695,22 +697,22 @@ def search_resultsForReview(search):
 
 # add this <string:label> to the route when done
 # it will take question label
-# @app.route('/studentAnswersMultipleChoice/', methods=['GET', 'POST'])
-# def studentMultipleChoiceAnswerPage():
-#     form = studentResponsesMultipleChoiceForm()
-#     # form.multipleChoiceAnswers.choices = ['QUERY TUPLE RESULTS HERE']
-#     selectChoices = [('1', 'BAD'), ('2', 'Okay'), ('3', 'Good')]
-#
-#     form.multipleChoiceAnswers.choices = selectChoices
-#     if request.method == 'POST':
-#         print('SUBMIT BUTTON HAS BEEN PRESSED WITH ANSWER CHOICE: ', form.multipleChoiceAnswers.data)
-#
-#     return render_template('multipleChoiceAnswerForm.html', form=form)
-#
+@app.route('/studentAnswersMultipleChoice/', methods=['GET', 'POST'])
+def studentMultipleChoiceAnswerPage():
+    form = studentResponsesMultipleChoiceForm()
+    # form.multipleChoiceAnswers.choices = ['QUERY TUPLE RESULTS HERE']
+    selectChoices = [('1', 'BAD'), ('2', 'Okay'), ('3', 'Good')]
+
+    form.multipleChoiceAnswers.choices = selectChoices
+    if request.method == 'POST':
+        print('SUBMIT BUTTON HAS BEEN PRESSED WITH ANSWER CHOICE: ', form.multipleChoiceAnswers.data)
+
+    return render_template('multipleChoiceAnswerForm.html', form=form)
 
 
 
-@app.route('/searchQuestions/', methods=['GET', 'POST'])
+
+@app.route('/searchLabels/', methods=['GET', 'POST'])
 def questionSearchPage():
     form = GetLabelForm()
     if request.method == 'POST':
@@ -719,7 +721,7 @@ def questionSearchPage():
     return render_template('getLabelFormV2.html', form=form)
 
 
-@app.route('/searchQuestions/results')
+@app.route('/searchLabels/results')
 def search_results_Questions(form):
     results = []
 
@@ -762,7 +764,7 @@ def search_results_Questions(form):
 #
     if len(results) == 0:
         flash('No results found!')
-        return redirect('/searchQuestions/')
+        return redirect('/searchLabels/')
     else:
         items = []
         for row in results:
@@ -783,7 +785,7 @@ def search_results_Questions(form):
         return render_template('results.html', table=table)
 
 
-@app.route('/answerItem/<string:id>', methods=['GET', 'POST'])
+@app.route('/LabelItem/<string:id>', methods=['GET', 'POST'])
 def answerLink(id):
     print(id)
 
@@ -804,6 +806,52 @@ def answerLink(id):
     # return render_template('multipleChoiceAnswerForm.html', form=form)
     return id
 
+
+@app.route('/searchQuestions/', methods=['GET', 'POST'])
+def REAL_Question_search_page():
+    form = searchQuestions()
+    if request.method == 'POST':
+        return newSearchResults(form)
+
+    return render_template('questionSearchPage.html', form=form)
+
+
+@app.route('/searchQuestions/results')
+def newSearchResults(form):
+    results = []
+    print('Here?')
+
+    if len(results) > 0:
+        flash('No results found!')
+        return redirect('/searchQuestions/')
+    else:
+        print('HEre')
+        items = [QuestionItem('This is a question', 'this is a label', 'this is a start year')]
+        table = ACTUALQuestionsResults(items)
+        table.border = True
+        return render_template('results.html', table=table)
+
+
+@app.route('/answerItem/<string:id>/<string:year>', methods=['GET', 'POST'])
+def answerLinkv2(id, year):
+    print(id)
+    print(year)
+
+    """
+    If count(*) is greater than one then relocate to multiple choice answer page
+
+    else 
+    relocate to short answer page
+    """
+    form = studentResponsesMultipleChoiceForm()
+    # form.multipleChoiceAnswers.choices = ['QUERY TUPLE RESULTS HERE']
+    selectChoices = [('1', 'BAD'), ('2', 'Okay'), ('3', 'Good')]
+
+    form.multipleChoiceAnswers.choices = selectChoices
+    if request.method == 'POST':
+        print('SUBMIT BUTTON HAS BEEN PRESSED WITH ANSWER CHOICE: ', form.multipleChoiceAnswers.data)
+
+    return render_template('multipleChoiceAnswerForm.html', form=form)
 
 if __name__ == '__main__':
     app.run(debug=True)

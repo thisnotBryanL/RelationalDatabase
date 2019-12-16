@@ -1,0 +1,64 @@
+{% extends "base.html" %}
+{% import "bootstrap/wtf.html" as wtf%}
+
+
+
+
+{% block title %}
+    Question Search Page
+{% endblock %}
+
+{%  block content %}
+<style>
+    .MyClass {
+        margin:  auto;
+        align-items: center;
+        justify-content: space-around;
+        display: flex;
+        float: none;
+    }
+        .ErrorClass{
+        margin:  auto;
+        justify-content: space-around;
+        display: block;
+        float: none;
+        text-align: center;
+    }
+
+    #title{
+        margin: 0 auto;
+        align-items: center;
+        justify-content: space-around;
+        display: flex;
+    }
+</style>
+<h1 id="title"> Question Search Page </h1>
+<hr>
+<div class="ErrorClass">
+                    {% with messages = get_flashed_messages() %}
+                {% if messages %}
+                    {% for message in messages %}
+                        <li style="color:red;">{{ message }}</li>
+                        </div>
+                    {% endfor %}
+                    {% endif %}
+                 {% endwith %}
+</div>
+<div class="MyClass">
+
+
+    <form method = "POST" action="{{url_for('REAL_Question_search_page')}}">
+        <dl>
+            {{ form.hidden_tag() }}
+            <div style="width: 150%">
+                {{ form.csrf_token }}
+                {{ wtf.form_field(form.label) }}
+                {{ wtf.form_field(form.startYear) }}
+                <br><br><br>
+                <input class="btn btn-primary" value="submit" type="submit"/>
+            </div>
+        </dl>
+
+    </form>
+</div>
+{% endblock %}

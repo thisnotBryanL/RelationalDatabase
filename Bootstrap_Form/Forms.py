@@ -161,6 +161,12 @@ class QuestionsResults(Table):
     type = Col('Review Type ')
     answerLink = LinkCol('answer this question', 'answerLink', url_kwargs=dict(id='label'))
 
+class ACTUALQuestionsResults(Table):
+    question = Col('Question ')
+    label = Col('Label ')
+    startYear = Col('StartYear')
+    answerLinkv2 = LinkCol('Answer this question', 'answerLinkv2', url_kwargs=dict(id='label', year='startYear'))
+
 
 #********************************************************************************************************************************************
 class PortfolioReviewTable(Table):
