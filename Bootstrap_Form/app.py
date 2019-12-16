@@ -35,6 +35,7 @@ app.config['SECRET_KEY'] = 'DontTellAnyone'
 # Create Classes for forms and web pages
 
 
+
 executeList = [ ]
 def executeInsert(sqlStatement, executeList, mycursor, mydb):
     print ("The execute list is", executeList)
