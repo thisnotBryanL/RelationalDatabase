@@ -72,7 +72,7 @@ def index():
             return redirect(url_for('supervisorInfo'))
         elif request.form['option'] == 'Enter Internship Information':
             return redirect(url_for('internshipInfo'))
-        elif request.form['option'] == 'Review Questions':
+        elif request.form['option'] == 'Enter Review Questions':
             return redirect(url_for('ReviewQ'))
         elif request.form['option'] == 'Look up Review Questions':
             return redirect(url_for('REAL_Question_search_page'))
@@ -81,9 +81,10 @@ def index():
 
 ######################## INFORMATION INPUT FORMS ########################
 
+####################### INFORMATION INPUT FORMS ########################
+
 @app.route('/input_student_info', methods=['GET', 'POST'])
 def studentInfo():
-    executeList = []
     form = StudentInfoForm()
     form2 = StudentInfoForm2()
     if (form.validate_on_submit() and form2.major_minor.data != '0' and form2.ADV_PR_Semester.data != '0' and
@@ -94,6 +95,15 @@ def studentInfo():
            majororminor = "major"
         else:
             majororminor = "minor"
+
+        if form2.data['Class'] == '1':
+           Class = "Freshman"
+        elif form2.data['Class'] == '2':
+           Class = "Sophomore"
+        elif form2.data['Class'] == '3':
+            Class = "Junior"
+        elif form2.data['Class'] == '4':
+            Class = "Senior"
 
         semester = " "
         if form2.data['ADV_PR_Semester'] == '1':
@@ -122,7 +132,7 @@ def studentInfo():
         executeList.append(form.data['first_name'])
         executeList.append(form.data['email'])
         executeList.append(semester)
-        executeList.append(form2.data['Class'])
+        executeList.append(Class)
         executeList.append(majororminor)
         executeList.append(grade)
         executeList.append(yr)
@@ -132,6 +142,8 @@ def studentInfo():
         sql = "INSERT INTO StudentInfo (`BaylorID`, `lastName`, `firstName`, `emailAddress`, `ADV_PR_semester`, `class`, `major_minor`, `ADV_PR_grade`, `ADV_PR_year`)" \
               "VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)"
         studentExecuteInsert(sql, executeList, mycursor,mydb)
+        return redirect(url_for('index'))
+
        #END INSERT DATA
         # if request.form['option'] == 'home':
         #     return redirect(url_for('index'))
@@ -142,7 +154,6 @@ def studentInfo():
 
 @app.route('/input_supervisor_info', methods=['GET', 'POST'])
 def supervisorInfo():
-    executeList = []
     form = SupervisorInfoForm()
     if form.validate_on_submit():
         executeList.append(form.data["company"])
@@ -160,7 +171,6 @@ def supervisorInfo():
 
 @app.route('/input_internship_info', methods=['GET', 'POST'])
 def internshipInfo():
-    executeList = []
     form = InternshipInfoForm()
     form2 = InternshipInfoForm2()
     if form.validate_on_submit():
@@ -197,25 +207,58 @@ def internshipInfo():
         executeList.append(form.data['phone'])
         executeList.append(form.data['tot_hours'])
         executeList.append(form.data['buID'])
-        print ("the execute list is", executeList)
 
         sql = "INSERT INTO Internship (`supervisorEmail`, `startMonth`, `startYear`, `endMonth`, `endYear`, `address`, `phoneNumber`, `totalHours`, `BaylorID`)" \
               "VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)"
+        executeInsert(sql, executeList, mycursor, mydb)
 
-        mycursor.execute(sql, executeList)
-        mydb.commit()
+        # if request.form['option'] == 'home':
+        #     return redirect(url_for('index'))
+        # else:
+        #     return 'Successfully submitted internship information!'
     return render_template('internship.html', form=form, form2=form2)
 
-@app.route('/input_SupervisorInternReviewQ_info', methods=['GET', 'POST'])
-def SupInternReviewInfo():
-    form = SupervisorInternReviewQForm()
-    form2 = SupervisorInternReviewQForm2()
-    if form.validate_on_submit():
+@app.route('/ReviewQ_info', methods=['GET', 'POST'])
+def ReviewQ():
+    # form = SupervisorInternReviewQForm()
+    # form2 = SupervisorInternReviewQForm2()
+    form = ReviewQuestions()
+    # if form.validate_on_submit():
 #        if request.form['option'] == 'home':
 #            return redirect(url_for('index'))
 #        else:
-            return 'Successfully submitted Review information!'
+#             return 'Successfully submitted Review information!'
+    if form.review_list.data == '1':
+        return redirect(url_for('PortfolioRevQ'))
+    elif form.review_list.data == '2':
+        return redirect(url_for('SupInternRevQ'))
+    elif form.review_list.data == '3':
+        return redirect(url_for('StudentRevQ'))
+    return render_template('ReviewQuestions.html', form=form)
+
+@app.route('/ReviewQ_info/Student_Review_Questions', methods=['GET','POST'])
+def StudentRevQ():
+    form = Student_PortfolioReviewQForm()
+    form2 = Student_PortfolioReviewQForm2()
+    if form.validate_on_submit():
+        return redirect(url_for('ReviewQ'))
+    return render_template('Student_PortfolioReviewQ.html', form=form, form2=form2, header='Student')
+
+@app.route('/ReviewQ_info/Supervisor_Intern_Review_Questions', methods=['GET','POST'])
+def SupInternRevQ():
+    form = SupervisorInternReviewQForm()
+    form2 = SupervisorInternReviewQForm2()
+    if form.validate_on_submit():
+        return redirect(url_for('ReviewQ'))
     return render_template('SupervisorInternReviewQ.html', form=form, form2=form2)
+
+@app.route('/ReviewQ_info/Portfolio_Review_Questions', methods=['GET','POST'])
+def PortfolioRevQ():
+    form = Student_PortfolioReviewQForm()
+    form2 = Student_PortfolioReviewQForm2()
+    if form.validate_on_submit():
+        return redirect(url_for('ReviewQ'))
+    return render_template('Student_PortfolioReviewQ.html', form=form, form2=form2, header='Portfolio')
 
 ######################## SUDENT QUERY DATA ########################
 
