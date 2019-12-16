@@ -17,7 +17,7 @@ class SupervisorTypesForm(FlaskForm):
     types = SelectField('Supervisor Review:', choices = [('Midterm Qualtrics Survey', 'Midterm Qualtrics Survey'),
                                                         ('Midterm Site Visit', 'Midterm Site Visit'),
                                                         ('End-of-Term Qualtrics Survey', 'End-of-Term Qualtrics Survey')])
-    year = StringField('Enter Year:')
+    year = StringField('Enter Year (Or leave Blank):')
 
 class StudentInfoForm(FlaskForm):
     student_id = StringField('student ID', validators=[InputRequired(), Length(9)])
@@ -96,7 +96,20 @@ class Student_PortfolioReviewQForm2(FlaskForm):
 
 
 class YearSearchForm(FlaskForm):
-    year = StringField('Enter Year:')
+    year = StringField('Enter Year (Or Leave Blank):')
+
+class YearSearchYearForm(FlaskForm):
+    year = StringField('Enter Year: ')
+
+class GetLabelForm(FlaskForm):
+    reviewchoices = [('Portfolio Review', 'Portfolio Review'),
+                     ('Student Review', 'Student Review'),
+                     ('Midterm Qualtrics Survey', 'Midterm Qualtrics Survey'),
+                     ('Midterm Site Visit', 'Midterm Site Visit'),
+                     ('End-of-Term Qualtrics Survey', 'End-of-Term Qualtrics Survey')]
+    reviewType = SelectField("Review Type", [DataRequired()], choices=reviewchoices)
+    startYear = SelectField('Start Year', choices=year_list)
+    endYear = SelectField('End Year', choices=year_list)
 
 class ReviewQuestions(FlaskForm):
     review_list = SelectField('Review Question Option', choices=[(0, '---'), (1, 'Portfolio Review'),
@@ -105,6 +118,28 @@ class ReviewQuestions(FlaskForm):
 
 
 #********************************************************************************************************************************************
+class LabelItem(object):
+    def __init__(self, id, year, type):
+        self.id = id
+        self.year = year
+        self.type = type
+
+    def setValues(self,list):
+        self.id = list[0]
+        self.year = list[1]
+        self.type = list[2]
+
+class LabelTable(Table):
+    id = Col('Question Label')
+    year = Col('Year')
+    type = Col('Review Type')
+#********************************************************************************************************************************************
+class LabelChoice(FlaskForm):
+    lbl = SelectField(choices = [])
+
+
+#********************************************************************************************************************************************
+
 
 class Results(Table):
     id = Col('Baylor ID ')
@@ -119,6 +154,7 @@ class Results(Table):
     supervisorReviewLink = LinkCol('Supervisor Reviews', 'supervisorReviewLink', url_kwargs=dict(id ='id'))
     portfolioReviewLink = LinkCol('Portfolio Reviews', 'portfolioReviewLink', url_kwargs=dict(id='id'))
     studentReviewLink = LinkCol('Student Reviews', 'studentReviewLink', url_kwargs=dict(id='id'))
+    searchByYearLink = LinkCol('Search Reviews By Year', 'yearLink', url_kwargs=dict(id='id'))
 
 class QuestionsResults(Table):
     label = Col('Label ')
@@ -223,6 +259,26 @@ class PortfolioReviewItemAllStudents(object):
         self.comment = list[5]
         self.yr = list[6]
         self.revname = list[7]
+# ********************************************************************************************************************************************
+class IDReviewPerYearItem(object):
+    def __init__(self,question,answer,comment, reviewType):
+        self.question = question
+        self.answer = answer
+        self.comment = comment
+        self.reviewType = reviewType
+
+    def setValues(self,list):
+        self.question = list[0]
+        self.answer = list[1]
+        self.comment = list[2]
+        self.reviewType = list[3]
+
+class IDReviewPerYearTable(Table):
+    reviewType = Col('Review Type')
+    question = Col('Questions')
+    answer = Col('Answers')
+    comment = Col('Comments')
+
 #********************************************************************************************************************************************
 
 class SupervisorReviewItem(object):
