@@ -212,7 +212,6 @@ def internshipInfo():
         print ("the execute list is", executeList)
 
         # validate that start date comes before year date
-
         if int(form2.startYear.data) < int(form2.endYear.data):
             print('startYeartart year is smaller', form2.startYear.data)
             # print('start month is smaller', form2.startMonth.data)
