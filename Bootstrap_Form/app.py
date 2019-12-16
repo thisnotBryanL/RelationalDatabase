@@ -12,6 +12,23 @@ from TableSchema import *
 from Bootstrap_Form.Forms import *
 import mysql.connector
 
+""""
+insert into Supervisor values ("google", "Will Smith", "product manager", "aa@yahoo.com");
+insert into StudentInfo values ("000000000", "Dadson", "Micah", "mm@yahoo.com", "Spring", "SO", "major", "A", "2018");
+insert into PortfolioReviewQ values ("photo", "how is the lighting", "2018");
+insert into PortfolioResponses values ("photo", "2018",  "000000000", "could be better", "awful answer", '2018-05-01', "Tom Hill");
+insert into PortfolioAnswerChoices values ("photo", "2018", "photo", "1");
+SELECT question, answer, comment, reviewerName
+        FROM PortfolioReviewQ, PortfolioResponses
+        WHERE baylorID = 000000000 and PortfolioResponses.startYear = 2018
+        AND PortfolioReviewQ.startYear = PortfolioResponses.startYear
+        AND PortfolioReviewQ.label = PortfolioResponses.label;
+--
+insert into StudentReviewQ values ("intern experience", "How did you enjoy your experience?", "2018");
+insert into StudentResponse values ("intern experience", "2018",  "aa@yahoo.com", "000000000", "it was decent", 'could have been better');
+insert into StudentAnswerChoices values ("intern experience", "2018", "I did not enjoy it", "1");
+"""
+
 #connect to database
 mydb = mysql.connector.connect(
     host = "localhost",
