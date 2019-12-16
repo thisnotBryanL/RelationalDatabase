@@ -4,6 +4,8 @@ from flask_table import Table, Col,LinkCol
 from wtforms import StringField, SelectField, IntegerField
 from wtforms.validators import InputRequired, Email, Length, DataRequired, NumberRange
 from flask_bootstrap import Bootstrap
+from flask_bootstrap import Bootstrap
+from Bootstrap_Form.TableSchema import reviewByStudent, basicInfo
 from Bootstrap_Form.TableSchema import reviewByStudent, basicInfo
 from Bootstrap_Form.qualtricsParser import qualtricsParser
 from TableSchema import *
@@ -14,8 +16,8 @@ import mysql.connector
 mydb = mysql.connector.connect(
     host = "localhost",
     user = "root",
-    password = "BUboxtop2020",
-    database = "testdb"
+    password = "password123",
+    database = "GP"
 )
 #
 #initialize cursor of database
@@ -35,8 +37,6 @@ app.config['SECRET_KEY'] = 'DontTellAnyone'
 # Create Classes for forms and web pages
 
 
-
-executeList = [ ]
 def executeInsert(sqlStatement, executeList, mycursor, mydb):
     print ("The execute list is", executeList)
     try:
@@ -55,6 +55,7 @@ def studentExecuteInsert(sqlStatement, executeList, mycursor, mydb):
         print ("duplicate entry")
         flash ("Attempting to enter either a student or supervisor that has already been entered")
     mydb.commit()
+
 @app.route('/', methods=['GET','POST'])
 def index():
     if request.method == 'POST':
@@ -92,16 +93,6 @@ def studentInfo():
            majororminor = "major"
         else:
             majororminor = "minor"
-
-        Class = " "
-        if form2.data['Class'] == '1':
-           Class = "Freshman"
-        elif form2.data['Class'] == '2':
-           Class = "Sophomore"
-        elif form2.data['Class'] == '3':
-            Class = "Junior"
-        elif form2.data['Class'] == '4':
-            Class = "Senior"
 
         semester = " "
         if form2.data['ADV_PR_Semester'] == '1':
@@ -174,7 +165,6 @@ def internshipInfo():
     executeList = []
     form = InternshipInfoForm()
     form2 = InternshipInfoForm2()
-
     if form.validate_on_submit():
         executeList.append(form.data['email'])
         month = " "
@@ -806,17 +796,21 @@ def search_resultsForReview(search):
 
 # add this <string:label> to the route when done
 # it will take question label
-@app.route('/studentAnswersMultipleChoice/', methods=['GET', 'POST'])
-def studentMultipleChoiceAnswerPage():
-    form = studentResponsesMultipleChoiceForm()
-    # form.multipleChoiceAnswers.choices = ['QUERY TUPLE RESULTS HERE']
-    selectChoices = [('1', 'BAD'), ('2', 'Okay'), ('3', 'Good')]
+# @app.route('/studentAnswersMultipleChoice/', methods=['GET', 'POST'])
+# def studentMultipleChoiceAnswerPage():
+#     form = studentResponsesMultipleChoiceForm()
+#     # form.multipleChoiceAnswers.choices = ['QUERY TUPLE RESULTS HERE']
+#     selectChoices = [('1', 'BAD'), ('2', 'Okay'), ('3', 'Good')]
+#
+#     form.multipleChoiceAnswers.choices = selectChoices
+#     if request.method == 'POST':
+#         print('SUBMIT BUTTON HAS BEEN PRESSED WITH ANSWER CHOICE: ', form.multipleChoiceAnswers.data)
+#
+#     return render_template('multipleChoiceAnswerForm.html', form=form)
+#
 
-    form.multipleChoiceAnswers.choices = selectChoices
-    if request.method == 'POST':
-        print('SUBMIT BUTTON HAS BEEN PRESSED WITH ANSWER CHOICE: ', form.multipleChoiceAnswers.data)
 
-    return render_template('multipleChoiceAnswerForm.html', form=form)
+    # return render_template('multipleChoiceAnswerForm.html', form=form)
 
 @app.route('/studentAnswersShortAnswer/', methods=['GET', 'POST'])
 def shortAnswerPage():
