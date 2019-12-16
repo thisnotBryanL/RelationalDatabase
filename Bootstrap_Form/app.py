@@ -15,7 +15,7 @@ from Forms import *
 mydb = mysql.connector.connect(
     host = "localhost",
     user = "root",
-    password = "hoangdieu72",
+    password = "password123",
     database = "GP"
 )
 
